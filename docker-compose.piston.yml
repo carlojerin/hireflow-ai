@@ -1,0 +1,49 @@
+
+# ============================================================
+# JOBPILOT AI - SELF-HOSTED PISTON (SANDBOXED CODE EXECUTION)
+#
+# Runs the same Piston (https://github.com/engineer-man/piston)
+# service the public emkc.org instance runs, privately, with no
+# rate limits and no whitelist requirement. The programming
+# assessment stage (backend/app/services/assessment/piston_client.py)
+# talks to it over plain HTTP.
+#
+# Setup (after Docker Desktop is installed and running):
+#
+#   1. docker compose -f docker-compose.piston.yml up -d
+#   2. python backend/app/scripts/piston_install_packages.py
+#      (installs the 12 language runtimes this project uses —
+#      a fresh Piston container starts with NONE installed)
+#   3. Add to .env:  PISTON_API_URL=http://localhost:2000/api/v2
+#   4. Restart the backend
+#
+# `privileged: true` is required by Piston itself — it uses Linux
+# namespaces/chroot/cgroups internally to isolate each execution,
+# which needs those extra kernel capabilities from Docker. This is
+# still a real security boundary: it isolates candidate code from
+# your host OS, which the previous plain-subprocess runners never
+# did at all.
+# ============================================================
+
+version: '3.2'
+
+services:
+    piston_api:
+        image: ghcr.io/engineer-man/piston
+        container_name: jobpilot_piston_api
+        restart: unless-stopped
+        privileged: true
+        ports:
+            - "2000:2000"
+        volumes:
+            - ./data/piston/packages:/piston/packages
+        tmpfs:
+            - /tmp:exec
+        # Explicit public resolvers -- works around some Docker
+        # Desktop/WSL2 setups where the container's inherited DNS
+        # resolves package-download hosts (github's release CDN) to
+        # an IP the container's own network path can't actually
+        # reach, even though the same host resolves fine elsewhere.
+        dns:
+            - 1.1.1.1
+            - 8.8.8.8

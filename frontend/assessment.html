@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <!-- Prevent browser caching -->
+    <meta
+        http-equiv="Cache-Control"
+        content="no-cache, no-store, must-revalidate"
+    >
+
+    <meta
+        http-equiv="Pragma"
+        content="no-cache"
+    >
+
+    <meta
+        http-equiv="Expires"
+        content="0"
+    >
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Assessment - HireFlow AI</title>
+
+
+    <!-- Bootstrap -->
+    <link
+        href="vendor/bootstrap/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+
+    <!-- Bootstrap Icons -->
+    <link
+        rel="stylesheet"
+        href="vendor/bootstrap-icons/bootstrap-icons.min.css"
+    >
+
+
+    <!-- HireFlow CSS -->
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="css/assessment.css"
+    >
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=DM+Sans:wght@400;500;700&display=swap">
+    <link rel="stylesheet" href="css/theme-glass.css?v=1">
+</head>
+
+
+<body class="dashboard-body" data-hf="calm">
+
+
+    <!-- ==================================================
+         NAVBAR
+         ================================================== -->
+
+    <nav class="navbar navbar-dark jobpilot-navbar">
+
+        <div class="container-fluid px-4">
+
+            <a
+                href="index.html"
+                class="navbar-brand fw-bold"
+            >
+                🚀 HireFlow AI
+            </a>
+
+
+            <div class="d-flex align-items-center gap-2">
+
+                <a
+                    href="assessment.html" data-dashboard-link
+                    class="btn btn-light btn-sm rounded-pill px-3"
+                >
+
+                    <i class="bi bi-arrow-left me-1"></i>
+
+                    Back to Dashboard
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </nav>
+
+
+
+    <!-- ==================================================
+         MAIN
+         ================================================== -->
+
+    <main class="container-fluid px-4 py-5">
+
+        <div class="assessment-page">
+
+
+            <!-- LOADING -->
+
+            <div id="assessmentLoading" class="text-center">
+
+                <div
+                    class="spinner-border text-primary"
+                    role="status"
+                ></div>
+
+                <div class="fw-semibold mt-3" id="assessmentLoadingText">
+                    Loading your assessment...
+                </div>
+
+            </div>
+
+
+            <!-- MESSAGE (errors / not eligible) -->
+
+            <div id="assessmentMessage"></div>
+
+
+            <!-- PROGRESS TRACKER (shown once loaded) -->
+
+            <div
+                id="assessmentProgress"
+                class="assessment-progress"
+                style="display:none;"
+            ></div>
+
+
+            <!-- JOB HEADER -->
+
+            <div
+                id="assessmentJobHeader"
+                class="text-center mb-4"
+                style="display:none;"
+            >
+
+                <h2 class="fw-bold mb-1" id="assessmentJobTitle">
+                    Recruitment Assessment
+                </h2>
+
+                <p class="text-muted mb-0" id="assessmentCompanyName"></p>
+
+            </div>
+
+
+            <!-- SELF INTRO: INTRO / INSTRUCTIONS -->
+
+            <div
+                id="selfIntroIntroSection"
+                class="assessment-card text-center"
+                style="display:none;"
+            >
+
+                <div class="assessment-icon">
+                    <i class="bi bi-person-video3"></i>
+                </div>
+
+                <h3 class="fw-bold mb-1">Self Introduction</h3>
+
+                <p class="text-muted">
+                    You are about to begin your recruitment
+                    assessment. Please introduce yourself briefly.
+                </p>
+
+                <div class="assessment-topics">
+
+                    <div class="fw-bold small text-uppercase text-muted">
+                        Suggested topics
+                    </div>
+
+                    <ul>
+                        <li>Your name</li>
+                        <li>Education</li>
+                        <li>Technical skills</li>
+                        <li>Projects or experience</li>
+                        <li>Strengths</li>
+                        <li>Why you are interested in this role</li>
+                    </ul>
+
+                </div>
+
+                <p class="fw-bold mb-4">
+                    <i class="bi bi-stopwatch me-1"></i>
+                    Time limit: 2 minutes.
+                </p>
+
+                <button
+                    type="button"
+                    id="startSelfIntroButton"
+                    class="btn btn-primary rounded-pill px-4"
+                >
+                    <i class="bi bi-play-fill me-1"></i>
+                    Begin Self Introduction
+                </button>
+
+            </div>
+
+
+            <!-- SELF INTRO: RECORDING -->
+
+            <div
+                id="selfIntroRecordingSection"
+                class="assessment-card text-center"
+                style="display:none;"
+            >
+
+                <div class="assessment-timer-label">
+                    Time Remaining
+                </div>
+
+                <div class="assessment-timer mb-3" id="selfIntroTimer">
+                    2:00
+                </div>
+
+                <div class="assessment-video-frame">
+
+                    <video
+                        id="selfIntroVideo"
+                        autoplay
+                        muted
+                        playsinline
+                    ></video>
+
+                    <div
+                        class="assessment-video-placeholder"
+                        id="selfIntroVideoPlaceholder"
+                    >
+                        <i class="bi bi-camera-video-off fs-3 d-block mb-1"></i>
+                        Camera preview will appear here.
+                    </div>
+
+                    <div
+                        class="assessment-rec-badge"
+                        id="selfIntroRecBadge"
+                        style="display:none;"
+                    >
+                        <span class="assessment-rec-dot"></span>
+                        Recording
+                    </div>
+
+                </div>
+
+                <div
+                    id="selfIntroPermissionNote"
+                    class="alert alert-info text-start small"
+                    style="display:none;"
+                ></div>
+
+                <div class="text-start mt-3">
+
+                    <label
+                        for="selfIntroTextInput"
+                        class="form-label small fw-bold text-uppercase text-muted"
+                    >
+                        Optional written introduction
+                    </label>
+
+                    <textarea
+                        id="selfIntroTextInput"
+                        class="form-control"
+                        rows="4"
+                        maxlength="4000"
+                        placeholder="You may type a short written introduction here as well (optional)."
+                    ></textarea>
+
+                </div>
+
+                <button
+                    type="button"
+                    id="submitSelfIntroButton"
+                    class="btn btn-primary rounded-pill px-4 mt-4"
+                >
+                    <i class="bi bi-send-check me-1"></i>
+                    Stop &amp; Submit
+                </button>
+
+                <div class="small text-muted mt-2">
+                    Your camera preview is never uploaded or
+                    recorded on our servers — only your
+                    submission time and optional written
+                    introduction are saved.
+                </div>
+
+            </div>
+
+
+            <!-- SELF INTRO: COMPLETED / NEXT STAGE -->
+
+            <div
+                id="selfIntroDoneSection"
+                class="assessment-card text-center"
+                style="display:none;"
+            >
+
+                <div class="assessment-icon">
+                    <i class="bi bi-check-circle"></i>
+                </div>
+
+                <h3 class="fw-bold mb-1">Self Introduction Complete</h3>
+
+                <p class="text-muted" id="selfIntroDoneMessage">
+                    Thank you for your introduction.
+                </p>
+
+                <div class="row g-3 mt-2 justify-content-center">
+
+                    <div class="col-6 col-md-4">
+
+                        <div class="assessment-stat-box">
+                            <div class="small text-muted">Duration</div>
+                            <div class="fw-bold fs-5" id="selfIntroDoneDuration">-</div>
+                        </div>
+
+                    </div>
+
+                    <div class="col-6 col-md-4">
+
+                        <div class="assessment-stat-box">
+                            <div class="small text-muted">Completed</div>
+                            <div class="fw-bold" id="selfIntroDoneDate" style="font-size:13px;">-</div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div id="assessmentNextStageAction" class="mt-4"></div>
+
+                <a
+                    href="assessment.html" data-dashboard-link
+                    class="btn btn-outline-primary rounded-pill px-4 mt-3"
+                >
+                    Back to Dashboard
+                </a>
+
+            </div>
+
+        </div>
+
+    </main>
+
+
+    <!-- ==================================================
+         BOOTSTRAP JS
+         ================================================== -->
+
+    <script
+        src="vendor/bootstrap/bootstrap.bundle.min.js"
+    ></script>
+
+
+    <!-- ==================================================
+         ASSESSMENT
+         ================================================== -->
+
+    <script src="./js/session-guard.js?v=3"></script>
+<script src="./js/csrf-fetch.js?v=1"></script>
+    <script src="./js/camera-quality.js?v=1"></script>
+    <script src="./js/face-proctor.js?v=4"></script>
+    <script src="./js/integrity-guards.js?v=3"></script>
+    <script src="./js/audio-proctor.js?v=1"></script>
+    <script src="./js/assessment-instructions.js?v=4"></script>
+    <script src="./js/screen-proctor.js?v=2"></script>
+    <script src="./js/assessment-integrity.js?v=103"></script>
+    <script src="./js/assessment-video-recorder.js?v=4"></script>
+    <script src="./js/phone-detector.js?v=6"></script>
+    <script src="./js/assessment.js?v=105"></script>
+
+
+    <script src="./js/dashboard-link.js"></script>
+    <script src="./js/assessment-titles.js?v=3"></script>
+</body>
+
+</html>

@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" role="img" aria-label="AI Interviewer">
+  <defs>
+
+    <radialGradient id="studioBg" cx="50%" cy="34%" r="78%">
+      <stop offset="0" stop-color="#3a4457"/>
+      <stop offset="55%" stop-color="#232a38"/>
+      <stop offset="100%" stop-color="#171b24"/>
+    </radialGradient>
+
+    <linearGradient id="orb" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#8ab4f8"/>
+      <stop offset="50%" stop-color="#635bff"/>
+      <stop offset="100%" stop-color="#4f46e5"/>
+    </linearGradient>
+
+    <radialGradient id="orbGlow" cx="50%" cy="38%" r="55%">
+      <stop offset="0" stop-color="#8ab4f8" stop-opacity=".55"/>
+      <stop offset="100%" stop-color="#8ab4f8" stop-opacity="0"/>
+    </radialGradient>
+
+    <linearGradient id="bust" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4a5272"/>
+      <stop offset="100%" stop-color="#2b3148"/>
+    </linearGradient>
+
+    <linearGradient id="orbSheen" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity=".55"/>
+      <stop offset="45%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+
+    <radialGradient id="ringPulse" cx="50%" cy="50%" r="50%">
+      <stop offset="78%" stop-color="#8ab4f8" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#8ab4f8" stop-opacity=".35"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="640" height="640" fill="url(#studioBg)"/>
+
+  <!-- ambient glow behind the mark -->
+  <circle cx="320" cy="300" r="230" fill="url(#orbGlow)"/>
+
+  <!-- shoulders, presence silhouette -->
+  <path d="M60 640 C70 486 160 420 320 420 C480 420 570 486 580 640 Z" fill="url(#bust)"/>
+
+  <!-- soft outer ring: brand identity, not a face. The speaking-state
+       ring in ai-interview-v2.css layers on top of this at runtime. -->
+  <circle cx="320" cy="258" r="156" fill="none" stroke="#39425c" stroke-width="2" opacity=".6"/>
+  <circle cx="320" cy="258" r="178" fill="none" stroke="url(#ringPulse)" stroke-width="18"/>
+
+  <!-- the mark itself: a rounded, abstract AI-presence glyph, calm
+       waveform strokes standing in for attention/listening, not a
+       literal illustrated face. Same honest design language used
+       elsewhere in the product (equalizer bars mean AI speaking)
+       rather than a cartoon human that reads as fake. -->
+  <circle cx="320" cy="258" r="138" fill="url(#orb)"/>
+  <circle cx="320" cy="258" r="138" fill="url(#orbSheen)"/>
+
+  <g stroke="#ffffff" stroke-width="12" stroke-linecap="round" opacity=".92">
+    <path d="M254 206 L254 310"/>
+    <path d="M320 186 L320 330"/>
+    <path d="M386 206 L386 310"/>
+  </g>
+
+  <!-- a single calm curve beneath the waveform mark, standing in for
+       a friendly, listening expression without literal facial features -->
+  <path d="M268 322 Q320 352 372 322" stroke="#ffffff" stroke-width="10" fill="none" stroke-linecap="round" opacity=".85"/>
+
+  <!-- collar hint on the shoulders, enough to read as professional
+       without needing a rendered face above it -->
+  <path d="M250 420 L320 520 L390 420 L368 408 L320 452 L272 408 Z" fill="#dfe3ee" opacity=".9"/>
+  <path d="M300 440 L340 440 L348 500 L320 540 L292 500 Z" fill="#5b6fd6"/>
+
+</svg>

@@ -1,0 +1,1648 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>HireFlow AI - AI-Assisted Candidate Assessments for HR Teams</title>
+
+
+    <!-- ==================================================
+         BOOTSTRAP
+    ================================================== -->
+
+    <link
+        href="vendor/bootstrap/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+
+    <!-- ==================================================
+         BOOTSTRAP ICONS
+    ================================================== -->
+
+    <link
+        rel="stylesheet"
+        href="vendor/bootstrap-icons/bootstrap-icons.min.css"
+    >
+
+
+    <style>
+
+        :root {
+
+            --dark: #101a35;
+
+            --text: #172554;
+
+            --muted: #64748b;
+
+            --blue: #4169e1;
+
+            --indigo: #4f5bff;
+
+            --purple: #3e7bff;
+
+            --green: #059669;
+
+            --border: #e2e8f0;
+
+        }
+
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+
+        body {
+
+            margin: 0;
+
+            color: var(--text);
+
+            background: #ffffff;
+
+            font-family:
+                Inter,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Arial,
+                sans-serif;
+
+        }
+
+
+        a {
+            text-decoration: none;
+        }
+
+
+        /* ==================================================
+           NAVBAR
+        ================================================== */
+
+        .jp-navbar {
+
+            position: fixed;
+
+            top: 0;
+
+            left: 0;
+
+            width: 100%;
+
+            min-height: 74px;
+
+            z-index: 1000;
+
+            background:
+                rgba(255, 255, 255, 0.96);
+
+            backdrop-filter:
+                blur(12px);
+
+            border-bottom:
+                1px solid #eef2f7;
+
+        }
+
+
+        .jp-brand {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+
+            color: var(--dark);
+
+        }
+
+
+        .jp-brand:hover {
+            color: var(--dark);
+        }
+
+
+        .jp-logo {
+
+            width: 43px;
+
+            height: 43px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            border-radius: 13px;
+
+            color: white;
+
+            font-size: 20px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #2563eb,
+                    #3e7bff
+                );
+
+            box-shadow:
+                0 8px 20px
+                rgba(79, 70, 229, 0.22);
+
+        }
+
+
+        .jp-brand-name {
+
+            font-size: 21px;
+
+            font-weight: 800;
+
+            line-height: 1;
+
+        }
+
+
+        .jp-brand-subtitle {
+
+            margin-top: 3px;
+
+            font-size: 10px;
+
+            color: #64748b;
+
+        }
+
+
+        .jp-nav-link {
+
+            margin: 0 7px;
+
+            color: #334155 !important;
+
+            font-size: 14px;
+
+            font-weight: 500;
+
+        }
+
+
+        .jp-nav-link:hover {
+
+            color:
+                var(--indigo) !important;
+
+        }
+
+
+        .jp-get-started {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 5px;
+
+            padding:
+                11px 21px;
+
+            border: none;
+
+            border-radius: 999px;
+
+            color: white;
+
+            font-size: 14px;
+
+            font-weight: 700;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #4f5bff,
+                    #3e7bff
+                );
+
+            box-shadow:
+                0 10px 22px
+                rgba(79, 70, 229, 0.22);
+
+        }
+
+
+        .jp-get-started:hover {
+
+            color: white;
+
+            transform:
+                translateY(-1px);
+
+        }
+
+
+        /* ==================================================
+           HERO
+        ================================================== */
+
+        .jp-hero {
+
+            position: relative;
+
+            overflow: hidden;
+
+            min-height: 660px;
+
+            padding-top: 108px;
+
+            background:
+
+                radial-gradient(
+                    circle at 78% 13%,
+                    rgba(147, 197, 253, 0.30),
+                    transparent 31%
+                ),
+
+                radial-gradient(
+                    circle at 92% 72%,
+                    rgba(216, 180, 254, 0.29),
+                    transparent 28%
+                ),
+
+                linear-gradient(
+                    180deg,
+                    #f8faff 0%,
+                    #ffffff 100%
+                );
+
+        }
+
+
+        .jp-hero::after {
+
+            content: "";
+
+            position: absolute;
+
+            width: 560px;
+
+            height: 560px;
+
+            right: -220px;
+
+            top: 80px;
+
+            border-radius: 50%;
+
+            background:
+                rgba(129, 140, 248, 0.14);
+
+            filter:
+                blur(60px);
+
+        }
+
+
+        .jp-hero-content {
+
+            position: relative;
+
+            z-index: 5;
+
+        }
+
+
+        .jp-pill {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 8px;
+
+            padding:
+                9px 15px;
+
+            border:
+                1px solid #dde4ff;
+
+            border-radius: 999px;
+
+            color: #4f5bff;
+
+            background: #eef2ff;
+
+            font-size: 13px;
+
+            font-weight: 700;
+
+        }
+
+
+        .jp-hero-title {
+
+            margin:
+                23px 0 20px;
+
+            color: var(--dark);
+
+            font-size:
+                clamp(
+                    46px,
+                    5.4vw,
+                    72px
+                );
+
+            line-height: 1.02;
+
+            letter-spacing: -3px;
+
+            font-weight: 800;
+
+        }
+
+
+        .jp-hero-title span {
+
+            display: block;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    #2563eb,
+                    #4f5bff,
+                    #c026d3
+                );
+
+            -webkit-background-clip: text;
+
+            background-clip: text;
+
+            color: transparent;
+
+        }
+
+
+        .jp-hero-description {
+
+            max-width: 620px;
+
+            margin:
+                0 0 28px;
+
+            color: #5b6b88;
+
+            font-size: 17px;
+
+            line-height: 1.7;
+
+        }
+
+
+        .jp-hero-actions {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 16px;
+
+            flex-wrap: wrap;
+
+        }
+
+
+        .jp-hero-secondary {
+
+            color: var(--text);
+
+            font-size: 14px;
+
+            font-weight: 600;
+
+        }
+
+
+        .jp-hero-secondary:hover {
+            color: var(--indigo);
+        }
+
+
+        /* ==================================================
+           HERO VISUAL: PIPELINE CARD
+        ================================================== */
+
+        .jp-hero-visual {
+
+            position: relative;
+
+            min-height: 520px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            z-index: 3;
+
+        }
+
+
+        .jp-hero-glow {
+
+            position: absolute;
+
+            width: 460px;
+
+            height: 460px;
+
+            border-radius: 50%;
+
+            background:
+                radial-gradient(
+                    circle,
+                    rgba(96,165,250,0.24),
+                    rgba(192,132,252,0.12),
+                    transparent 70%
+                );
+
+            filter:
+                blur(10px);
+
+        }
+
+
+        .jp-pipeline-card {
+
+            position: relative;
+
+            z-index: 4;
+
+            width: 100%;
+
+            max-width: 420px;
+
+            padding: 28px;
+
+            border-radius: 22px;
+
+            background: #ffffff;
+
+            border: 1px solid #e7edf5;
+
+            box-shadow:
+                0 30px 60px
+                rgba(30,41,59,0.12);
+
+        }
+
+
+        .jp-pipeline-title {
+
+            font-size: 11px;
+
+            letter-spacing: 2px;
+
+            font-weight: 800;
+
+            color: #64748b;
+
+            margin-bottom: 18px;
+
+        }
+
+
+        .jp-pipeline-step {
+
+            display: flex;
+
+            align-items: flex-start;
+
+            gap: 14px;
+
+            padding: 12px 0;
+
+        }
+
+
+        .jp-pipeline-step + .jp-pipeline-step {
+
+            border-top: 1px solid #f1f5f9;
+
+        }
+
+
+        .jp-pipeline-num {
+
+            flex: 0 0 auto;
+
+            width: 30px;
+
+            height: 30px;
+
+            border-radius: 50%;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size: 13px;
+
+            font-weight: 800;
+
+            color: #fff;
+
+            background: linear-gradient(135deg, #4f5bff, #3e7bff);
+
+        }
+
+
+        .jp-pipeline-step h5 {
+
+            margin: 0 0 2px;
+
+            font-size: 14.5px;
+
+            font-weight: 700;
+
+            color: var(--text);
+
+        }
+
+
+        .jp-pipeline-step p {
+
+            margin: 0;
+
+            font-size: 12.5px;
+
+            color: #64748b;
+
+            line-height: 1.5;
+
+        }
+
+
+        /* ==================================================
+           FEATURES
+        ================================================== */
+
+        .jp-features {
+
+            padding:
+                78px 0 85px;
+
+            background:
+                #fbfdff;
+
+        }
+
+
+        .jp-section-label {
+
+            color:
+                #64748b;
+
+            font-size: 11px;
+
+            letter-spacing: 3px;
+
+            font-weight: 800;
+
+        }
+
+
+        .jp-section-title {
+
+            margin-top: 9px;
+
+            color:
+                var(--text);
+
+            font-size:
+                clamp(
+                    34px,
+                    4vw,
+                    50px
+                );
+
+            letter-spacing: -1.7px;
+
+            font-weight: 800;
+
+        }
+
+
+        .jp-section-text {
+
+            max-width: 650px;
+
+            margin:
+                12px auto 0;
+
+            color:
+                #64748b;
+
+            line-height: 1.7;
+
+        }
+
+
+        .jp-feature-card {
+
+            height: 100%;
+
+            padding: 27px;
+
+            border:
+                1px solid #e7edf5;
+
+            border-radius: 20px;
+
+            background: white;
+
+            box-shadow:
+                0 10px 27px
+                rgba(15,23,42,0.05);
+
+        }
+
+
+        .jp-feature-icon {
+
+            width: 55px;
+
+            height: 55px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            margin-bottom: 18px;
+
+            border-radius: 50%;
+
+            font-size: 22px;
+
+        }
+
+
+        .jp-blue {
+
+            color: #2563eb;
+
+            background: #edf4ff;
+
+        }
+
+
+        .jp-purple {
+
+            color: #3e7bff;
+
+            background: #f3edff;
+
+        }
+
+
+        .jp-green {
+
+            color: #059669;
+
+            background: #eafbf3;
+
+        }
+
+
+        .jp-pink {
+
+            color: #db2777;
+
+            background: #fff0f8;
+
+        }
+
+
+        .jp-feature-card h4 {
+
+            margin-bottom: 10px;
+
+            color:
+                var(--text);
+
+            font-size: 19px;
+
+            font-weight: 800;
+
+        }
+
+
+        .jp-feature-card p {
+
+            margin: 0;
+
+            color:
+                #64748b;
+
+            font-size: 14px;
+
+            line-height: 1.7;
+
+        }
+
+
+        /* ==================================================
+           ABOUT
+        ================================================== */
+
+        .jp-about {
+
+            padding:
+                75px 0;
+
+            background: white;
+
+        }
+
+
+        .jp-about-box {
+
+            padding:
+                48px;
+
+            border:
+                1px solid #edf0f8;
+
+            border-radius: 25px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #f7f8ff,
+                    #fbf8ff
+                );
+
+        }
+
+
+        .jp-about-box h2 {
+
+            color:
+                var(--text);
+
+            font-weight: 800;
+
+        }
+
+
+        .jp-about-box p {
+
+            max-width: 760px;
+
+            margin:
+                0 auto;
+
+            color:
+                #64748b;
+
+            line-height: 1.8;
+
+        }
+
+
+        /* ==================================================
+           CONTACT
+        ================================================== */
+
+        .jp-contact {
+
+            padding:
+                70px 0;
+
+            text-align: center;
+
+            background:
+                white;
+
+        }
+
+
+        /* ==================================================
+           FOOTER
+        ================================================== */
+
+        .jp-footer {
+
+            padding:
+                24px 0;
+
+            border-top:
+                1px solid #eef2f7;
+
+            background:
+                white;
+
+        }
+
+
+        .jp-footer-text {
+
+            color:
+                #64748b;
+
+            font-size: 13px;
+
+        }
+
+
+        /* ==================================================
+           RESPONSIVE
+        ================================================== */
+
+        @media (max-width: 991px) {
+
+            .jp-navbar {
+
+                min-height: 70px;
+
+            }
+
+
+            .jp-hero {
+
+                padding-top: 100px;
+
+            }
+
+
+            .jp-hero-title {
+
+                letter-spacing: -2px;
+
+            }
+
+
+            .jp-hero-visual {
+
+                min-height: 400px;
+
+                margin-top: 25px;
+
+            }
+
+        }
+
+
+        @media (max-width: 767px) {
+
+            .jp-hero-title {
+
+                font-size: 42px;
+
+            }
+
+
+            .jp-hero-description {
+
+                font-size: 16px;
+
+            }
+
+
+            .jp-hero-visual {
+
+                min-height: 340px;
+
+            }
+
+
+            .jp-hero-glow {
+
+                width: 300px;
+
+                height: 300px;
+
+            }
+
+        }
+
+    </style>
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=DM+Sans:wght@400;500;700&display=swap">
+    <link rel="stylesheet" href="css/theme-glass.css?v=1">
+</head>
+
+
+<body>
+
+
+<!-- ==================================================
+     NAVBAR
+================================================== -->
+
+<nav class="navbar navbar-expand-lg jp-navbar">
+
+    <div class="container">
+
+
+        <!-- BRAND -->
+
+        <a
+            href="index.html"
+            class="jp-brand"
+        >
+
+            <div class="jp-logo">
+
+                <i class="bi bi-send-fill"></i>
+
+            </div>
+
+
+            <div>
+
+                <div class="jp-brand-name">
+
+                    HireFlow AI
+
+                </div>
+
+
+                <div class="jp-brand-subtitle">
+
+                    AI-Assisted Candidate Assessments
+
+                </div>
+
+            </div>
+
+        </a>
+
+
+        <!-- MOBILE MENU -->
+
+        <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#jobpilotNavbar"
+            aria-controls="jobpilotNavbar"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+        >
+
+            <span class="navbar-toggler-icon"></span>
+
+        </button>
+
+
+        <div
+            class="collapse navbar-collapse"
+            id="jobpilotNavbar"
+        >
+
+            <ul
+                class="navbar-nav ms-auto align-items-lg-center"
+            >
+
+
+                <!-- HOME -->
+
+                <li class="nav-item">
+
+                    <a
+                        class="nav-link jp-nav-link"
+                        href="#home"
+                    >
+
+                        Home
+
+                    </a>
+
+                </li>
+
+
+                <!-- HOW IT WORKS -->
+
+                <li class="nav-item">
+
+                    <a
+                        class="nav-link jp-nav-link"
+                        href="#how-it-works"
+                    >
+
+                        How It Works
+
+                    </a>
+
+                </li>
+
+
+                <!-- FEATURES -->
+
+                <li class="nav-item">
+
+                    <a
+                        class="nav-link jp-nav-link"
+                        href="#features"
+                    >
+
+                        Features
+
+                    </a>
+
+                </li>
+
+
+                <!-- ABOUT -->
+
+                <li class="nav-item">
+
+                    <a
+                        class="nav-link jp-nav-link"
+                        href="#about"
+                    >
+
+                        About
+
+                    </a>
+
+                </li>
+
+
+                <!-- ADMIN LOGIN -->
+
+                <li class="nav-item">
+
+                    <a
+                        class="nav-link jp-nav-link"
+                        href="admin-login.html"
+                        title="Platform admin console"
+                    >
+
+                        <i class="bi bi-shield-lock me-1"></i> Admin
+
+                    </a>
+
+                </li>
+
+
+                <!-- HR LOGIN -->
+
+                <li
+                    class="nav-item
+                           ms-lg-3
+                           mt-3
+                           mt-lg-0"
+                >
+
+                    <a
+                        href="company-login.html"
+                        class="jp-get-started"
+                    >
+
+                        HR Login
+
+                        <i
+                            class="bi bi-arrow-right"
+                        ></i>
+
+                    </a>
+
+                </li>
+
+            </ul>
+
+        </div>
+
+    </div>
+
+</nav>
+
+
+<!-- ==================================================
+     HERO
+================================================== -->
+
+<section
+    class="jp-hero"
+    id="home"
+>
+
+    <div class="container">
+
+        <div class="row align-items-center">
+
+
+            <!-- ==================================================
+                 LEFT SIDE
+            ================================================== -->
+
+            <div class="col-lg-6 jp-hero-content">
+
+
+                <!-- BADGE -->
+
+                <span class="jp-pill">
+
+                    <i class="bi bi-stars"></i>
+
+                    AI-Powered Candidate Assessment
+
+                </span>
+
+
+                <!-- TITLE -->
+
+                <h1 class="jp-hero-title">
+
+                    Assess Every Candidate,
+
+                    <span>
+                        Without the Manual Work.
+                    </span>
+
+                </h1>
+
+
+                <!-- DESCRIPTION -->
+
+                <p class="jp-hero-description">
+
+                    Upload a candidate's resume, and HireFlow AI takes it from there — AI analysis,
+                    an emailed assessment link, a role-based knowledge test, a hands-on task chosen for the job
+                    (coding, technical lab, written, design or a call simulation), and a live AI voice interview.
+                    You get one clear report per candidate, with scores and an integrity summary.
+
+                </p>
+
+
+                <div class="jp-hero-actions">
+
+                    <a
+                        href="company-login.html"
+                        class="jp-get-started"
+                    >
+
+                        HR Login
+
+                        <i
+                            class="bi bi-arrow-right"
+                        ></i>
+
+                    </a>
+
+
+                    <a
+                        href="company-register.html"
+                        class="jp-hero-secondary"
+                    >
+
+                        New HR? Register instantly →
+
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <!-- ==================================================
+                 RIGHT SIDE - PIPELINE CARD
+            ================================================== -->
+
+            <div class="col-lg-6">
+
+                <div
+                    class="jp-hero-visual"
+                >
+
+
+                    <div
+                        class="jp-hero-glow"
+                    ></div>
+
+
+                    <div class="jp-pipeline-card">
+
+                        <div class="jp-pipeline-title">
+                            THE ASSESSMENT PIPELINE
+                        </div>
+
+                        <div class="jp-pipeline-step">
+                            <div class="jp-pipeline-num">1</div>
+                            <div>
+                                <h5>Upload a resume</h5>
+                                <p>HR uploads a candidate's resume for an open job.</p>
+                            </div>
+                        </div>
+
+                        <div class="jp-pipeline-step">
+                            <div class="jp-pipeline-num">2</div>
+                            <div>
+                                <h5>AI analyzes &amp; invites</h5>
+                                <p>The candidate is emailed a link — one click creates their account.</p>
+                            </div>
+                        </div>
+
+                        <div class="jp-pipeline-step">
+                            <div class="jp-pipeline-num">3</div>
+                            <div>
+                                <h5>Candidate completes the assessment</h5>
+                                <p>Self-intro, a role-based test, a hands-on task for the job, then an AI voice interview.</p>
+                            </div>
+                        </div>
+
+                        <div class="jp-pipeline-step">
+                            <div class="jp-pipeline-num">4</div>
+                            <div>
+                                <h5>HR gets the report</h5>
+                                <p>One consolidated view of strengths, gaps and how the candidate performed.</p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ==================================================
+     FEATURES
+================================================== -->
+
+<section
+    class="jp-features"
+    id="features"
+>
+
+    <div class="container">
+
+
+        <div class="text-center mb-5">
+
+            <div class="jp-section-label">
+
+                WHY HIREFLOW AI
+
+            </div>
+
+
+            <h2 class="jp-section-title">
+
+                Everything HR Needs to Assess Candidates
+
+            </h2>
+
+
+            <p class="jp-section-text">
+
+                One AI-powered pipeline that replaces manual resume screening, first-round tests
+                and first-round interviews.
+
+            </p>
+
+        </div>
+
+
+        <div class="row g-4">
+
+
+            <!-- RESUME ANALYSIS -->
+
+            <div class="col-md-6 col-xl-3">
+
+                <div class="jp-feature-card">
+
+                    <div
+                        class="jp-feature-icon jp-blue"
+                    >
+
+                        <i
+                            class="bi bi-file-earmark-text-fill"
+                        ></i>
+
+                    </div>
+
+
+                    <h4>
+
+                        AI Resume Analysis
+
+                    </h4>
+
+
+                    <p>
+
+                        Every uploaded resume is analyzed for skills, experience and role fit
+                        before an invite ever goes out.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- APTITUDE -->
+
+            <div class="col-md-6 col-xl-3">
+
+                <div class="jp-feature-card">
+
+                    <div
+                        class="jp-feature-icon jp-purple"
+                    >
+
+                        <i
+                            class="bi bi-lightning-charge-fill"
+                        ></i>
+
+                    </div>
+
+
+                    <h4>
+
+                        Role-Based Knowledge Test
+
+                    </h4>
+
+
+                    <p>
+
+                        A different, AI-generated question set for every candidate — never the
+                        same test twice.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- CODING -->
+
+            <div class="col-md-6 col-xl-3">
+
+                <div class="jp-feature-card">
+
+                    <div
+                        class="jp-feature-icon jp-green"
+                    >
+
+                        <i
+                            class="bi bi-code-slash"
+                        ></i>
+
+                    </div>
+
+
+                    <h4>
+
+                        Hands-On Task for Every Role
+
+                    </h4>
+
+
+                    <p>
+
+                        Real code for developers, a technical lab for DevOps and security, written, data and
+                        design tasks for other roles, and call simulations for sales and support. Scored
+                        automatically; HR reads one report, not raw answers.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- AI INTERVIEW -->
+
+            <div class="col-md-6 col-xl-3">
+
+                <div class="jp-feature-card">
+
+                    <div
+                        class="jp-feature-icon jp-pink"
+                    >
+
+                        <i
+                            class="bi bi-mic-fill"
+                        ></i>
+
+                    </div>
+
+
+                    <h4>
+
+                        AI Voice Interview
+
+                    </h4>
+
+
+                    <p>
+
+                        A spoken, adaptive interview delivered live over LiveKit: role questions, how the
+                        candidate would use AI in the job, salary expectations and a closing question —
+                        with follow-ups based on what the candidate actually says.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ==================================================
+     ABOUT
+================================================== -->
+
+<section
+    class="jp-about"
+    id="about"
+>
+
+    <div class="container">
+
+        <div
+            class="jp-about-box text-center"
+        >
+
+            <div class="jp-section-label">
+
+                ABOUT HIREFLOW AI
+
+            </div>
+
+
+            <h2 class="mt-2 mb-3">
+
+                Built for HR Teams, Not Job Boards
+
+            </h2>
+
+
+            <p>
+
+                HireFlow AI isn't a place candidates browse for jobs — it's the assessment
+                engine HR teams use once they've already found someone worth evaluating.
+                Upload a resume, and the platform handles analysis, invitation, testing and
+                interviewing end to end, then hands back one clear report per candidate.
+
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ==================================================
+     CONTACT
+================================================== -->
+
+<section
+    class="jp-contact"
+    id="contact"
+>
+
+    <div class="container">
+
+        <div class="jp-section-label">
+
+            GET STARTED
+
+        </div>
+
+
+        <h2 class="jp-section-title">
+
+            Ready to Assess Your Candidates?
+
+        </h2>
+
+
+        <p class="jp-section-text">
+
+            Log in as an HR team, upload a resume, and send your first assessment invite
+            in minutes.
+
+        </p>
+
+
+        <a
+            href="company-login.html"
+            class="jp-get-started mt-3 d-inline-flex"
+        >
+
+            HR Login
+
+            <i
+                class="bi bi-arrow-right"
+            ></i>
+
+        </a>
+
+    </div>
+
+</section>
+
+
+<!-- ==================================================
+     FOOTER
+================================================== -->
+
+<footer class="jp-footer">
+
+    <div class="container">
+
+        <div
+            class="d-flex
+                   flex-column
+                   flex-md-row
+                   justify-content-between
+                   align-items-center
+                   gap-3"
+        >
+
+
+            <div class="jp-footer-text">
+
+                © 2026 HireFlow AI · AI-Assisted Candidate Assessments
+
+            </div>
+
+
+            <div>
+
+                <a
+                    href="company-login.html"
+                    class="jp-footer-text"
+                >
+
+                    HR Login
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</footer>
+
+
+<!-- ==================================================
+     BOOTSTRAP JS
+================================================== -->
+
+<script
+    src="vendor/bootstrap/bootstrap.bundle.min.js"
+></script>
+
+
+</body>
+
+</html>

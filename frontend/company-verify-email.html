@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Verify Email - HireFlow AI</title>
+
+    <link href="vendor/bootstrap/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="vendor/bootstrap-icons/bootstrap-icons.min.css">
+
+    <style>
+        body { min-height: 100vh; background: #f5f7fb; font-family: Arial, sans-serif; }
+        .page-wrapper { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 30px 15px; }
+        .verify-card { width: 100%; max-width: 460px; background: #fff; border-radius: 18px; padding: 36px 32px; box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08); }
+        .brand { font-weight: 800; font-size: 20px; color: #111827; margin-bottom: 18px; }
+        .icon-badge { width: 56px; height: 56px; border-radius: 16px; background: #eef2ff; color: #4f46e5; display: flex; align-items: center; justify-content: center; font-size: 26px; margin-bottom: 14px; }
+        .code-input { font-size: 30px; font-weight: 800; letter-spacing: 12px; text-align: center; padding: 12px 8px 12px 20px; }
+        .link-button { background: none; border: 0; color: #4f46e5; font-weight: 600; padding: 0; }
+        .link-button:disabled { color: #94a3b8; cursor: not-allowed; }
+    </style>
+
+</head>
+
+<body>
+
+<div class="page-wrapper">
+    <div class="verify-card">
+
+        <div class="brand"><i class="bi bi-send-fill text-primary me-2"></i>HireFlow AI</div>
+
+        <div class="icon-badge"><i class="bi bi-envelope-check"></i></div>
+
+        <h2 class="h4 fw-bold mb-1">Verify your email</h2>
+        <p class="text-muted mb-4">We sent a 6-digit code to <strong id="emailShown">your email</strong>. Enter it below to activate your HR account.</p>
+
+        <div id="messageBox" class="alert d-none" role="alert"></div>
+
+        <label for="codeInput" class="form-label">Verification code</label>
+        <input id="codeInput" class="form-control code-input" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="000000">
+
+        <button id="verifyButton" type="button" class="btn btn-dark w-100 mt-3">
+            <i class="bi bi-shield-check me-2"></i>Verify email
+        </button>
+
+        <div class="d-flex justify-content-between align-items-center mt-4 small">
+            <span class="text-muted">Did not get it? Check spam first.</span>
+            <button id="resendButton" type="button" class="link-button">Resend code</button>
+        </div>
+
+        <div class="text-center mt-4 small">
+            <a href="company-login.html" class="text-decoration-none">Back to login</a>
+        </div>
+
+    </div>
+</div>
+
+<script src="js/csrf-fetch.js?v=1"></script>
+<script src="js/company-verify-email.js?v=1"></script>
+
+</body>
+</html>

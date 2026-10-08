@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>HR Login - HireFlow AI</title>
+
+
+    <!-- Bootstrap -->
+
+    <link
+        href="vendor/bootstrap/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+
+    <!-- Bootstrap Icons -->
+
+    <link
+        rel="stylesheet"
+        href="vendor/bootstrap-icons/bootstrap-icons.min.css"
+    >
+
+
+    <style>
+
+        body {
+            min-height: 100vh;
+            background: #f5f7fb;
+            font-family: Arial, sans-serif;
+        }
+
+
+        .page-wrapper {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 30px 15px;
+        }
+
+
+        .login-card {
+            width: 100%;
+            max-width: 850px;
+            background: white;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+        }
+
+
+        /* =========================================
+           BRAND SECTION
+        ========================================= */
+
+        .brand-section {
+            background: #111827;
+            color: white;
+            padding: 45px 35px;
+        }
+
+
+        .brand-title {
+            font-size: 30px;
+            font-weight: 700;
+        }
+
+
+        .brand-subtitle {
+            color: #d1d5db;
+            line-height: 1.6;
+            margin-top: 10px;
+        }
+
+
+        .brand-feature {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 18px;
+            color: #e5e7eb;
+            font-size: 14px;
+        }
+
+
+        .brand-feature i {
+            color: #86efac;
+        }
+
+
+        /* =========================================
+           FORM SECTION
+        ========================================= */
+
+        .form-section {
+            padding: 45px 35px;
+        }
+
+
+        .form-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #111827;
+        }
+
+
+        .form-subtitle {
+            color: #6b7280;
+        }
+
+
+        .form-label {
+            font-weight: 600;
+            color: #374151;
+        }
+
+
+        .form-control {
+            min-height: 48px;
+            border-radius: 9px;
+        }
+
+
+        /* =========================================
+           PASSWORD
+        ========================================= */
+
+        .password-wrapper {
+            position: relative;
+        }
+
+
+        .password-wrapper .form-control {
+            padding-right: 50px;
+        }
+
+
+        .password-toggle {
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+            border: none;
+            background: transparent;
+            color: #6b7280;
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+
+        .password-toggle:hover {
+            background: #f3f4f6;
+            color: #111827;
+        }
+
+
+        .password-toggle:focus {
+            outline: none;
+        }
+
+
+        /* =========================================
+           LOGIN BUTTON
+        ========================================= */
+
+        .login-button {
+            min-height: 48px;
+            border-radius: 9px;
+            font-weight: 600;
+        }
+
+
+        /* =========================================
+           ALERT
+        ========================================= */
+
+        #messageBox {
+            border-radius: 9px;
+        }
+
+
+        /* =========================================
+           LINKS
+        ========================================= */
+
+        .register-link,
+        .back-link {
+            color: #111827;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+
+        .register-link:hover,
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+
+        .helper-text {
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+
+        @media (max-width: 768px) {
+
+            .brand-section,
+            .form-section {
+                padding: 30px 25px;
+            }
+
+        }
+
+    </style>
+
+    <!-- Shared Company Visual Polish -->
+    <link rel="stylesheet" href="css/company.css">
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=DM+Sans:wght@400;500;700&display=swap">
+    <link rel="stylesheet" href="css/theme-glass.css?v=1">
+</head>
+
+
+<body>
+
+
+<div class="page-wrapper">
+
+    <div class="login-card">
+
+        <div class="row g-0">
+
+
+            <!-- ==================================================
+                 BRAND SECTION
+            ================================================== -->
+
+            <div class="col-lg-5">
+
+                <div class="brand-section h-100">
+
+                    <div class="brand-title">
+
+                        <i class="bi bi-robot me-2"></i>
+
+                        HireFlow AI
+
+                    </div>
+
+
+                    <p class="brand-subtitle">
+
+                        Sign in to invite candidates, review
+                        AI-assessed results and manage your
+                        hiring pipeline.
+
+                    </p>
+
+
+                    <div class="brand-feature">
+
+                        <i class="bi bi-check-circle-fill"></i>
+
+                        Invite candidates with a resume upload
+
+                    </div>
+
+
+                    <div class="brand-feature">
+
+                        <i class="bi bi-check-circle-fill"></i>
+
+                        AI-assessed aptitude, coding &amp; interview
+
+                    </div>
+
+
+                    <div class="brand-feature">
+
+                        <i class="bi bi-check-circle-fill"></i>
+
+                        Review applicants and results
+
+                    </div>
+
+
+                    <div class="brand-feature">
+
+                        <i class="bi bi-check-circle-fill"></i>
+
+                        Manage your HR profile &amp; account
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ==================================================
+                 LOGIN FORM
+            ================================================== -->
+
+            <div class="col-lg-7">
+
+                <div class="form-section">
+
+
+                    <div class="mb-4">
+
+                        <h2 class="form-title mb-2">
+
+                            HR Login
+
+                        </h2>
+
+
+                        <p class="form-subtitle mb-0">
+
+                            Login using your registered
+                            email.
+
+                        </p>
+
+                    </div>
+
+
+                    <!-- ==================================================
+                         MESSAGE
+                    ================================================== -->
+
+                    <div
+                        id="messageBox"
+                        class="alert d-none"
+                        role="alert"
+                    >
+                    </div>
+
+
+                    <!-- ==================================================
+                         EMAIL
+                    ================================================== -->
+
+                    <div class="mb-3">
+
+                        <label
+                            for="companyEmail"
+                            class="form-label"
+                        >
+
+                            Email
+
+                        </label>
+
+
+                        <div class="input-group">
+
+                            <span class="input-group-text">
+
+                                <i class="bi bi-building"></i>
+
+                            </span>
+
+
+                            <input
+                                type="email"
+                                class="form-control"
+                                id="companyEmail"
+                                placeholder="hr@company.com"
+                                autocomplete="email"
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ==================================================
+                         PASSWORD
+                    ================================================== -->
+
+                    <div class="mb-3">
+
+                        <label
+                            for="companyPassword"
+                            class="form-label"
+                        >
+
+                            Password
+
+                        </label>
+
+
+                        <div class="password-wrapper">
+
+                            <input
+                                type="password"
+                                class="form-control"
+                                id="companyPassword"
+                                placeholder="Enter your password"
+                                autocomplete="current-password"
+                                required
+                            >
+
+
+                            <button
+                                type="button"
+                                class="password-toggle"
+                                id="toggleCompanyPassword"
+                                aria-label="Show password"
+                                title="Show password"
+                            >
+
+                                <i class="bi bi-eye"></i>
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ==================================================
+                         LOGIN BUTTON
+                    ================================================== -->
+
+                    <button
+                        type="button"
+                        class="btn btn-dark w-100 login-button mt-1"
+                        id="loginCompanyButton"
+                    >
+
+                        <i class="bi bi-box-arrow-in-right me-2"></i>
+
+                        Login
+
+                    </button>
+
+
+                    <!-- ==================================================
+                         REGISTER
+                    ================================================== -->
+
+                    <div class="text-center mt-4">
+
+                        <span class="text-muted">
+
+                            Don't have an account?
+
+                        </span>
+
+
+                        <a
+                            href="company-register.html"
+                            class="register-link ms-1"
+                        >
+
+                            Register
+
+                        </a>
+
+                    </div>
+
+
+                    <!-- ==================================================
+                         BACK
+                    ================================================== -->
+
+                    <div class="text-center mt-3">
+
+                        <a
+                            href="index.html"
+                            class="back-link small"
+                        >
+
+                            <i class="bi bi-arrow-left me-1"></i>
+
+                            Back to HireFlow
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ==================================================
+     PASSWORD TOGGLE
+================================================== -->
+
+<script>
+
+    const passwordInput =
+        document.getElementById(
+            "companyPassword"
+        );
+
+
+    const passwordToggle =
+        document.getElementById(
+            "toggleCompanyPassword"
+        );
+
+
+    if (
+        passwordInput &&
+        passwordToggle
+    ) {
+
+        passwordToggle.addEventListener(
+            "click",
+            function () {
+
+                const icon =
+                    passwordToggle.querySelector("i");
+
+
+                if (
+                    passwordInput.type === "password"
+                ) {
+
+                    passwordInput.type = "text";
+
+
+                    icon.classList.remove(
+                        "bi-eye"
+                    );
+
+
+                    icon.classList.add(
+                        "bi-eye-slash"
+                    );
+
+
+                    passwordToggle.setAttribute(
+                        "aria-label",
+                        "Hide password"
+                    );
+
+
+                    passwordToggle.setAttribute(
+                        "title",
+                        "Hide password"
+                    );
+
+                } else {
+
+                    passwordInput.type = "password";
+
+
+                    icon.classList.remove(
+                        "bi-eye-slash"
+                    );
+
+
+                    icon.classList.add(
+                        "bi-eye"
+                    );
+
+
+                    passwordToggle.setAttribute(
+                        "aria-label",
+                        "Show password"
+                    );
+
+
+                    passwordToggle.setAttribute(
+                        "title",
+                        "Show password"
+                    );
+
+                }
+
+            }
+        );
+
+    }
+
+</script>
+
+
+<!-- Company Login JS -->
+
+<script src="js/company-login.js?v=2"></script>
+
+
+</body>
+
+</html>

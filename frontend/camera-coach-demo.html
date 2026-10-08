@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Camera Setup Coach Demo</title>
+<style>
+    :root { --bg:#f6f7fb; --card:#fff; --ink:#0f172a; --muted:#64748b; --line:rgba(15,23,42,.1); --accent:#4f46e5; --good:#047857; }
+    @media (prefers-color-scheme: dark) { :root { --bg:#0b1020; --card:#131a30; --ink:#e5e9f5; --muted:#94a3b8; --line:rgba(255,255,255,.1); --accent:#818cf8; --good:#34d399; } }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--bg); color:var(--ink); font:15px/1.5 system-ui,Segoe UI,Arial,sans-serif; }
+    main { max-width:1040px; margin:0 auto; padding:28px 16px 60px; }
+    h1 { font-size:24px; margin:0 0 4px; } .sub { color:var(--muted); margin:0 0 22px; }
+    .grid { display:grid; grid-template-columns:minmax(300px,380px) 1fr; gap:20px; align-items:start; }
+    @media (max-width:760px) { .grid { grid-template-columns:1fr; } }
+    .card { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:18px; margin-bottom:20px; }
+    .card h2 { font-size:15px; margin:0 0 12px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); }
+    canvas, video { width:100%; border-radius:12px; background:#000; display:block; }
+    label { display:block; font-weight:600; font-size:13px; margin:12px 0 2px; }
+    input[type=range] { width:100%; accent-color:var(--accent); }
+    .row { display:flex; flex-wrap:wrap; gap:8px; margin-top:6px; }
+    button { border:1px solid var(--line); background:var(--card); color:var(--ink); border-radius:999px; padding:7px 14px; font:600 13px system-ui; cursor:pointer; }
+    button:hover { border-color:var(--accent); } button.primary { background:var(--accent); color:#fff; border-color:var(--accent); }
+    table { width:100%; border-collapse:collapse; font-size:13px; } td { padding:4px 0; border-bottom:1px solid var(--line); } td:last-child { text-align:right; font-variant-numeric:tabular-nums; }
+    .pill { display:inline-block; padding:2px 10px; border-radius:999px; font-size:12px; font-weight:700; }
+    .ok { background:rgba(4,120,87,.14); color:var(--good); } .warn { background:rgba(217,119,6,.16); color:#b45309; }
+    #log { font:12px ui-monospace,Consolas,monospace; color:var(--muted); white-space:pre-wrap; }
+</style>
+</head>
+<body>
+<main>
+    <h1>Camera setup coach</h1>
+    <p class="sub">The real coach from the assessment pages (<code>camera-quality.js</code>), running on a simulated camera you control, or on your own camera.</p>
+
+    <div class="grid">
+        <div>
+            <div class="card">
+                <h2>1 &middot; Simulated camera</h2>
+                <canvas id="scene" width="320" height="240"></canvas>
+                <div id="simTip"></div>
+                <label>Light on your face <span id="vFront" class="pill ok"></span></label>
+                <input type="range" id="front" min="0" max="100" value="62">
+                <label>Brightness behind you (window / wall) <span id="vBack" class="pill ok"></span></label>
+                <input type="range" id="back" min="0" max="100" value="50">
+                <label>Distance from camera</label>
+                <input type="range" id="distance" min="30" max="160" value="80">
+                <label>Left &#8596; right position</label>
+                <input type="range" id="shift" min="-40" max="40" value="0">
+                <div class="row" id="presets">
+                    <button data-p="good">Good setup</button>
+                    <button data-p="dark">Dark room</button>
+                    <button data-p="window">Window behind me</button>
+                    <button data-p="glare">Too bright</button>
+                    <button data-p="far">Too far</button>
+                    <button data-p="close">Too close</button>
+                    <button data-p="side">Off to the side</button>
+                </div>
+            </div>
+        </div>
+
+        <div>
+            <div class="card">
+                <h2>What the coach measures</h2>
+                <table>
+                    <tr><td>Face brightness (0-255)</td><td id="mFace">-</td></tr>
+                    <tr><td>Background brightness (0-255)</td><td id="mBg">-</td></tr>
+                    <tr><td>Whole picture brightness</td><td id="mFrame">-</td></tr>
+                    <tr><td>Left / right difference</td><td id="mSide">-</td></tr>
+                    <tr><td>Face width in picture</td><td id="mWidth">-</td></tr>
+                    <tr><td>Verdict (right now)</td><td id="mVerdict">-</td></tr>
+                    <tr><td>Tip shown (after ~2 s of the same problem)</td><td id="mShown">-</td></tr>
+                </table>
+            </div>
+
+            <div class="card">
+                <h2>2 &middot; Your own camera</h2>
+                <p class="sub" style="margin:0 0 10px">Uses the same face model and coach as the real test, loaded from our own server. Nothing is recorded or uploaded.</p>
+                <button class="primary" id="useCamera">Use my camera</button>
+                <div id="liveBox" style="display:none;margin-top:12px">
+                    <video id="live" autoplay muted playsinline></video>
+                    <div id="liveTip"></div>
+                    <p style="margin:10px 0 0" class="sub" id="liveStatus">Starting...</p>
+                </div>
+            </div>
+
+            <div class="card"><h2>Where the AI files came from</h2><div id="log">Waiting for the face model to load...</div></div>
+        </div>
+    </div>
+</main>
+
+<script src="./js/camera-quality.js"></script>
+<script src="./js/face-proctor.js"></script>
+<script>
+(function () {
+    "use strict";
+
+    const $ = (id) => document.getElementById(id);
+    const CQ = window.CameraQuality;
+
+    /* ---------- the simulated camera ---------- */
+    const scene = $("scene"), sctx = scene.getContext("2d");
+    const small = document.createElement("canvas"); small.width = 64; small.height = 48;
+    const smallCtx = small.getContext("2d", { willReadFrequently: true });
+    const tip = CQ.createTip({ anchor: scene, goodText: "Thanks, the picture looks good now." });
+    $("simTip").remove();
+
+    let lastBox = null;
+
+    function draw() {
+        const front = +$("front").value, back = +$("back").value, dist = +$("distance").value / 100, shift = +$("shift").value / 100;
+        const faceLuma = Math.round(30 + 2.1 * front), bgLuma = Math.round(20 + 2.2 * back);
+        $("vFront").textContent = front + "%"; $("vBack").textContent = back + "%";
+
+        sctx.fillStyle = `rgb(${bgLuma},${bgLuma},${bgLuma})`; sctx.fillRect(0, 0, 320, 240);
+        const cx = 160 + shift * 320, cy = 125, rw = 62 * dist, rh = 80 * dist;
+        sctx.fillStyle = "rgb(60,60,70)"; sctx.beginPath(); sctx.ellipse(cx, cy + rh * 1.35, rw * 1.7, rh * 0.9, 0, 0, Math.PI * 2); sctx.fill();   // shoulders
+        sctx.fillStyle = `rgb(${faceLuma},${Math.round(faceLuma * .86)},${Math.round(faceLuma * .74)})`; sctx.beginPath(); sctx.ellipse(cx, cy, rw, rh, 0, 0, Math.PI * 2); sctx.fill();
+        sctx.fillStyle = "rgba(30,20,20,.65)"; [[-.35, -.1], [.35, -.1]].forEach(([dx, dy]) => { sctx.beginPath(); sctx.ellipse(cx + dx * rw, cy + dy * rh, rw * .1, rh * .06, 0, 0, Math.PI * 2); sctx.fill(); });
+        sctx.beginPath(); sctx.ellipse(cx, cy + rh * .45, rw * .22, rh * .05, 0, 0, Math.PI * 2); sctx.fill();
+
+        lastBox = { x0: (cx - rw) / 320, x1: (cx + rw) / 320, y0: (cy - rh) / 240, y1: (cy + rh) / 240 };
+    }
+
+    const coach = CQ.createCoach({ onChange: (issues) => { tip.update(issues); $("mShown").innerHTML = issues.length ? issues.map(i => `<span class="pill warn">${i.code.replace("_", " ")}</span>`).join(" ") : '<span class="pill ok">none</span>'; } });
+
+    function measure() {
+        draw();
+        smallCtx.drawImage(scene, 0, 0, 64, 48);
+        const stats = CQ.analyzeFrame(smallCtx.getImageData(0, 0, 64, 48), lastBox);
+        const verdict = CQ.assessQuality(stats);
+        coach.feed(verdict);
+        $("mFace").textContent = Math.round(stats.faceLuma); $("mBg").textContent = Math.round(stats.bgLuma); $("mFrame").textContent = Math.round(stats.frameLuma);
+        $("mSide").textContent = Math.round(stats.sideDifference); $("mWidth").textContent = Math.round(stats.faceWidth * 100) + "%";
+        $("mVerdict").innerHTML = verdict.ok ? '<span class="pill ok">good</span>' : verdict.issues.map(i => `<span class="pill warn">${i.code.replace("_", " ")}</span>`).join(" ");
+    }
+
+    const PRESETS = {
+        good: [62, 50, 80, 0], dark: [0, 0, 80, 0], window: [28, 98, 80, 0], glare: [100, 70, 80, 0],
+        far: [62, 50, 36, 0], close: [62, 50, 150, 0], side: [62, 50, 70, 32],
+    };
+
+    document.querySelectorAll("#presets button").forEach((b) => b.addEventListener("click", () => {
+        const [f, k, d, s] = PRESETS[b.dataset.p]; $("front").value = f; $("back").value = k; $("distance").value = d; $("shift").value = s; measure();
+    }));
+    ["front", "back", "distance", "shift"].forEach((id) => $(id).addEventListener("input", measure));
+    setInterval(measure, 250); measure();
+
+    /* ---------- the real camera ---------- */
+    function sources() {
+        const loaded = performance.getEntriesByType("resource").map((r) => r.name).filter((n) => /vendor\/|jsdelivr|googleapis|githubusercontent/.test(n));
+        const local = loaded.filter((n) => n.includes("/vendor/")), net = loaded.filter((n) => !n.includes("/vendor/"));
+        $("log").textContent = (local.length ? "From OUR server:\n" + local.map((n) => "  " + n.split("/vendor/")[1]).join("\n") : "Nothing from our server yet.") +
+            (net.length ? "\n\nFrom the internet (fallback):\n" + net.map((n) => "  " + n).join("\n") : "\n\nNothing from the internet.");
+    }
+
+    $("useCamera").addEventListener("click", async () => {
+        $("liveBox").style.display = "block";
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+            $("live").srcObject = stream;
+        } catch (e) { $("liveStatus").textContent = "The camera could not be opened: " + e.message; return; }
+
+        const liveTip = CQ.createTip({ anchor: $("live"), goodText: "Lighting and position look good." });
+        const liveCoach = CQ.createCoach({ appearAfter: 6, clearAfter: 6, onChange: (i) => liveTip.update(i) });
+        window.FaceProctor.start($("live"), {
+            onStatus: (s) => { $("liveStatus").textContent = s === "ready" ? "Face model ready. Move around, turn a light off, put a window behind you." : s === "loading" ? "Loading the face model from our server..." : "Face model unavailable: only brightness checks run."; sources(); },
+            onSample: (sample) => { if (sample.quality) liveCoach.feed(sample.quality); },
+            onEvent: () => {},
+        });
+    });
+    setInterval(sources, 1500);
+})();
+</script>
+</body>
+</html>

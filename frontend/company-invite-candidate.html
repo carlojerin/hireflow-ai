@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Invite a Candidate - HireFlow AI</title>
+
+    <link href="vendor/bootstrap/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="vendor/bootstrap-icons/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+
+        body { background: #f5f6fb; font-family: 'IBM Plex Sans', 'Segoe UI', Arial, sans-serif; }
+        h1, h2, h3, h4, .ic-brand { font-family: 'Sora', 'IBM Plex Sans', sans-serif; }
+
+        .navbar { background: #111827; }
+        .navbar-brand { color: #fff; font-weight: 700; }
+        .navbar-brand:hover { color: #fff; }
+        .company-text { color: #d1d5db; font-size: 13px; }
+
+        .ic-card {
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(15,23,42,.07);
+            padding: 34px 38px;
+            max-width: 620px;
+            margin: 40px auto;
+        }
+
+        .ic-icon-badge {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #4f5bff, #4f5bff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: 0 0 auto;
+            color: #fff;
+            font-size: 19px;
+        }
+
+        .ic-success-banner {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 12px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #166534;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .ic-danger-banner {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: 12px;
+            padding: 12px 16px;
+            color: #991b1b;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .ic-label {
+            font-size: 12.5px;
+            font-weight: 700;
+            color: #334155;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .form-control,
+        .form-select {
+            border: 1px solid #dbe1ea;
+            border-radius: 10px;
+            padding: 11px 14px;
+            font-size: 14px;
+        }
+
+        textarea.form-control {
+            resize: vertical;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #4f5bff;
+            box-shadow: 0 0 0 3px rgba(79,91,255,.12);
+        }
+
+        .ic-dropzone {
+            border: 1.5px dashed #c7cee0;
+            border-radius: 12px;
+            padding: 16px;
+            background: #fafbfd;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .ic-dropzone-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 9px;
+            background: #ede9fe;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: 0 0 auto;
+            color: #4f5bff;
+            font-size: 17px;
+        }
+
+        .ic-submit-btn {
+            border: 0;
+            background: #4f5bff;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 700;
+            padding: 12px 26px;
+            border-radius: 999px;
+            box-shadow: 0 8px 20px rgba(79,91,255,.3);
+        }
+
+        .ic-submit-btn:hover { background: #4f5bff; color: #fff; }
+        .ic-submit-btn:disabled { opacity: .7; }
+
+    </style>
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=DM+Sans:wght@400;500;700&display=swap">
+    <link rel="stylesheet" href="css/theme-glass.css?v=1">
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand ic-brand" href="company-dashboard.html">
+                🚀 HireFlow AI
+            </a>
+            <div class="d-flex align-items-center gap-3">
+                <span class="company-text" id="navbarCompanyName">Company</span>
+                <a href="company-dashboard.html" class="btn btn-outline-light btn-sm">
+                    <i class="bi bi-arrow-left me-1"></i>Back to Dashboard
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+
+        <div class="ic-card">
+
+            <div class="d-flex align-items-center gap-3 mb-2">
+                <div class="ic-icon-badge"><i class="bi bi-person-plus"></i></div>
+                <h4 class="fw-bold mb-0">Invite a Candidate</h4>
+            </div>
+
+            <p class="text-muted mb-4" style="font-size: 13.5px; line-height: 1.6;">
+                Describe the role and upload a candidate's resume. HireFlow AI weighs the resume against
+                the requirement and emails them a link — one click creates their account and drops them
+                straight into the assessment (self-intro, a role-based test, a hands-on task for the job, AI interview).
+            </p>
+
+            <div id="icMessage" class="mb-3"></div>
+
+            <form id="icForm">
+
+                <div class="mb-3">
+                    <label class="ic-label">Job title</label>
+                    <input type="text" class="form-control" id="icJobTitle" placeholder="e.g. Backend Engineer" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="ic-label">Job requirement</label>
+                    <textarea class="form-control" id="icJobRequirement" rows="4" placeholder="Describe the skills, experience and responsibilities for this role..." required></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label class="ic-label">Assessment type</label>
+                    <select class="form-select" id="icRoleShape">
+                        <option value="auto">Auto-detect from the requirement above</option>
+                        <option value="technical">Technical — coding, lab or platform assessment</option>
+                        <option value="non_technical">Non-technical — written, data, design or call task</option>
+                    </select>
+                    <div class="text-muted mt-1" style="font-size: 12px;" id="icRoleShapeHint">
+                        HireFlow AI will detect this automatically once you describe the role above. You can override it here if it gets it wrong.
+                    </div>
+                </div>
+
+                <div class="mb-3" id="icPlanCard" hidden>
+                    <label class="ic-label">Assessments the AI recommends for this role</label>
+                    <div class="border rounded-3 p-3" style="background:#f8f9ff;">
+                        <div id="icPlanSummary" class="small text-muted mb-2"></div>
+                        <ol class="mb-2 ps-3" id="icPlanList"></ol>
+                        <div id="icPlanChoices" class="row g-2"></div>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-6">
+                        <label class="ic-label">Candidate name</label>
+                        <input type="text" class="form-control" id="icCandidateName" required>
+                    </div>
+                    <div class="col-6">
+                        <label class="ic-label">Candidate email</label>
+                        <input type="email" class="form-control" id="icCandidateEmail" required>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="ic-label">Assessment deadline</label>
+                    <select class="form-select" id="icDeadlineDays">
+                        <option value="1">1 day</option>
+                        <option value="3">3 days</option>
+                        <option value="7" selected>7 days</option>
+                        <option value="14">14 days</option>
+                        <option value="30">30 days</option>
+                    </select>
+                    <div class="text-muted mt-1" style="font-size: 12px;">
+                        The candidate can start anytime before this deadline — the emailed link stays valid until then.
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="ic-label">Resume (PDF or DOCX, max 10MB)</label>
+                    <div class="ic-dropzone">
+                        <div class="ic-dropzone-icon"><i class="bi bi-file-earmark-text"></i></div>
+                        <div class="flex-grow-1">
+                            <input type="file" class="form-control border-0 p-0 shadow-none" id="icResumeFile" accept=".pdf,.docx" required style="background: transparent;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-end">
+                    <button type="submit" class="btn ic-submit-btn" id="icSubmitButton">
+                        <i class="bi bi-send me-1"></i>Analyze &amp; Send Invite
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <script src="./js/csrf-fetch.js?v=1"></script>
+    <script src="./js/company-invite-candidate.js?v=9"></script>
+
+</body>
+
+</html>

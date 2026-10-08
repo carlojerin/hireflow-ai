@@ -1,0 +1,333 @@
+/* =========================================================
+   HIREFLOW AI - GLASS + AURORA THEME
+   One shared skin for every page. Loaded LAST on each page so it
+   wins over Bootstrap and the page's own styles. Markup, IDs and
+   JavaScript are untouched.
+
+   Pages whose <body> has data-hf="calm" (tests, interview) keep
+   their own calm background and only take the accents, so the
+   candidate is not distracted while answering.
+   ========================================================= */
+
+:root {
+    --hf-ink: #14183a;
+    --hf-muted: #5a5f8c;
+    --hf-line: rgba(20, 24, 58, 0.08);
+    --hf-primary: #4f5bff;
+    --hf-primary-2: #3e7bff;
+    --hf-primary-soft: #e6e9ff;
+    --hf-glass: rgba(255, 255, 255, 0.66);
+    --hf-glass-edge: rgba(255, 255, 255, 0.92);
+    --hf-shadow: 0 10px 30px rgba(70, 60, 200, 0.14);
+    --hf-grad: linear-gradient(135deg, #5b5bff, #3e7bff);
+    --hf-pass-bg: #d6f5e6;  --hf-pass-ink: #0b5a3a;
+    --hf-review-bg: #ffefc2; --hf-review-ink: #6b4700;
+    --hf-flag-bg: #ffd9de;  --hf-flag-ink: #8a1530;
+
+    /* the pages' own variable names, re-pointed at the new palette */
+    --company-primary: #4f5bff;
+    --company-accent: #3e7bff;
+    --company-gradient: linear-gradient(135deg, #5b5bff, #3e7bff);
+    --primary: #4f5bff;
+    --primary-dark: #3b46e0;
+    --primary-light: #3e7bff;
+    --admin-primary: #4f5bff;
+    --admin-primary-dark: #3b46e0;
+}
+
+/* ---------- ground ---------- */
+
+body:not([data-hf="calm"]) {
+    background:
+        radial-gradient(900px 520px at 8% -8%, rgba(155, 140, 255, 0.55), transparent 62%),
+        radial-gradient(800px 520px at 100% 4%, rgba(127, 214, 255, 0.5), transparent 60%),
+        radial-gradient(760px 520px at 50% 108%, rgba(255, 199, 227, 0.5), transparent 62%),
+        #eef1ff !important;
+    background-attachment: fixed !important;
+    color: var(--hf-ink);
+}
+
+body {
+    font-family: 'DM Sans', 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif;
+}
+
+h1, h2, h3, h4, h5, .navbar-brand, .hero-title, .ic-brand, .sa-brand {
+    font-family: 'Bricolage Grotesque', 'Sora', 'DM Sans', system-ui, sans-serif;
+    letter-spacing: -0.02em;
+}
+
+/* ---------- glass surfaces ---------- */
+
+body:not([data-hf="calm"]) .card,
+body:not([data-hf="calm"]) .modal-content,
+body:not([data-hf="calm"]) .stat-card,
+body:not([data-hf="calm"]) .kpi-card,
+body:not([data-hf="calm"]) .section-card,
+body:not([data-hf="calm"]) .settings-card,
+body:not([data-hf="calm"]) .sa-card,
+body:not([data-hf="calm"]) .quick-action,
+body:not([data-hf="calm"]) .jp-feature-card,
+body:not([data-hf="calm"]) .hero-dashboard-card,
+body:not([data-hf="calm"]) .login-card,
+body:not([data-hf="calm"]) .auth-card,
+body:not([data-hf="calm"]) .panel,
+body:not([data-hf="calm"]) .dropdown-menu {
+    background: var(--hf-glass) !important;
+    border: 1px solid var(--hf-glass-edge) !important;
+    border-radius: 18px !important;
+    box-shadow: var(--hf-shadow), inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    color: var(--hf-ink);
+}
+
+.card-head, .card-header, .modal-header, .modal-footer {
+    background: transparent !important;
+    border-color: var(--hf-line) !important;
+}
+
+/* ---------- top bar + side bar ---------- */
+
+body:not([data-hf="calm"]) .navbar,
+body:not([data-hf="calm"]) .sa-navbar {
+    background: rgba(255, 255, 255, 0.72) !important;
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--hf-glass-edge);
+    box-shadow: 0 6px 24px rgba(70, 60, 200, 0.08);
+}
+
+body:not([data-hf="calm"]) .navbar-brand,
+body:not([data-hf="calm"]) .navbar-brand:hover,
+body:not([data-hf="calm"]) .sa-brand {
+    color: var(--hf-ink) !important;
+}
+
+body:not([data-hf="calm"]) .company-text,
+body:not([data-hf="calm"]) .navbar .nav-link,
+body:not([data-hf="calm"]) .navbar .navbar-text,
+body:not([data-hf="calm"]) .jp-nav-link {
+    color: var(--hf-muted) !important;
+}
+
+body:not([data-hf="calm"]) .navbar .nav-link:hover,
+body:not([data-hf="calm"]) .jp-nav-link:hover {
+    color: var(--hf-primary) !important;
+}
+
+body:not([data-hf="calm"]) .navbar .btn-outline-light {
+    color: var(--hf-ink);
+    border-color: rgba(20, 24, 58, 0.18);
+    background: rgba(255, 255, 255, 0.6);
+}
+
+body:not([data-hf="calm"]) .navbar .btn-outline-light:hover {
+    background: #fff;
+    color: var(--hf-primary);
+}
+
+body:not([data-hf="calm"]) .navbar-toggler {
+    border-color: rgba(20, 24, 58, 0.2);
+}
+
+body:not([data-hf="calm"]) .navbar-toggler-icon {
+    filter: invert(1);
+}
+
+.sidebar {
+    background: rgba(255, 255, 255, 0.62) !important;
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    border-right: 1px solid var(--hf-glass-edge) !important;
+}
+
+.sidebar .nav-link {
+    color: var(--hf-muted) !important;
+    border-radius: 12px !important;
+}
+
+.sidebar .nav-link:hover {
+    background: var(--hf-primary-soft) !important;
+    color: var(--hf-primary) !important;
+}
+
+.sidebar .nav-link.active {
+    background: var(--hf-grad) !important;
+    color: #fff !important;
+    box-shadow: 0 8px 20px rgba(70, 80, 255, 0.35);
+}
+
+/* admin has its own dark-ish sidebar markup: keep the same family */
+body .sidebar .nav-section-label,
+body .sidebar-section-label {
+    color: var(--hf-muted) !important;
+}
+
+/* ---------- buttons ---------- */
+
+.btn-primary,
+.sa-submit-btn,
+.save-button,
+.jp-get-started,
+.logo-button {
+    background: var(--hf-grad) !important;
+    border: 0 !important;
+    color: #fff !important;
+    border-radius: 999px !important;
+    box-shadow: 0 8px 20px rgba(70, 80, 255, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.35) !important;
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.btn-primary:hover,
+.sa-submit-btn:hover,
+.save-button:hover,
+.jp-get-started:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 12px 26px rgba(70, 80, 255, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.35) !important;
+}
+
+.btn-primary:active,
+.sa-submit-btn:active {
+    transform: translateY(1px);
+}
+
+.btn-outline-primary {
+    color: var(--hf-primary) !important;
+    border-color: rgba(79, 91, 255, 0.45) !important;
+    border-radius: 999px !important;
+    background: rgba(255, 255, 255, 0.6);
+}
+
+.btn-outline-primary:hover {
+    background: var(--hf-primary-soft) !important;
+    color: var(--hf-primary) !important;
+}
+
+body:not([data-hf="calm"]) .btn-dark {
+    background: var(--hf-ink) !important;
+    border-color: var(--hf-ink) !important;
+    border-radius: 999px !important;
+}
+
+.btn-outline-secondary, .btn-light {
+    border-radius: 999px !important;
+}
+
+a { color: var(--hf-primary); }
+
+/* ---------- forms ---------- */
+
+.form-control, .form-select, textarea.form-control {
+    background: rgba(255, 255, 255, 0.78) !important;
+    border: 1px solid rgba(20, 24, 58, 0.12) !important;
+    border-radius: 12px !important;
+    color: var(--hf-ink);
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--hf-primary) !important;
+    box-shadow: 0 0 0 4px rgba(79, 91, 255, 0.18) !important;
+}
+
+.form-label, .ic-label {
+    color: var(--hf-ink);
+    font-weight: 500;
+}
+
+/* ---------- tables ---------- */
+
+.table {
+    --bs-table-bg: transparent;
+    --bs-table-hover-bg: rgba(79, 91, 255, 0.06);
+    color: var(--hf-ink);
+}
+
+.table thead th {
+    color: var(--hf-muted);
+    font-weight: 500;
+    font-size: 0.8rem;
+    letter-spacing: 0.02em;
+    border-bottom: 1px solid var(--hf-line) !important;
+    background: transparent !important;
+}
+
+.table td, .table th {
+    border-color: var(--hf-line) !important;
+}
+
+/* ---------- chips / badges (status colours stay readable) ---------- */
+
+.badge {
+    border-radius: 999px;
+    font-weight: 500;
+    padding: 0.4em 0.85em;
+}
+
+.badge.bg-success, .text-bg-success { background: var(--hf-pass-bg) !important; color: var(--hf-pass-ink) !important; }
+.badge.bg-warning, .text-bg-warning { background: var(--hf-review-bg) !important; color: var(--hf-review-ink) !important; }
+.badge.bg-danger, .text-bg-danger { background: var(--hf-flag-bg) !important; color: var(--hf-flag-ink) !important; }
+.badge.bg-primary, .text-bg-primary, .badge.bg-info, .text-bg-info { background: var(--hf-primary-soft) !important; color: #2a33c9 !important; }
+.badge.bg-secondary, .text-bg-secondary { background: rgba(20, 24, 58, 0.08) !important; color: var(--hf-muted) !important; }
+
+.alert { border-radius: 14px; border: 1px solid var(--hf-glass-edge); }
+
+/* ---------- big numbers ---------- */
+
+.stat-number, .kpi-value {
+    font-family: 'Bricolage Grotesque', 'DM Sans', sans-serif;
+    letter-spacing: -0.02em;
+}
+
+.stat-icon, .quick-action-icon, .jp-feature-icon {
+    background: var(--hf-grad) !important;
+    color: #fff !important;
+    border-radius: 14px !important;
+    box-shadow: 0 8px 18px rgba(70, 80, 255, 0.3);
+}
+
+.stat-title, .kpi-label, .info-label, .verification-label, .sub, .section-description {
+    color: var(--hf-muted) !important;
+}
+
+/* ---------- landing + login hero blocks that used the old purple ---------- */
+
+.hero-section,
+.brand-panel,
+.login-brand,
+.auth-brand,
+.company-brand-panel,
+.brand-section {
+    background:
+        radial-gradient(520px 340px at 10% 0%, rgba(155, 140, 255, 0.55), transparent 62%),
+        radial-gradient(460px 340px at 100% 100%, rgba(127, 214, 255, 0.5), transparent 60%),
+        linear-gradient(135deg, #4a50f0, #3a6ff0) !important;
+    color: #fff;
+}
+
+.hero-title span, .gradient-text {
+    background: var(--hf-grad);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hero-badge {
+    background: rgba(255, 255, 255, 0.7) !important;
+    color: var(--hf-primary) !important;
+    border: 1px solid var(--hf-glass-edge) !important;
+}
+
+/* ---------- calm pages (tests, interview): accents only ---------- */
+
+body[data-hf="calm"] .btn-primary {
+    background: var(--hf-grad) !important;
+    border: 0 !important;
+}
+
+body[data-hf="calm"] .progress-bar {
+    background: var(--hf-grad) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .btn-primary, .sa-submit-btn { transition: none; }
+}

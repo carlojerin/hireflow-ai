@@ -1,0 +1,974 @@
+{
+  "stage_catalogue": {
+    "stage1": "S1-INTRO",
+    "stage4": "S4-AI-INT",
+    "stage2": {
+      "AP-CORE": {
+        "name": "Aptitude - Core",
+        "desc": "Quantitative + logical reasoning + verbal, 25-30 Q, 30 min. For roles that need analytical/engineering thinking."
+      },
+      "AP-LOGIC": {
+        "name": "Aptitude - Logic/Verbal",
+        "desc": "Logical + verbal + pattern reasoning, 20 Q, 20 min, light maths. For support/ops-leaning tech roles."
+      },
+      "AP-NUM": {
+        "name": "Aptitude - Numerical/Data",
+        "desc": "Number series, percentages, ratios, chart/table interpretation, 20-25 Q, 25 min. For finance/data-heavy roles."
+      },
+      "SJT": {
+        "name": "Situational Judgement Test",
+        "desc": "10-15 workplace scenarios, pick best/worst action, 20 min. For people-facing/non-technical roles where aptitude math adds little."
+      }
+    },
+    "stage3": {
+      "PRG": {
+        "name": "Programming Test",
+        "desc": "2-3 coding problems (easy/medium) in an online IDE with test cases, 60-90 min. Language chosen by role."
+      },
+      "PRG-L": {
+        "name": "Light Programming / SQL / Scripting",
+        "desc": "1-2 tasks: SQL queries, Python/Bash script, or config-as-code, 45 min."
+      },
+      "TECH-LAB": {
+        "name": "Hands-on Technical Scenario",
+        "desc": "Domain MCQ (15) + troubleshooting/lab scenario (log reading, config fix, architecture or incident question), 45-60 min. No heavy coding."
+      },
+      "TEST-DESIGN": {
+        "name": "Test Design Task",
+        "desc": "Given a feature/spec: write test cases, find seeded bugs, file a bug report, 45 min."
+      },
+      "WS-WRITE": {
+        "name": "Written Work Sample",
+        "desc": "Job-realistic writing task (email, brief, post, policy note, report) graded by rubric + AI, 30-45 min."
+      },
+      "WS-DATA": {
+        "name": "Data/Spreadsheet Work Sample",
+        "desc": "Provided messy dataset: clean, calculate, summarise findings (Excel/Sheets-style), 45 min."
+      },
+      "WS-DESIGN": {
+        "name": "Design Task",
+        "desc": "Short design brief: wireframe/critique/flow or portfolio case review, 60 min or take-home 24-48 h."
+      },
+      "WS-ROLE": {
+        "name": "Role-play Simulation",
+        "desc": "Simulated chat/email/call with a customer or prospect (AI persona), scored on empathy, accuracy, process, 15-20 min."
+      },
+      "CASE": {
+        "name": "Case Study / Prioritisation",
+        "desc": "Business case: prioritise, plan, estimate, recommend, 45 min written + short defence in interview."
+      }
+    }
+  },
+  "roles": [
+    {
+      "domain": "Software Development",
+      "kind": "Technical",
+      "title": "Frontend Developer",
+      "stage1": "S1-INTRO",
+      "stage2": "AP-CORE",
+      "stage3": "PRG",
+      "stage4": "S4-AI-INT",
+      "focus": "JavaScript/TypeScript, React/Angular/Vue, DOM, CSS, UI logic"
+    },
+    {
+      "domain": "Software Development",
+      "kind": "Technical",
+      "title": "Backend Developer",
+      "stage1": "S1-INTRO",
+      "stage2": "AP-CORE",
+      "stage3": "PRG",
+      "stage4": "S4-AI-INT",
+      "focus": "Java/Python/Node/.NET/Go, APIs, DB queries, data structures"
+    },
+    {
+      "domain": "Software Development",
+      "kind": "Technical",
+      "title": "Full-Stack Developer",
+      "stage1": "S1-INTRO",
+      "stage2": "AP-CORE",
+      "stage3": "PRG",
+      "stage4": "S4-AI-INT",
+      "focus": "Frontend + backend task in one problem set"
+    },
+    {
+      "domain": "Software Development",
+      "kind": "Technical",
+      "title": "Mobile App Developer (Android/iOS/Flutter)",
+      "stage1": "S1-INTRO",
+      "stage2": "AP-CORE",
+      "stage3": "PRG",
+      "stage4": "S4-AI-INT",
+      "focus": "Kotlin/Swift/Dart, lifecycle, state, API integration"
+    },
+    {
+      "domain": "Software Development",
+      "kind": "Technical",
+      "title": "Embedded / Firmware Engineer",
+      "stage1": "S1-INTRO",
+      "stage2": "AP-CORE",
+      "stage3": "PRG",
+      "stage4": "S4-AI-INT",
+      "focus": "C/C++, memory, bit ops, protocols"
+    },
+    {
+      "domain": "Software Development",
+      "kind": "Technical",
+      "title": "Game Developer",
+      "stage1": "S1-INTRO",
+      "stage2": "AP-CORE",
+      "stage3": "PRG",
+      "stage4": "S4-AI-INT",
+      "focus": "C++/C#, algorithms, maths/physics logic"
+    },
+    {
+      "domain": "Software Development",
+      "kind": "Technical",
+      "title": "Software Engineer Trainee / Intern",
+      "stage1": "S1-INTRO",
+      "stage2": "AP-CORE",
+      "stage3": "PRG",
+      "stage4": "S4-AI-INT",
+      "focus": "Easier problem set; DSA basics, weight aptitude higher"
+    },
+    {
+      "domain": "Software Development",
+      "kind": "Technical",
+      "title": "Software Architect / Principal Engineer",
+      "stage1": "S1-INTRO",
+      "stage2": "-",
+      "stage3": "CASE",
+      "stage4": "S4-AI-INT",
+      "focus": "System design case instead of coding; S2 waived"
+    },
+    {
+      "domain": "Quality Assurance & Testing",
+      "kind": "Technical",
+      "title": "Manual QA Tester",
+      "stage1": "S1-INTRO",
+      "stage2": "AP-LOGIC",
+      "stage3": "TEST-DESIGN",
+      "stage4": "S4-AI-INT",
+      "focus": "Test cases, bug reports, edge cases, SDLC/STLC"
+    },
+    {
+      "domain": "Quality Assurance & Testing",
+      "kind": "Technical",
+      "title": "QA Automation Engineer",
+      "stage1": "S1-INTRO",
+      "stage2": "AP-CORE",
+      "stage3": "PRG",
+      "stage4": "S4-AI-INT",
+      "focus": "Selenium/Playwright/Cypress + scripting in Java/Python/JS"
+    },
+    {
+      "domain": "Quality Assurance & Testing",
+      "kind": "Technical",
+      "title": "SDET",
+      "stage1": "S1-INTRO",
+      "stage2": "AP-CORE",
+      "stage3": "PRG",
+      "stage4": "S4-AI-INT",
+      "focus": "Coding + framework design + API testing"
+    },
+    {
+      "domain": "Quality Assurance & Testing",
+      "kind": "Technical",
+      "title": "Performance Test Engineer",
+      "stage1": "S1-INTRO",
+      "stage2": "AP-LOGIC",
+      "stage3": "PRG-L",
+      "stage4": "S4-AI-INT",
+      "focus": "JMeter/k6 scenario design, metrics reading, scripting"
+    },
+    {
+      "domain": "Quality Assurance & Testing",
+      "kind": "Technical",
+      "title": "QA Lead / Test Manager",
+      "stage1": "S1-INTRO",
+      "stage2": "-",
+      "stage3": "CASE",
+      "stage4": "S4-AI-INT",
+      "focus": "Test strategy case; S2 optional"
+    },
+    {
+      "domain": "DevOps, Cloud & Infrastructure",
+      "kind": "Technical",
+      "title": "DevOps Engineer",
+      "stage1": "S1-INTRO",
+      "stage2": "AP-LOGIC",
+      "stage3": "TECH-LAB",
+      "stage4": "S4-AI-INT",
+      "focus": "CI/CD, Docker, Kubernetes, Linux, IaC, Git"
+    },
+    {
+      "domain": "DevOps, Cloud & Infrastructure",
+      "kind": "Technical",
+      "title": "Site Reliability Engineer (SRE)",
+      "stage1": "S1-INTRO",
+      "stage2": "AP-CORE",
+      "stage3": "PRG-L",
+      "stage4": "S4-AI-INT",
+      "focus": "Incidents, monitoring, SLOs, Python/Go scripting"
+    },
+    {
+      "domain": "DevOps, Cloud & Infrastructure",
+      "kind": "Technical",
+      "title": "Cloud Engineer (AWS/Azure/GCP)",
+      "stage1": "S1-INTRO",
+      "stage2": "AP-LOGIC",
+      "stage3": "TECH-LAB",
+      "stage4": "S4-AI-INT",
+      "focus": "Networking, IAM, compute/storage, cost, architecture scenario"
+    },
+    {
+      "domain": "DevOps, Cloud & Infrastructure",
+      "kind": "Technical",
+      "title": "Platform Engineer",
+      "stage1": "S1-INTRO",
+      "stage2": "AP-LOGIC",
+      "stage3": "TECH-LAB",
+      "stage4": "S4-AI-INT",
+      "focus": "Internal tooling, Kubernetes, Terraform"
+    },
+    {
+      "domain": "DevOps, Cloud & Infrastructure",
+      "kind": "Technical",
+      "title": "System Administrator",
+      "stage1": "S1-INTRO",
+      "stage2": "AP-LOGIC",
+      "stage3": "TECH-LAB",
+      "stage4": "S4-AI-INT",
+      "focus": "Linux/Windows server, users, backups, patching"
+    },
+    {
+      "domain": "DevOps, Cloud & Infrastructure",
+      "kind": "Technical",
+      "title": "Network Engineer",
+      "stage1": "S1-INTRO",
+      "stage2": "AP-LOGIC",
+      "stage3": "TECH-LAB",
+      "stage4": "S4-AI-INT",
+      "focus": "TCP/IP, routing, switching, firewall, subnetting"
+    },
+    {
+      "domain": "DevOps, Cloud & Infrastructure",
+      "kind": "Technical",
+      "title": "Database Administrator (DBA)",
+      "stage1": "S1-INTRO",
+      "stage2": "AP-LOGIC",
+      "stage3": "PRG-L",
+      "stage4": "S4-AI-INT",
+      "focus": "SQL tuning, backup/recovery, indexing, replication"
+    },
+    {
+      "domain": "Data, AI & Machine Learning",
+      "kind": "Technical",
+      "title": "Data Analyst",
+      "stage1": "S1-INTRO",
+      "stage2": "AP-NUM",
+      "stage3": "WS-DATA",
+      "stage4": "S4-AI-INT",
+      "focus": "SQL, Excel, dashboards, insight write-up"
+    },
+    {
+      "domain": "Data, AI & Machine Learning",
+      "kind": "Technical",
+      "title": "Business Intelligence (BI) Developer",
+      "stage1": "S1-INTRO",
+      "stage2": "AP-NUM",
+      "stage3": "PRG-L",
+      "stage4": "S4-AI-INT",
+      "focus": "SQL, Power BI/Tableau, data modelling"
+    },
+    {
+      "domain": "Data, AI & Machine Learning",
+      "kind": "Technical",
+      "title": "Data Engineer",
+      "stage1": "S1-INTRO",
+      "stage2": "AP-CORE",
+      "stage3": "PRG",
+      "stage4": "S4-AI-INT",
+      "focus": "SQL + Python/Scala, ETL, pipelines, warehouses"
+    },
+    {
+      "domain": "Data, AI & Machine Learning",
+      "kind": "Technical",
+      "title": "Analytics Engineer",
+      "stage1": "S1-INTRO",
+      "stage2": "AP-CORE",
+      "stage3": "PRG-L",
+      "stage4": "S4-AI-INT",
+      "focus": "SQL, dbt, modelling, testing"
+    },
+    {
+      "domain": "Data, AI & Machine Learning",
+      "kind": "Technical",
+      "title": "Data Scientist",
+      "stage1": "S1-INTRO",
+      "stage2": "AP-CORE",
+      "stage3": "PRG-L",
+      "stage4": "S4-AI-INT",
+      "focus": "Python, statistics, feature work, evaluation metrics"
+    },
+    {
+      "domain": "Data, AI & Machine Learning",
+      "kind": "Technical",
+      "title": "Machine Learning Engineer",
+      "stage1": "S1-INTRO",
+      "stage2": "AP-CORE",
+      "stage3": "PRG",
+      "stage4": "S4-AI-INT",
+      "focus": "Python coding + ML concepts, deployment/MLOps"
+    },
+    {
+      "domain": "Data, AI & Machine Learning",
+      "kind": "Technical",
+      "title": "AI / LLM Engineer",
+      "stage1": "S1-INTRO",
+      "stage2": "AP-CORE",
+      "stage3": "PRG",
+      "stage4": "S4-AI-INT",
+      "focus": "Prompting, RAG, APIs, evaluation, Python"
+    },
+    {
+      "domain": "Data, AI & Machine Learning",
+      "kind": "Technical",
+      "title": "Data Annotation / AI Trainer",
+      "stage1": "S1-INTRO",
+      "stage2": "AP-LOGIC",
+      "stage3": "WS-WRITE",
+      "stage4": "S4-AI-INT",
+      "focus": "Labelling guidelines, accuracy, language quality"
+    },
+    {
+      "domain": "Cybersecurity",
+      "kind": "Technical",
+      "title": "SOC Analyst",
+      "stage1": "S1-INTRO",
+      "stage2": "AP-CORE",
+      "stage3": "TECH-LAB",
+      "stage4": "S4-AI-INT",
+      "focus": "SIEM logs, alert triage, incident steps"
+    },
+    {
+      "domain": "Cybersecurity",
+      "kind": "Technical",
+      "title": "Penetration Tester / Ethical Hacker",
+      "stage1": "S1-INTRO",
+      "stage2": "AP-CORE",
+      "stage3": "TECH-LAB",
+      "stage4": "S4-AI-INT",
+      "focus": "OWASP Top 10, recon, exploitation reasoning, reporting"
+    },
+    {
+      "domain": "Cybersecurity",
+      "kind": "Technical",
+      "title": "Security Engineer",
+      "stage1": "S1-INTRO",
+      "stage2": "AP-CORE",
+      "stage3": "PRG-L",
+      "stage4": "S4-AI-INT",
+      "focus": "Secure coding review, cloud security, scripting"
+    },
+    {
+      "domain": "Cybersecurity",
+      "kind": "Technical",
+      "title": "GRC / Compliance Analyst (ISO 27001, SOC 2)",
+      "stage1": "S1-INTRO",
+      "stage2": "SJT",
+      "stage3": "CASE",
+      "stage4": "S4-AI-INT",
+      "focus": "Policy, risk register, audit scenario - no hands-on lab"
+    },
+    {
+      "domain": "Cybersecurity",
+      "kind": "Technical",
+      "title": "Identity & Access Management Specialist",
+      "stage1": "S1-INTRO",
+      "stage2": "AP-CORE",
+      "stage3": "TECH-LAB",
+      "stage4": "S4-AI-INT",
+      "focus": "SSO, MFA, RBAC, directory services"
+    },
+    {
+      "domain": "IT Support & Service Desk",
+      "kind": "Technical",
+      "title": "Help Desk / Service Desk Analyst (L1)",
+      "stage1": "S1-INTRO",
+      "stage2": "SJT",
+      "stage3": "TECH-LAB",
+      "stage4": "S4-AI-INT",
+      "focus": "Common faults, ticket handling, communication"
+    },
+    {
+      "domain": "IT Support & Service Desk",
+      "kind": "Technical",
+      "title": "Technical Support Engineer (L2/L3)",
+      "stage1": "S1-INTRO",
+      "stage2": "AP-LOGIC",
+      "stage3": "TECH-LAB",
+      "stage4": "S4-AI-INT",
+      "focus": "Log reading, root cause, product/API knowledge"
+    },
+    {
+      "domain": "IT Support & Service Desk",
+      "kind": "Technical",
+      "title": "Desktop / End-User Support Technician",
+      "stage1": "S1-INTRO",
+      "stage2": "SJT",
+      "stage3": "TECH-LAB",
+      "stage4": "S4-AI-INT",
+      "focus": "OS, hardware, printers, VPN, Active Directory"
+    },
+    {
+      "domain": "IT Support & Service Desk",
+      "kind": "Technical",
+      "title": "IT Asset / Systems Coordinator",
+      "stage1": "S1-INTRO",
+      "stage2": "SJT",
+      "stage3": "WS-DATA",
+      "stage4": "S4-AI-INT",
+      "focus": "Inventory spreadsheets, procurement tracking"
+    },
+    {
+      "domain": "Enterprise Applications & Automation",
+      "kind": "Technical",
+      "title": "SAP / ERP Consultant",
+      "stage1": "S1-INTRO",
+      "stage2": "AP-LOGIC",
+      "stage3": "TECH-LAB",
+      "stage4": "S4-AI-INT",
+      "focus": "Module knowledge (FI/MM/SD), configuration scenarios"
+    },
+    {
+      "domain": "Enterprise Applications & Automation",
+      "kind": "Technical",
+      "title": "Salesforce Developer / Administrator",
+      "stage1": "S1-INTRO",
+      "stage2": "AP-LOGIC",
+      "stage3": "TECH-LAB",
+      "stage4": "S4-AI-INT",
+      "focus": "Objects, flows, Apex basics, security model"
+    },
+    {
+      "domain": "Enterprise Applications & Automation",
+      "kind": "Technical",
+      "title": "ServiceNow Developer",
+      "stage1": "S1-INTRO",
+      "stage2": "AP-LOGIC",
+      "stage3": "PRG-L",
+      "stage4": "S4-AI-INT",
+      "focus": "Workflows, scripting (JavaScript), ITSM"
+    },
+    {
+      "domain": "Enterprise Applications & Automation",
+      "kind": "Technical",
+      "title": "RPA Developer (UiPath/Power Automate)",
+      "stage1": "S1-INTRO",
+      "stage2": "AP-LOGIC",
+      "stage3": "TECH-LAB",
+      "stage4": "S4-AI-INT",
+      "focus": "Process automation design, selectors, exceptions"
+    },
+    {
+      "domain": "Enterprise Applications & Automation",
+      "kind": "Technical",
+      "title": "Low-Code / No-Code Developer",
+      "stage1": "S1-INTRO",
+      "stage2": "AP-LOGIC",
+      "stage3": "TECH-LAB",
+      "stage4": "S4-AI-INT",
+      "focus": "App building scenario, data model, integrations"
+    },
+    {
+      "domain": "Product & Project Management",
+      "kind": "Hybrid",
+      "title": "Product Manager",
+      "stage1": "S1-INTRO",
+      "stage2": "AP-CORE",
+      "stage3": "CASE",
+      "stage4": "S4-AI-INT",
+      "focus": "Prioritisation, metrics, roadmap, trade-offs"
+    },
+    {
+      "domain": "Product & Project Management",
+      "kind": "Hybrid",
+      "title": "Product Owner",
+      "stage1": "S1-INTRO",
+      "stage2": "AP-CORE",
+      "stage3": "CASE",
+      "stage4": "S4-AI-INT",
+      "focus": "Backlog, user stories, acceptance criteria"
+    },
+    {
+      "domain": "Product & Project Management",
+      "kind": "Hybrid",
+      "title": "Project / Delivery Manager",
+      "stage1": "S1-INTRO",
+      "stage2": "SJT",
+      "stage3": "CASE",
+      "stage4": "S4-AI-INT",
+      "focus": "Plan, risk, stakeholder, estimate"
+    },
+    {
+      "domain": "Product & Project Management",
+      "kind": "Hybrid",
+      "title": "Scrum Master / Agile Coach",
+      "stage1": "S1-INTRO",
+      "stage2": "SJT",
+      "stage3": "CASE",
+      "stage4": "S4-AI-INT",
+      "focus": "Ceremonies, impediments, team conflict"
+    },
+    {
+      "domain": "Product & Project Management",
+      "kind": "Hybrid",
+      "title": "Business Analyst",
+      "stage1": "S1-INTRO",
+      "stage2": "AP-CORE",
+      "stage3": "WS-WRITE",
+      "stage4": "S4-AI-INT",
+      "focus": "Requirements doc / user story writing from a messy brief"
+    },
+    {
+      "domain": "Product & Project Management",
+      "kind": "Hybrid",
+      "title": "Technical Program Manager",
+      "stage1": "S1-INTRO",
+      "stage2": "AP-CORE",
+      "stage3": "CASE",
+      "stage4": "S4-AI-INT",
+      "focus": "Cross-team dependency and system-level case"
+    },
+    {
+      "domain": "UI/UX & Design",
+      "kind": "Hybrid",
+      "title": "UI Designer",
+      "stage1": "S1-INTRO",
+      "stage2": "SJT",
+      "stage3": "WS-DESIGN",
+      "stage4": "S4-AI-INT",
+      "focus": "Layout, typography, colour, component consistency"
+    },
+    {
+      "domain": "UI/UX & Design",
+      "kind": "Hybrid",
+      "title": "UX Designer / Product Designer",
+      "stage1": "S1-INTRO",
+      "stage2": "SJT",
+      "stage3": "WS-DESIGN",
+      "stage4": "S4-AI-INT",
+      "focus": "User flow, wireframe, usability critique"
+    },
+    {
+      "domain": "UI/UX & Design",
+      "kind": "Hybrid",
+      "title": "UX Researcher",
+      "stage1": "S1-INTRO",
+      "stage2": "SJT",
+      "stage3": "CASE",
+      "stage4": "S4-AI-INT",
+      "focus": "Research plan, interview guide, synthesis"
+    },
+    {
+      "domain": "UI/UX & Design",
+      "kind": "Hybrid",
+      "title": "Graphic / Visual Designer",
+      "stage1": "S1-INTRO",
+      "stage2": "SJT",
+      "stage3": "WS-DESIGN",
+      "stage4": "S4-AI-INT",
+      "focus": "Brand asset task, composition, tool proficiency"
+    },
+    {
+      "domain": "UI/UX & Design",
+      "kind": "Hybrid",
+      "title": "Motion / Video Designer",
+      "stage1": "S1-INTRO",
+      "stage2": "SJT",
+      "stage3": "WS-DESIGN",
+      "stage4": "S4-AI-INT",
+      "focus": "Short storyboard/animation brief"
+    },
+    {
+      "domain": "UI/UX & Design",
+      "kind": "Hybrid",
+      "title": "Technical Writer",
+      "stage1": "S1-INTRO",
+      "stage2": "AP-LOGIC",
+      "stage3": "WS-WRITE",
+      "stage4": "S4-AI-INT",
+      "focus": "Documentation, API doc clarity, editing"
+    },
+    {
+      "domain": "Sales & Business Development",
+      "kind": "Non-technical",
+      "title": "Sales Development Rep (SDR)",
+      "stage1": "S1-INTRO",
+      "stage2": "SJT",
+      "stage3": "WS-ROLE",
+      "stage4": "S4-AI-INT",
+      "focus": "Cold email/call, qualification, persistence"
+    },
+    {
+      "domain": "Sales & Business Development",
+      "kind": "Non-technical",
+      "title": "Account Executive",
+      "stage1": "S1-INTRO",
+      "stage2": "SJT",
+      "stage3": "WS-ROLE",
+      "stage4": "S4-AI-INT",
+      "focus": "Discovery, demo pitch, negotiation role-play"
+    },
+    {
+      "domain": "Sales & Business Development",
+      "kind": "Non-technical",
+      "title": "Business Development Manager",
+      "stage1": "S1-INTRO",
+      "stage2": "SJT",
+      "stage3": "CASE",
+      "stage4": "S4-AI-INT",
+      "focus": "Market/account plan, pipeline strategy"
+    },
+    {
+      "domain": "Sales & Business Development",
+      "kind": "Non-technical",
+      "title": "Account Manager",
+      "stage1": "S1-INTRO",
+      "stage2": "SJT",
+      "stage3": "WS-ROLE",
+      "stage4": "S4-AI-INT",
+      "focus": "Renewal, upsell, escalation handling"
+    },
+    {
+      "domain": "Sales & Business Development",
+      "kind": "Non-technical",
+      "title": "Pre-Sales / Solutions Consultant",
+      "stage1": "S1-INTRO",
+      "stage2": "AP-LOGIC",
+      "stage3": "TECH-LAB",
+      "stage4": "S4-AI-INT",
+      "focus": "Technical demo, requirement mapping, RFP answer"
+    },
+    {
+      "domain": "Sales & Business Development",
+      "kind": "Non-technical",
+      "title": "Inside Sales / Telesales Executive",
+      "stage1": "S1-INTRO",
+      "stage2": "SJT",
+      "stage3": "WS-ROLE",
+      "stage4": "S4-AI-INT",
+      "focus": "Call script, objection handling"
+    },
+    {
+      "domain": "Marketing & Content",
+      "kind": "Non-technical",
+      "title": "Digital Marketing Executive",
+      "stage1": "S1-INTRO",
+      "stage2": "SJT",
+      "stage3": "WS-WRITE",
+      "stage4": "S4-AI-INT",
+      "focus": "Campaign copy, channel mix, basic metrics"
+    },
+    {
+      "domain": "Marketing & Content",
+      "kind": "Non-technical",
+      "title": "SEO / SEM Specialist",
+      "stage1": "S1-INTRO",
+      "stage2": "AP-NUM",
+      "stage3": "WS-DATA",
+      "stage4": "S4-AI-INT",
+      "focus": "Keyword/data sheet analysis, audit findings"
+    },
+    {
+      "domain": "Marketing & Content",
+      "kind": "Non-technical",
+      "title": "Content Writer / Copywriter",
+      "stage1": "S1-INTRO",
+      "stage2": "SJT",
+      "stage3": "WS-WRITE",
+      "stage4": "S4-AI-INT",
+      "focus": "Blog/landing page/email under brief + tone"
+    },
+    {
+      "domain": "Marketing & Content",
+      "kind": "Non-technical",
+      "title": "Social Media Manager",
+      "stage1": "S1-INTRO",
+      "stage2": "SJT",
+      "stage3": "WS-WRITE",
+      "stage4": "S4-AI-INT",
+      "focus": "Content calendar, post copy, crisis response"
+    },
+    {
+      "domain": "Marketing & Content",
+      "kind": "Non-technical",
+      "title": "Growth / Performance Marketer",
+      "stage1": "S1-INTRO",
+      "stage2": "AP-NUM",
+      "stage3": "WS-DATA",
+      "stage4": "S4-AI-INT",
+      "focus": "Funnel metrics, CAC/ROAS calc, budget split"
+    },
+    {
+      "domain": "Marketing & Content",
+      "kind": "Non-technical",
+      "title": "Brand / PR Executive",
+      "stage1": "S1-INTRO",
+      "stage2": "SJT",
+      "stage3": "WS-WRITE",
+      "stage4": "S4-AI-INT",
+      "focus": "Press note, brand voice, stakeholder messaging"
+    },
+    {
+      "domain": "Customer Success & Support",
+      "kind": "Non-technical",
+      "title": "Customer Support Executive (Chat/Email)",
+      "stage1": "S1-INTRO",
+      "stage2": "SJT",
+      "stage3": "WS-ROLE",
+      "stage4": "S4-AI-INT",
+      "focus": "Reply quality, tone, grammar, speed"
+    },
+    {
+      "domain": "Customer Success & Support",
+      "kind": "Non-technical",
+      "title": "Voice / Call Centre Executive",
+      "stage1": "S1-INTRO",
+      "stage2": "SJT",
+      "stage3": "WS-ROLE",
+      "stage4": "S4-AI-INT",
+      "focus": "Spoken-English clarity, de-escalation"
+    },
+    {
+      "domain": "Customer Success & Support",
+      "kind": "Non-technical",
+      "title": "Customer Success Manager",
+      "stage1": "S1-INTRO",
+      "stage2": "SJT",
+      "stage3": "CASE",
+      "stage4": "S4-AI-INT",
+      "focus": "Account health, churn risk plan, QBR outline"
+    },
+    {
+      "domain": "Customer Success & Support",
+      "kind": "Non-technical",
+      "title": "Onboarding / Implementation Specialist",
+      "stage1": "S1-INTRO",
+      "stage2": "SJT",
+      "stage3": "WS-WRITE",
+      "stage4": "S4-AI-INT",
+      "focus": "Customer onboarding plan and instructions"
+    },
+    {
+      "domain": "Human Resources & Talent",
+      "kind": "Non-technical",
+      "title": "Technical Recruiter / Talent Acquisition",
+      "stage1": "S1-INTRO",
+      "stage2": "SJT",
+      "stage3": "CASE",
+      "stage4": "S4-AI-INT",
+      "focus": "Screen resumes vs a JD, write outreach, sourcing plan"
+    },
+    {
+      "domain": "Human Resources & Talent",
+      "kind": "Non-technical",
+      "title": "HR Generalist / Executive",
+      "stage1": "S1-INTRO",
+      "stage2": "SJT",
+      "stage3": "WS-WRITE",
+      "stage4": "S4-AI-INT",
+      "focus": "Policy note, employee query reply, process"
+    },
+    {
+      "domain": "Human Resources & Talent",
+      "kind": "Non-technical",
+      "title": "HR Business Partner",
+      "stage1": "S1-INTRO",
+      "stage2": "SJT",
+      "stage3": "CASE",
+      "stage4": "S4-AI-INT",
+      "focus": "Org/people scenario, advisory recommendation"
+    },
+    {
+      "domain": "Human Resources & Talent",
+      "kind": "Non-technical",
+      "title": "Learning & Development Specialist",
+      "stage1": "S1-INTRO",
+      "stage2": "SJT",
+      "stage3": "WS-WRITE",
+      "stage4": "S4-AI-INT",
+      "focus": "Training outline, needs analysis"
+    },
+    {
+      "domain": "Human Resources & Talent",
+      "kind": "Non-technical",
+      "title": "Payroll / HR Operations Executive",
+      "stage1": "S1-INTRO",
+      "stage2": "AP-NUM",
+      "stage3": "WS-DATA",
+      "stage4": "S4-AI-INT",
+      "focus": "Payroll sheet accuracy, compliance checks"
+    },
+    {
+      "domain": "Human Resources & Talent",
+      "kind": "Non-technical",
+      "title": "Talent Sourcer / Research Associate",
+      "stage1": "S1-INTRO",
+      "stage2": "SJT",
+      "stage3": "WS-DATA",
+      "stage4": "S4-AI-INT",
+      "focus": "Boolean search, candidate sheet building"
+    },
+    {
+      "domain": "Finance & Accounting",
+      "kind": "Non-technical",
+      "title": "Accountant / Accounts Executive",
+      "stage1": "S1-INTRO",
+      "stage2": "AP-NUM",
+      "stage3": "WS-DATA",
+      "stage4": "S4-AI-INT",
+      "focus": "Journal entries, reconciliation, GST/VAT basics"
+    },
+    {
+      "domain": "Finance & Accounting",
+      "kind": "Non-technical",
+      "title": "Financial Analyst / FP&A",
+      "stage1": "S1-INTRO",
+      "stage2": "AP-NUM",
+      "stage3": "CASE",
+      "stage4": "S4-AI-INT",
+      "focus": "Budget vs actual, variance commentary"
+    },
+    {
+      "domain": "Finance & Accounting",
+      "kind": "Non-technical",
+      "title": "Accounts Payable / Receivable Executive",
+      "stage1": "S1-INTRO",
+      "stage2": "AP-NUM",
+      "stage3": "WS-DATA",
+      "stage4": "S4-AI-INT",
+      "focus": "Invoice matching, ageing report"
+    },
+    {
+      "domain": "Finance & Accounting",
+      "kind": "Non-technical",
+      "title": "Billing / Revenue Operations Analyst",
+      "stage1": "S1-INTRO",
+      "stage2": "AP-NUM",
+      "stage3": "WS-DATA",
+      "stage4": "S4-AI-INT",
+      "focus": "Billing sheet, MRR calc, discrepancy finding"
+    },
+    {
+      "domain": "Finance & Accounting",
+      "kind": "Non-technical",
+      "title": "Internal Auditor",
+      "stage1": "S1-INTRO",
+      "stage2": "AP-NUM",
+      "stage3": "CASE",
+      "stage4": "S4-AI-INT",
+      "focus": "Control gap case, sampling logic"
+    },
+    {
+      "domain": "Operations, Admin & Legal",
+      "kind": "Non-technical",
+      "title": "Office / Admin Executive",
+      "stage1": "S1-INTRO",
+      "stage2": "SJT",
+      "stage3": "WS-WRITE",
+      "stage4": "S4-AI-INT",
+      "focus": "Scheduling, email etiquette, document handling"
+    },
+    {
+      "domain": "Operations, Admin & Legal",
+      "kind": "Non-technical",
+      "title": "Executive Assistant",
+      "stage1": "S1-INTRO",
+      "stage2": "SJT",
+      "stage3": "WS-WRITE",
+      "stage4": "S4-AI-INT",
+      "focus": "Calendar conflict, prioritisation, drafted reply"
+    },
+    {
+      "domain": "Operations, Admin & Legal",
+      "kind": "Non-technical",
+      "title": "Procurement / Vendor Management Executive",
+      "stage1": "S1-INTRO",
+      "stage2": "AP-NUM",
+      "stage3": "WS-DATA",
+      "stage4": "S4-AI-INT",
+      "focus": "Quote comparison, vendor scoring sheet"
+    },
+    {
+      "domain": "Operations, Admin & Legal",
+      "kind": "Non-technical",
+      "title": "Operations Coordinator",
+      "stage1": "S1-INTRO",
+      "stage2": "SJT",
+      "stage3": "CASE",
+      "stage4": "S4-AI-INT",
+      "focus": "Process improvement case"
+    },
+    {
+      "domain": "Operations, Admin & Legal",
+      "kind": "Non-technical",
+      "title": "Legal / Contract Executive",
+      "stage1": "S1-INTRO",
+      "stage2": "AP-LOGIC",
+      "stage3": "WS-WRITE",
+      "stage4": "S4-AI-INT",
+      "focus": "Clause review, summary of a contract extract"
+    },
+    {
+      "domain": "Operations, Admin & Legal",
+      "kind": "Non-technical",
+      "title": "Facilities / Receptionist",
+      "stage1": "S1-INTRO",
+      "stage2": "SJT",
+      "stage3": "WS-ROLE",
+      "stage4": "S4-AI-INT",
+      "focus": "Visitor/caller handling simulation"
+    },
+    {
+      "domain": "Engineering Leadership",
+      "kind": "Technical (senior)",
+      "title": "Tech Lead",
+      "stage1": "S1-INTRO",
+      "stage2": "-",
+      "stage3": "CASE",
+      "stage4": "S4-AI-INT",
+      "focus": "Design review + code-review exercise"
+    },
+    {
+      "domain": "Engineering Leadership",
+      "kind": "Technical (senior)",
+      "title": "Engineering Manager",
+      "stage1": "S1-INTRO",
+      "stage2": "-",
+      "stage3": "CASE",
+      "stage4": "S4-AI-INT",
+      "focus": "Team scenarios, delivery trade-offs"
+    },
+    {
+      "domain": "Engineering Leadership",
+      "kind": "Technical (senior)",
+      "title": "Head / Director of Engineering",
+      "stage1": "S1-INTRO",
+      "stage2": "-",
+      "stage3": "CASE",
+      "stage4": "S4-AI-INT",
+      "focus": "Strategy, hiring, budget case"
+    },
+    {
+      "domain": "Engineering Leadership",
+      "kind": "Technical (senior)",
+      "title": "CTO / VP Engineering",
+      "stage1": "S1-INTRO",
+      "stage2": "-",
+      "stage3": "CASE",
+      "stage4": "S4-AI-INT",
+      "focus": "Executive panel; AI interview optional"
+    }
+  ]
+}

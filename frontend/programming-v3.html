@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        http-equiv="Cache-Control"
+        content="no-cache, no-store, must-revalidate"
+    >
+
+    <meta
+        http-equiv="Pragma"
+        content="no-cache"
+    >
+
+    <meta
+        http-equiv="Expires"
+        content="0"
+    >
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Programming Assessment - HireFlow AI</title>
+
+
+    <link
+        href="vendor/bootstrap/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="vendor/bootstrap-icons/bootstrap-icons.min.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="css/programming-v3.css?v=4"
+    >
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=DM+Sans:wght@400;500;700&display=swap">
+    <link rel="stylesheet" href="css/theme-glass.css?v=1">
+</head>
+
+
+<body class="dashboard-body" style="overflow:hidden;" data-hf="calm">
+
+
+    <div class="pv3-shell" id="pv3Shell">
+
+
+        <!-- LOADING / MESSAGE (shown until the workspace is ready) -->
+
+        <div id="pv3CenterState" class="pv3-center-state">
+
+            <div class="spinner-border text-primary" role="status"></div>
+
+            <div class="fw-semibold" id="pv3CenterStateText">
+                Loading your programming assessment...
+            </div>
+
+        </div>
+
+        <div id="pv3Message"></div>
+
+
+        <!-- ==================================================
+             TOP BAR
+             ================================================== -->
+
+        <div id="pv3Topbar" class="pv3-topbar" style="display:none;">
+
+            <div class="pv3-brand">
+                <span class="pv3-brand-logo">🚀 HireFlow AI</span>
+                <span class="pv3-brand-sep">/</span>
+                <div class="pv3-job-meta">
+                    <span class="pv3-job-title" id="pv3JobTitle">Job Title</span>
+                    <span class="pv3-company-name" id="pv3CompanyName"></span>
+                </div>
+            </div>
+
+            <div class="pv3-topbar-center">
+                <i class="bi bi-code-square"></i>
+                Programming Assessment
+            </div>
+
+            <div class="pv3-topbar-right">
+
+                <div class="pv3-integrity">
+                    <span class="pv3-integrity-dot" id="pv3IntegrityDot"></span>
+                    <span id="pv3IntegrityStatus">Camera initializing…</span>
+                </div>
+
+                <span class="pv3-status-badge" id="pv3StatusBadge">In Progress</span>
+
+                <div class="pv3-timer" id="pv3Timer">45:00</div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ==================================================
+             WORKSPACE
+             ================================================== -->
+
+        <div id="pv3Workspace" class="pv3-workspace" style="display:none;">
+
+            <!-- QUESTION NAVIGATOR -->
+            <div class="pv3-nav-panel">
+                <div class="pv3-nav-heading">Questions</div>
+                <div id="pv3NavList"></div>
+            </div>
+
+            <!-- PROBLEM PANEL -->
+            <div class="pv3-problem-panel">
+
+                <div class="pv3-problem-header">
+                    <h2 class="pv3-problem-title" id="pv3ProblemTitle">Question title</h2>
+                    <div class="pv3-badges" id="pv3ProblemBadges"></div>
+                </div>
+
+                <div class="pv3-tabs">
+                    <button type="button" class="pv3-tab-btn is-active" data-pv3-tab="description">Description</button>
+                    <button type="button" class="pv3-tab-btn" data-pv3-tab="examples">Examples</button>
+                    <button type="button" class="pv3-tab-btn" data-pv3-tab="constraints">Constraints</button>
+                </div>
+
+                <div class="pv3-tab-body">
+                    <div class="pv3-tab-pane is-active" id="pv3TabDescription"></div>
+                    <div class="pv3-tab-pane" id="pv3TabExamples"></div>
+                    <div class="pv3-tab-pane" id="pv3TabConstraints"></div>
+                </div>
+
+            </div>
+
+            <!-- EDITOR PANEL -->
+            <div class="pv3-editor-panel">
+
+                <div class="pv3-editor-toolbar">
+
+                    <div class="pv3-editor-toolbar-left">
+                        <span class="text-white-50" style="font-size:11px; font-weight:700; text-transform:uppercase;">Language</span>
+                        <select id="pv3LanguageSelect" class="pv3-select"></select>
+                    </div>
+
+                    <div class="pv3-editor-toolbar-right">
+                        <button type="button" class="pv3-icon-btn" id="pv3FontDecreaseBtn" title="Decrease font size">A-</button>
+                        <button type="button" class="pv3-icon-btn" id="pv3FontIncreaseBtn" title="Increase font size">A+</button>
+                        <button type="button" class="pv3-icon-btn" id="pv3ThemeToggleBtn" title="Toggle editor theme"><i class="bi bi-circle-half"></i></button>
+                        <button type="button" class="pv3-icon-btn" id="pv3ResetCodeBtn" title="Reset to starter code"><i class="bi bi-arrow-counterclockwise"></i></button>
+                    </div>
+
+                </div>
+
+                <div class="pv3-editor-host" id="pv3EditorHost">
+                    <div class="pv3-editor-fallback-wrap" id="pv3FallbackWrap">
+                        <div class="pv3-line-numbers" id="pv3LineNumbers">1</div>
+                        <textarea
+                            id="pv3FallbackTextarea"
+                            class="pv3-fallback-textarea"
+                            spellcheck="false"
+                        ></textarea>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- BOTTOM PANEL -->
+            <div class="pv3-bottom-panel">
+
+                <div class="pv3-bottom-tabs">
+                    <button type="button" class="pv3-tab-btn is-active" data-pv3-bottom-tab="tests">Sample Tests</button>
+                    <button type="button" class="pv3-tab-btn" data-pv3-bottom-tab="output">Output</button>
+                    <button type="button" class="pv3-tab-btn" data-pv3-bottom-tab="errors">Errors</button>
+                    <button type="button" class="pv3-tab-btn" data-pv3-bottom-tab="preview" id="pv3PreviewTabBtn" style="display:none;">
+                        <i class="bi bi-window-desktop me-1"></i> Live Preview
+                    </button>
+                </div>
+
+                <div class="pv3-bottom-body">
+                    <div class="pv3-bottom-pane is-active" id="pv3BottomTests">
+                        <div class="text-muted small">Click "Run Code" to see how your solution performs against the sample tests.</div>
+                    </div>
+                    <div class="pv3-bottom-pane" id="pv3BottomOutput"></div>
+                    <div class="pv3-bottom-pane" id="pv3BottomErrors"></div>
+                    <div class="pv3-bottom-pane" id="pv3BottomPreview">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="small text-muted">The code in the editor is only a starting template. Write your HTML between &lt;body&gt; and &lt;/body&gt;; your page is drawn here as you type (isolated: no network, no access to this assessment).</span>
+                            <button type="button" class="btn btn-sm btn-primary" id="pv3PreviewRefresh"><i class="bi bi-play-fill"></i> Compile &amp; Preview</button>
+                        </div>
+                        <iframe id="pv3PreviewFrame" title="Live preview of your page" sandbox="allow-scripts" class="pv3-preview-frame"></iframe>
+                        <div class="small fw-bold mt-2">Console</div>
+                        <pre id="pv3PreviewConsole" class="pv3-preview-console"></pre>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ACTION BAR -->
+
+        <div id="pv3ActionBar" class="pv3-action-bar" style="display:none;">
+
+            <div class="small text-muted">
+                <kbd>Ctrl</kbd>/<kbd>Cmd</kbd> + <kbd>Enter</kbd> to run
+            </div>
+
+            <div class="d-flex gap-2">
+                <button type="button" class="pv3-btn pv3-btn-run" id="pv3RunButton">
+                    <i class="bi bi-play-fill"></i> Run Code
+                </button>
+                <button type="button" class="pv3-btn pv3-btn-submit" id="pv3SubmitButton">
+                    <i class="bi bi-send-check"></i> Submit Assessment
+                </button>
+            </div>
+
+        </div>
+
+
+        <!-- RESULT -->
+
+        <div id="pv3ResultSection" style="display:none; overflow-y:auto; flex:1;">
+            <div class="pv3-result-card">
+                <div class="pv3-result-icon"><i class="bi bi-code-slash"></i></div>
+                <h3 class="fw-bold mb-1">Programming Assessment Complete</h3>
+                <div id="pv3ResultBadge" class="mb-3"></div>
+                <div id="pv3QuestionResults" class="text-start"></div>
+                <a href="assessment.html" data-dashboard-link class="btn btn-outline-primary rounded-pill px-4 mt-4">
+                    Back to Dashboard
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- ==================================================
+         SUBMIT CONFIRMATION MODAL
+
+         Task 5G note: the underlying Programming V2 API only ever
+         submits the WHOLE assessment in one call (there is no
+         per-question submit endpoint) -- see programming_
+         integration_v2.py's submit_assessment_v2(). Rather than
+         inventing a new, unverified per-question submission
+         contract, this confirmation covers the one real, existing
+         action: final submission of the entire assessment. Every
+         answered question's hidden tests are evaluated together at
+         that point, exactly as the candidate is told here.
+         ================================================== -->
+
+    <div class="modal fade" id="pv3FinalSubmitConfirmModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold">Submit the whole assessment?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-2">You are about to submit your entire programming assessment.</p>
+                    <ul class="small text-muted mb-0">
+                        <li>Every question locks — you cannot edit or run code after this.</li>
+                        <li>Hidden tests will be evaluated for every question you answered.</li>
+                        <li>Any question left blank will score zero.</li>
+                        <li>This action cannot be undone.</li>
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="pv3ConfirmFinalSubmitBtn">Submit Assessment</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script
+        src="vendor/bootstrap/bootstrap.bundle.min.js"
+    ></script>
+
+    <script src="./js/session-guard.js?v=3"></script>
+    <script src="./js/csrf-fetch.js?v=1"></script>
+    <script src="./js/assessment-instructions.js?v=4"></script>
+    <script src="./js/camera-quality.js?v=1"></script>
+    <script src="./js/face-proctor.js?v=4"></script>
+    <script src="./js/exam-lock.js?v=3"></script>
+    <script src="./js/integrity-guards.js?v=3"></script>
+    <script src="./js/audio-proctor.js?v=1"></script>
+    <script src="./js/screen-proctor.js?v=2"></script>
+    <script src="./js/assessment-integrity.js?v=103"></script>
+    <script src="./js/assessment-video-recorder.js?v=4"></script>
+    <script src="./js/phone-detector.js?v=6"></script>
+    <script src="./js/programming-v3.js?v=11"></script>
+
+
+    <script src="./js/dashboard-link.js"></script>
+</body>
+
+</html>

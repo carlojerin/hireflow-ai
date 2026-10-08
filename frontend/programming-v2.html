@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        http-equiv="Cache-Control"
+        content="no-cache, no-store, must-revalidate"
+    >
+
+    <meta
+        http-equiv="Pragma"
+        content="no-cache"
+    >
+
+    <meta
+        http-equiv="Expires"
+        content="0"
+    >
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Programming Assessment (Multi-Language) - HireFlow AI</title>
+
+
+    <link
+        href="vendor/bootstrap/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="vendor/bootstrap-icons/bootstrap-icons.min.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="css/programming-test.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="css/programming-v2.css"
+    >
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=DM+Sans:wght@400;500;700&display=swap">
+    <link rel="stylesheet" href="css/theme-glass.css?v=1">
+</head>
+
+
+<body class="dashboard-body" data-hf="calm">
+
+
+    <!-- ==================================================
+         NAVBAR
+         ================================================== -->
+
+    <nav class="navbar navbar-dark jobpilot-navbar">
+
+        <div class="container-fluid px-4">
+
+            <a
+                href="index.html"
+                class="navbar-brand fw-bold"
+            >
+                🚀 HireFlow AI
+            </a>
+
+            <div class="d-flex align-items-center gap-2">
+
+                <span class="badge rounded-pill pv2-multilang-badge">
+                    <i class="bi bi-code-square me-1"></i>
+                    Multi-Language
+                </span>
+
+                <a
+                    href="assessment.html" data-dashboard-link
+                    class="btn btn-light btn-sm rounded-pill px-3"
+                >
+                    <i class="bi bi-arrow-left me-1"></i>
+                    Back to Dashboard
+                </a>
+
+            </div>
+
+        </div>
+
+    </nav>
+
+
+    <!-- ==================================================
+         MAIN
+         ================================================== -->
+
+    <main class="container-fluid px-4 py-5">
+
+        <div class="programming-page pv2-page">
+
+
+            <!-- LOADING -->
+
+            <div id="pv2Loading" class="text-center">
+
+                <div
+                    class="spinner-border text-primary"
+                    role="status"
+                ></div>
+
+                <div class="fw-semibold mt-3" id="pv2LoadingText">
+                    Loading your programming assessment...
+                </div>
+
+            </div>
+
+
+            <!-- MESSAGE (errors / not eligible) -->
+
+            <div id="pv2Message"></div>
+
+
+            <!-- HEADER -->
+
+            <div
+                id="pv2HeaderCard"
+                class="programming-header-card"
+                style="display:none;"
+            >
+
+                <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
+
+                    <div>
+                        <div class="small text-uppercase text-muted fw-bold">
+                            Programming Assessment
+                        </div>
+                        <h3 class="fw-bold mb-0" id="pv2JobTitle">
+                            Job Title
+                        </h3>
+                        <div class="text-muted" id="pv2CompanyName"></div>
+
+                        <div class="d-flex align-items-center gap-2 mt-2">
+                            <span
+                                class="pv2-integrity-dot"
+                                id="pv2IntegrityDot"
+                            ></span>
+                            <span class="small text-muted" id="pv2IntegrityStatus">
+                                Camera initializing…
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="text-end">
+                        <div class="small text-uppercase text-muted fw-bold">
+                            Time Remaining
+                        </div>
+                        <div class="programming-timer" id="pv2Timer">
+                            45:00
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- QUESTION NAVIGATION -->
+
+            <div
+                id="pv2Nav"
+                class="programming-nav"
+                style="display:none;"
+            ></div>
+
+
+            <!-- WORKSPACE: question | editor | output -->
+
+            <div id="pv2Workspace" class="pv2-workspace" style="display:none;">
+
+                <!-- QUESTION PANEL -->
+                <div class="pv2-question-panel">
+                    <div id="pv2QuestionContainer"></div>
+                </div>
+
+                <!-- EDITOR + OUTPUT PANEL -->
+                <div class="pv2-editor-panel">
+
+                    <div class="programming-card pv2-editor-card">
+
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2">
+
+                            <div class="small fw-bold text-muted">
+                                <i class="bi bi-braces me-1"></i>
+                                Your Solution
+                            </div>
+
+                            <div class="d-flex align-items-center gap-2">
+
+                                <select
+                                    id="pv2LanguageSelect"
+                                    class="form-select form-select-sm pv2-language-select"
+                                ></select>
+
+                                <button
+                                    type="button"
+                                    id="pv2ResetButton"
+                                    class="btn btn-outline-secondary btn-sm rounded-pill"
+                                    title="Reset to starter code for this language"
+                                >
+                                    <i class="bi bi-arrow-counterclockwise"></i>
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                        <textarea
+                            id="pv2CodeEditor"
+                            class="programming-code-editor pv2-code-editor"
+                            spellcheck="false"
+                        ></textarea>
+
+                        <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap gap-2">
+
+                            <div class="small text-muted">
+                                <kbd>Ctrl</kbd>/<kbd>Cmd</kbd> + <kbd>Enter</kbd> to run
+                            </div>
+
+                            <button
+                                type="button"
+                                id="pv2RunButton"
+                                class="btn btn-outline-primary rounded-pill px-4"
+                            >
+                                <i class="bi bi-play-fill me-1"></i>
+                                Run Code
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                    <div id="pv2RunResult" class="pv2-run-result"></div>
+
+                </div>
+
+            </div>
+
+
+            <!-- FINAL SUBMIT -->
+
+            <div
+                id="pv2FinalSubmitCard"
+                class="programming-card text-center"
+                style="display:none;"
+            >
+
+                <button
+                    type="button"
+                    id="pv2SubmitFinalButton"
+                    class="btn btn-primary rounded-pill px-4"
+                >
+                    <i class="bi bi-send-check me-1"></i>
+                    Submit Assessment
+                </button>
+
+                <div class="small text-muted mt-2">
+                    This is final — once submitted, your programming
+                    assessment cannot be changed or retaken.
+                </div>
+
+            </div>
+
+
+            <!-- RESULT -->
+
+            <div
+                id="pv2ResultSection"
+                class="programming-card text-center"
+                style="display:none;"
+            >
+
+                <div class="programming-result-icon" id="pv2ResultIcon">
+                    <i class="bi bi-code-slash"></i>
+                </div>
+
+                <h3 class="fw-bold mb-1">Programming Assessment Complete</h3>
+
+                <div id="pv2ResultBadge" class="mb-3"></div>
+
+                <div id="pv2QuestionResults" class="text-start mx-auto" style="max-width:560px;"></div>
+
+                <a
+                    href="assessment.html" data-dashboard-link
+                    class="btn btn-outline-primary rounded-pill px-4 mt-4"
+                >
+                    Back to Dashboard
+                </a>
+
+            </div>
+
+        </div>
+
+    </main>
+
+
+    <script
+        src="vendor/bootstrap/bootstrap.bundle.min.js"
+    ></script>
+
+    <script src="./js/session-guard.js?v=3"></script>
+    <script src="./js/csrf-fetch.js?v=1"></script>
+    <script src="./js/camera-quality.js?v=1"></script>
+    <script src="./js/face-proctor.js?v=4"></script>
+    <script src="./js/exam-lock.js?v=3"></script>
+    <script src="./js/integrity-guards.js?v=3"></script>
+    <script src="./js/audio-proctor.js?v=1"></script>
+    <script src="./js/screen-proctor.js?v=2"></script>
+    <script src="./js/assessment-integrity.js?v=103"></script>
+    <script src="./js/assessment-video-recorder.js?v=4"></script>
+    <script src="./js/phone-detector.js?v=6"></script>
+    <script src="./js/programming-v2.js?v=5"></script>
+
+
+    <script src="./js/dashboard-link.js"></script>
+</body>
+
+</html>

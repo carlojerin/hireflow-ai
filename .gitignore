@@ -1,0 +1,61 @@
+# Secrets — never commit real credentials (GEMINI_API_KEY, and any
+# future LIVEKIT_API_SECRET / TAVUS_API_KEY) to version control.
+.env
+.env.*
+!.env.example
+
+# Python
+venv/
+__pycache__/
+*.pyc
+
+# Node
+node_modules/
+
+# SQLite database and candidate evidence — never committed
+jobpilot.db
+jobpilot.db-journal
+jobpilot.db-wal
+jobpilot.db-shm
+data/
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+
+# More database copies, recordings and recovery material (candidate data)
+*.db
+*.db.*
+jobpilot.db.*
+assessment recordings/
+incident-recovery/
+logs/
+resume/
+Arjun_Mehta_Web_Developer_Resume.pdf
+
+# Local tooling and scratch files
+.claude/
+.pytest_cache/
+_archive/
+New Text Document.txt
+db_investigation.txt
+duplicate comp.txt
+query.py
+query_db.py
+create_test_applications.py
+judge0.conf
+
+# Large or personal binaries (slides, brochures, stock images)
+*.pptx
+*.avif
+JobPilot_AI_Product_Overview.pdf
+
+# YOLOv8 weights are AGPL-3.0: download them yourself (see frontend/vendor/README.md)
+frontend/vendor/models/yolov8n.onnx
+
+# Docker Desktop WSL disk images (tens of GB)
+docker/DockerDesktopWSL/
+*.vhdx
+
+# User uploads
+backend/uploads/

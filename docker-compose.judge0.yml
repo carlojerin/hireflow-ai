@@ -1,0 +1,82 @@
+
+# ============================================================
+# JOBPILOT AI - SELF-HOSTED JUDGE0 (SANDBOXED CODE EXECUTION)
+#
+# Replaces the earlier Piston setup (docker-compose.piston.yml,
+# now superseded) after Piston's post-boot per-language package
+# downloads proved unreliable over this network's path to GitHub's
+# release CDN. Judge0 ships every supported compiler/interpreter
+# baked into its own image already -- one `docker compose up`
+# pulls everything, with no separate install step that reaches
+# out to the internet afterward.
+#
+# Sandboxing is via `isolate` (https://github.com/ioi/isolate),
+# the same sandbox built for the International Olympiad in
+# Informatics to run adversarial, untrusted competitor code --
+# real process/cgroup isolation, network disabled by default
+# (judge0.conf's ENABLE_NETWORK=false).
+#
+# Setup (after Docker Desktop is installed and running):
+#
+#   1. docker compose -f docker-compose.judge0.yml up -d
+#      (first run pulls ~11GB across server/worker/db/redis --
+#      slow once, nothing to install afterward)
+#   2. Add to .env:  JUDGE0_API_URL=http://localhost:2358
+#   3. Restart the backend
+#
+# `privileged: true` is required by Judge0 itself (same reason as
+# Piston) -- isolate needs those extra kernel capabilities to set
+# up its per-submission sandbox.
+# ============================================================
+
+x-logging:
+  &default-logging
+  logging:
+    driver: json-file
+    options:
+      max-size: 100M
+
+services:
+  server:
+    image: judge0/judge0:latest
+    container_name: jobpilot_judge0_server
+    volumes:
+      - ./judge0.conf:/judge0.conf:ro
+    ports:
+      - "2358:2358"
+    privileged: true
+    <<: *default-logging
+    restart: unless-stopped
+
+  worker:
+    image: judge0/judge0:latest
+    container_name: jobpilot_judge0_worker
+    command: ["./scripts/workers"]
+    volumes:
+      - ./judge0.conf:/judge0.conf:ro
+    privileged: true
+    <<: *default-logging
+    restart: unless-stopped
+
+  db:
+    image: postgres:16.2
+    container_name: jobpilot_judge0_db
+    env_file: judge0.conf
+    volumes:
+      - judge0_data:/var/lib/postgresql/data/
+    <<: *default-logging
+    restart: unless-stopped
+
+  redis:
+    image: redis:7.2.4
+    container_name: jobpilot_judge0_redis
+    command: [
+      "bash", "-c",
+      'docker-entrypoint.sh --appendonly no --requirepass "$$REDIS_PASSWORD"'
+    ]
+    env_file: judge0.conf
+    <<: *default-logging
+    restart: unless-stopped
+
+volumes:
+  judge0_data:

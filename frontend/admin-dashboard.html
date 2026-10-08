@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Admin Console - HireFlow AI</title>
+
+    <link href="vendor/bootstrap/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="vendor/bootstrap-icons/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #4f5bff; --primary-dark: #4f5bff; --primary-soft: #eef0ff;
+            --ink: #0f172a; --ink-soft: #475569; --muted: #64748b;
+            --bg: #FAFAF8; --surface: #ffffff; --border: rgba(15,23,42,0.08);
+            --success: #16a34a; --success-soft: #ecfdf5;
+            --danger: #dc2626; --danger-soft: #fef2f2;
+            --warn: #d97706; --warn-soft: #fffbeb;
+            --depth-resting: 0 2px 4px rgba(15,23,42,0.04), 0 8px 20px rgba(15,23,42,0.06);
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0; background: var(--bg); color: var(--ink);
+            font-family: 'Inter', 'Segoe UI', Arial, sans-serif; font-size: 14px;
+            display: flex; min-height: 100vh;
+        }
+        h1, h2, h3, .brand { font-family: 'Sora', 'Inter', sans-serif; }
+
+        .sidebar {
+            width: 240px; flex: 0 0 240px; background: linear-gradient(180deg, #171923 0%, #0b0d14 100%);
+            color: #e2e4ec; padding: 22px 16px; position: sticky; top: 0; height: 100vh; overflow-y: auto;
+        }
+        .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 17px; color: #fff; padding: 0 8px 22px; }
+        .brand .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--primary); box-shadow: 0 0 0 4px rgba(79,91,255,0.25); }
+        .nav-section-label { font-size: 10.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #6b7280; margin: 18px 12px 8px; }
+        .nav-link {
+            display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 9px;
+            color: #c6c9d4; text-decoration: none; font-weight: 600; font-size: 13.5px; margin-bottom: 2px; cursor: pointer;
+        }
+        .nav-link:hover { background: rgba(255,255,255,0.06); color: #fff; }
+        .nav-link.active { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: #fff; box-shadow: 0 4px 14px rgba(79,91,255,0.35); }
+
+        .main { flex: 1; min-width: 0; }
+        .topbar {
+            display: flex; align-items: center; justify-content: space-between; padding: 18px 32px;
+            background: var(--surface); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 5;
+        }
+        .topbar h1 { font-size: 19px; margin: 0; }
+        .topbar p { margin: 2px 0 0; color: var(--muted); font-size: 12.5px; }
+        .admin-chip { display: flex; align-items: center; gap: 8px; font-size: 12.5px; font-weight: 700; color: var(--ink-soft); cursor: pointer; }
+        .admin-chip .avatar { width: 30px; height: 30px; border-radius: 50%; background: linear-gradient(145deg,#1e2434,#0b0f19); color:#fff; display:flex; align-items:center; justify-content:center; font-size:12px; }
+
+        .content { padding: 28px 32px 60px; max-width: 1280px; }
+        .section { display: none; }
+        .section.active { display: block; }
+
+        .kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px,1fr)); gap: 14px; margin-bottom: 26px; }
+        .kpi-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 18px 20px; box-shadow: var(--depth-resting); }
+        .kpi-card .label { font-size: 12px; color: var(--muted); font-weight: 600; margin-bottom: 6px; }
+        .kpi-card .value { font-size: 26px; font-weight: 800; }
+
+        .card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 22px; box-shadow: var(--depth-resting); margin-bottom: 20px; }
+        .card-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; gap: 12px; flex-wrap: wrap; }
+        .card-head h2 { font-size: 15.5px; margin: 0; }
+        .card-head .sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+        .search-box { border: 1px solid var(--border); border-radius: 9px; padding: 8px 12px; font-size: 12.5px; background: var(--bg); color: var(--ink); min-width: 220px; }
+
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        thead th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); padding: 8px 10px; border-bottom: 1px solid var(--border); }
+        tbody td { padding: 11px 10px; border-bottom: 1px solid var(--border); color: var(--ink-soft); vertical-align: middle; }
+        tbody tr:last-child td { border-bottom: none; }
+        tbody tr:hover { background: var(--primary-soft); }
+        .name-cell { color: var(--ink); font-weight: 650; }
+        .mono { font-variant-numeric: tabular-nums; }
+
+        .llm-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; }
+        .llm-card { border: 1px solid var(--border); border-radius: 12px; padding: 18px; }
+        .llm-card h3 { font-size: 15px; margin: 0 0 2px; display: flex; align-items: center; gap: 8px; }
+        .llm-card .model { font-size: 12px; color: var(--muted); margin-bottom: 14px; word-break: break-all; }
+        .llm-meter { margin: 12px 0; }
+        .llm-meter .row { display: flex; justify-content: space-between; font-size: 12.5px; margin-bottom: 5px; gap: 8px; }
+        .llm-meter .row b { font-variant-numeric: tabular-nums; }
+        .llm-bar { height: 8px; border-radius: 999px; background: var(--border); overflow: hidden; }
+        .llm-bar > i { display: block; height: 100%; border-radius: 999px; }
+        .llm-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 14px; }
+        .llm-stats div { background: var(--bg); border-radius: 10px; padding: 10px 12px; }
+        .llm-stats span { display: block; font-size: 11.5px; color: var(--muted); }
+        .llm-stats b { font-size: 18px; font-variant-numeric: tabular-nums; }
+        .set-group { margin: 6px 0 22px; }
+        .set-group > h3 { font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 0 0 10px; }
+        .set-row { display: grid; grid-template-columns: minmax(180px, 1fr) minmax(220px, 1.4fr) auto; gap: 12px; align-items: start; padding: 12px 0; border-top: 1px solid var(--border); }
+        .set-row .name { font-weight: 700; font-size: 13.5px; }
+        .set-row .help { font-size: 12px; color: var(--muted); margin-top: 3px; line-height: 1.45; }
+        .set-row .default { font-size: 11.5px; color: var(--muted); margin-top: 6px; }
+        .set-row .status { font-size: 12px; margin-top: 6px; min-height: 16px; }
+        .set-row .status.err { color: var(--danger); }
+        .set-row .status.good { color: var(--success); }
+        .set-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+        .set-input { width: 100%; padding: 8px 10px; border: 1px solid var(--border); border-radius: 8px; font-size: 13px; background: var(--surface); color: var(--ink); }
+        .set-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79,91,255,.12); }
+        .btn-sm-primary { border: 0; background: var(--primary); color: #fff; border-radius: 999px; padding: 6px 14px; font-size: 12px; font-weight: 700; cursor: pointer; }
+        .btn-sm-primary:disabled { opacity: .6; cursor: default; }
+        @media (max-width: 820px) { .set-row { grid-template-columns: 1fr; } }
+        .llm-note { font-size: 12px; color: var(--muted); margin-top: 12px; line-height: 1.5; }
+        .btn-sm-outline { border: 1px solid var(--border); background: var(--surface); color: var(--ink); border-radius: 999px; padding: 5px 12px; font-size: 12px; font-weight: 600; cursor: pointer; }
+        .btn-sm-outline:hover { background: var(--primary-soft); }
+        .pill { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; white-space: nowrap; }
+        .pill.ok { background: var(--success-soft); color: var(--success); }
+        .pill.bad { background: var(--danger-soft); color: var(--danger); }
+        .pill.warn { background: var(--warn-soft); color: var(--warn); }
+        .pill.neutral { background: var(--border); color: var(--muted); }
+
+        .row-actions { display: flex; gap: 6px; }
+        .icon-btn { width: 28px; height: 28px; border-radius: 7px; border: 1px solid var(--border); background: var(--surface); color: var(--ink-soft); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 13px; }
+        .icon-btn:hover { background: var(--bg); }
+        .icon-btn.danger:hover { border-color: var(--danger); color: var(--danger); background: var(--danger-soft); }
+        .icon-btn.warn:hover { border-color: var(--warn); color: var(--warn); background: var(--warn-soft); }
+
+        .empty-row td { text-align: center; color: var(--muted); padding: 30px; }
+
+        .loading-row td { text-align: center; color: var(--muted); padding: 30px; }
+
+        .form-label { display: block; margin-bottom: 6px; }
+        .form-control { width: 100%; border: 1px solid var(--border); border-radius: 10px; padding: 9px 12px; font-size: 13.5px; background: var(--bg); color: var(--ink); }
+        .form-control:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79,91,255,.12); }
+        .password-wrapper { position: relative; }
+        .password-wrapper .form-control { padding-right: 44px; }
+        .password-toggle {
+            position: absolute; top: 50%; right: 6px; transform: translateY(-50%);
+            border: none; background: transparent; color: var(--muted);
+            width: 30px; height: 30px; border-radius: 6px;
+            display: flex; align-items: center; justify-content: center; cursor: pointer;
+        }
+        .password-toggle:hover { background: var(--bg); color: var(--ink); }
+        .success-box { background: var(--success-soft); color: var(--success); border-radius: 10px; padding: 10px 14px; font-size: 12.5px; margin-bottom: 14px; }
+        .error-box { background: var(--danger-soft); color: var(--danger); border-radius: 10px; padding: 10px 14px; font-size: 12.5px; margin-bottom: 14px; }
+
+        @media (max-width: 860px) {
+            body { flex-direction: column; }
+            .sidebar { width: 100%; height: auto; position: relative; display:flex; flex-wrap: wrap; gap: 4px; }
+            .content { padding: 20px 16px 40px; }
+        }
+    </style>
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=DM+Sans:wght@400;500;700&display=swap">
+    <link rel="stylesheet" href="css/theme-glass.css?v=1">
+</head>
+
+<body>
+
+<aside class="sidebar">
+    <div class="brand"><span class="dot"></span> HireFlow Admin</div>
+
+    <div class="nav-section-label">Platform</div>
+    <div class="nav-link active" data-target="overview"><i class="bi bi-speedometer2"></i> Overview</div>
+
+    <div class="nav-section-label">People</div>
+    <div class="nav-link" data-target="companies"><i class="bi bi-building"></i> HR / Company Registry</div>
+    <div class="nav-link" data-target="invites"><i class="bi bi-envelope"></i> Candidate Invites</div>
+
+    <div class="nav-section-label">AI Operations</div>
+    <div class="nav-link" data-target="connectors"><i class="bi bi-plug"></i> System Connectors</div>
+    <div class="nav-link" data-target="llm"><i class="bi bi-cpu"></i> LLM Usage</div>
+
+    <div class="nav-section-label">Account</div>
+    <div class="nav-link" data-target="settings"><i class="bi bi-gear"></i> Settings</div>
+</aside>
+
+<main class="main">
+
+    <div class="topbar">
+        <div>
+            <h1 id="pageTitle">Overview</h1>
+            <p id="pageSub">Platform-wide snapshot</p>
+        </div>
+        <div class="admin-chip" id="logoutChip"><div class="avatar" id="adminAvatar">A</div> <span id="adminEmail">Admin</span> <i class="bi bi-box-arrow-right ms-1"></i></div>
+    </div>
+
+    <div class="content">
+
+        <!-- ============ OVERVIEW ============ -->
+        <section class="section active" id="sec-overview">
+            <div class="kpi-row" id="kpiRow">
+                <div class="kpi-card"><div class="label">Registered Companies</div><div class="value" id="kpiCompanies">—</div></div>
+                <div class="kpi-card"><div class="label">Total Jobs Posted</div><div class="value" id="kpiJobs">—</div></div>
+                <div class="kpi-card"><div class="label">Candidate Invites Sent</div><div class="value" id="kpiInvites">—</div></div>
+                <div class="kpi-card"><div class="label">Suspended Companies</div><div class="value" id="kpiSuspended">—</div></div>
+            </div>
+            <div class="card">
+                <div class="card-head"><div><h2>Welcome</h2><div class="sub">Live data, pulled directly from the database on every load</div></div></div>
+                <p class="text-muted mb-0" style="font-size:13px;">Use the sidebar to manage HR/company accounts, review candidate invites sent across the platform, or check which AI providers and sandbox languages are actually connected right now.</p>
+            </div>
+        </section>
+
+        <!-- ============ COMPANIES ============ -->
+        <section class="section" id="sec-companies">
+            <div class="card">
+                <div class="card-head">
+                    <div><h2>Registered HR / companies</h2><div class="sub">Every company account — suspend, warn, or permanently delete</div></div>
+                    <input class="search-box" id="companySearch" placeholder="Search by company or email…">
+                </div>
+                <table>
+                    <thead><tr><th>Company</th><th>HR Contact</th><th>Email</th><th>Jobs</th><th>Invites</th><th>Warnings</th><th>Status</th><th>Registered</th><th></th></tr></thead>
+                    <tbody id="companiesTableBody"><tr class="loading-row"><td colspan="9">Loading…</td></tr></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ============ INVITES ============ -->
+        <section class="section" id="sec-invites">
+            <div class="card">
+                <div class="card-head">
+                    <div><h2>Candidate invite links</h2><div class="sub">Every invite sent across every company, newest first</div></div>
+                    <input class="search-box" id="inviteSearch" placeholder="Search by candidate email…">
+                </div>
+                <table>
+                    <thead><tr><th>Candidate Email</th><th>Job Title</th><th>Company</th><th>Sent</th><th>Expires</th><th>Status</th></tr></thead>
+                    <tbody id="invitesTableBody"><tr class="loading-row"><td colspan="6">Loading…</td></tr></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ============ CONNECTORS ============ -->
+        <section class="section" id="sec-connectors">
+            <div class="card">
+                <div class="card-head">
+                    <div><h2>AI provider per assessment stage</h2><div class="sub">Read directly from the server's live configuration</div></div>
+                    <span class="pill ok" id="connectorsCheckedAt">Checking…</span>
+                </div>
+                <table>
+                    <thead><tr><th>Provider</th><th>Used by</th><th>Status</th></tr></thead>
+                    <tbody id="providersTableBody"><tr class="loading-row"><td colspan="3">Loading…</td></tr></tbody>
+                </table>
+            </div>
+            <div class="card">
+                <div class="card-head"><div><h2>Programming sandbox — execution environments</h2><div class="sub">What actually runs candidate code</div></div></div>
+                <table>
+                    <thead><tr><th>Environment</th><th>Detail</th><th>Status</th></tr></thead>
+                    <tbody id="sandboxTableBody"><tr class="loading-row"><td colspan="3">Loading…</td></tr></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ============ LLM USAGE ============ -->
+        <section class="section" id="sec-llm">
+            <div class="card">
+                <div class="card-head">
+                    <div><h2>Groq and Gemini usage</h2><div class="sub">Groq numbers are its own live limits. Gemini shows what this platform has used.</div></div>
+                    <div style="display:flex;gap:8px;align-items:center;">
+                        <span class="pill neutral" id="llmCheckedAt">Loading…</span>
+                        <button type="button" class="btn-sm-outline" id="llmRefreshButton"><i class="bi bi-arrow-repeat"></i> Check now</button>
+                    </div>
+                </div>
+                <div id="llmProviders" class="llm-grid"><div class="loading-row">Loading…</div></div>
+            </div>
+            <div class="card">
+                <div class="card-head">
+                    <div><h2>Model controls</h2><div class="sub">Change which model each provider uses. A change is tested, saved and used by the very next request, with no restart.</div></div>
+                </div>
+                <div id="llmSettingsMessage"></div>
+                <div id="llmSettings"><div class="loading-row">Loading…</div></div>
+                <datalist id="groqModelList"></datalist>
+                <datalist id="geminiModelList"></datalist>
+            </div>
+            <div class="card">
+                <div class="card-head"><div><h2>Last 7 days</h2><div class="sub">Requests and tokens per day, both providers</div></div></div>
+                <table>
+                    <thead><tr><th>Day</th><th>Groq requests</th><th>Groq tokens</th><th>Gemini requests</th><th>Gemini tokens</th></tr></thead>
+                    <tbody id="llmHistoryBody"><tr class="loading-row"><td colspan="5">Loading…</td></tr></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ============ SETTINGS ============ -->
+        <section class="section" id="sec-settings">
+            <div class="card" style="max-width:440px;">
+                <div class="card-head">
+                    <div><h2>Change password</h2><div class="sub">Updates the password for your own admin account</div></div>
+                </div>
+
+                <div id="settingsMessage"></div>
+
+                <form id="changePasswordForm">
+
+                    <div class="mb-3">
+                        <label class="form-label" style="font-size:12.5px;font-weight:700;color:var(--ink-soft);">Current password</label>
+                        <div class="password-wrapper">
+                            <input type="password" class="form-control" id="currentPassword" required autocomplete="current-password">
+                            <button type="button" class="password-toggle" data-for="currentPassword" aria-label="Show password" title="Show password"><i class="bi bi-eye"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" style="font-size:12.5px;font-weight:700;color:var(--ink-soft);">New password</label>
+                        <div class="password-wrapper">
+                            <input type="password" class="form-control" id="newPassword" required minlength="8" autocomplete="new-password">
+                            <button type="button" class="password-toggle" data-for="newPassword" aria-label="Show password" title="Show password"><i class="bi bi-eye"></i></button>
+                        </div>
+                        <div class="form-text" style="font-size:11.5px;">At least 8 characters.</div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label" style="font-size:12.5px;font-weight:700;color:var(--ink-soft);">Confirm new password</label>
+                        <div class="password-wrapper">
+                            <input type="password" class="form-control" id="confirmPassword" required autocomplete="new-password">
+                            <button type="button" class="password-toggle" data-for="confirmPassword" aria-label="Show password" title="Show password"><i class="bi bi-eye"></i></button>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn" id="changePasswordButton" style="background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;border:0;border-radius:10px;padding:10px 20px;font-weight:700;font-size:13.5px;">
+                        <i class="bi bi-key me-1"></i> Update password
+                    </button>
+
+                </form>
+            </div>
+        </section>
+
+    </div>
+</main>
+
+<script src="js/csrf-fetch.js?v=1"></script>
+<script src="js/admin-dashboard.js?v=6"></script>
+
+</body>
+
+</html>

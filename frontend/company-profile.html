@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        http-equiv="Cache-Control"
+        content="no-cache, no-store, must-revalidate"
+    >
+
+    <meta
+        http-equiv="Pragma"
+        content="no-cache"
+    >
+
+    <meta
+        http-equiv="Expires"
+        content="0"
+    >
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>HR Profile - HireFlow AI</title>
+
+    <!-- Bootstrap -->
+    <link
+        href="vendor/bootstrap/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <!-- Bootstrap Icons -->
+    <link
+        rel="stylesheet"
+        href="vendor/bootstrap-icons/bootstrap-icons.min.css"
+    >
+
+    <style>
+
+        body {
+            background: #f5f7fb;
+            font-family: Arial, sans-serif;
+        }
+
+        /* =========================================
+           NAVBAR
+        ========================================= */
+
+        .navbar {
+            background: #111827;
+        }
+
+        .navbar-brand {
+            color: white;
+            font-weight: 700;
+        }
+
+        .navbar-brand:hover {
+            color: white;
+        }
+
+        .company-text {
+            color: #d1d5db;
+            font-size: 14px;
+        }
+
+        /* =========================================
+           SIDEBAR
+        ========================================= */
+
+        .sidebar {
+            min-height: calc(100vh - 56px);
+            background: white;
+            border-right: 1px solid #e5e7eb;
+            padding-top: 20px;
+        }
+
+        .sidebar .nav-link {
+            color: #4b5563;
+            padding: 12px 18px;
+            margin: 4px 10px;
+            border-radius: 8px;
+        }
+
+        .sidebar .nav-link:hover {
+            background: #f3f4f6;
+            color: #111827;
+        }
+
+        .sidebar .nav-link.active {
+            background: #111827;
+            color: white;
+        }
+
+        .sidebar .nav-link i {
+            margin-right: 10px;
+        }
+
+        /* =========================================
+           MAIN
+        ========================================= */
+
+        .main-content {
+            padding: 30px;
+        }
+
+        .page-title {
+            color: #111827;
+            font-weight: 700;
+        }
+
+        .page-subtitle {
+            color: #6b7280;
+        }
+
+        /* =========================================
+           CARDS
+        ========================================= */
+
+        .profile-card {
+            background: white;
+            border-radius: 16px;
+            padding: 26px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        /* =========================================
+           PROFILE HEADER
+        ========================================= */
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid #e5e7eb;
+            margin-bottom: 24px;
+        }
+
+        .company-avatar {
+            width: 78px;
+            height: 78px;
+            border-radius: 16px;
+            background: #111827;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            font-weight: 700;
+            flex-shrink: 0;
+            overflow: hidden;
+            border: 1px solid #e5e7eb;
+        }
+
+        .company-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .company-header-name {
+            font-size: 24px;
+            font-weight: 700;
+            color: #111827;
+        }
+
+        .company-header-legal {
+            color: #6b7280;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .verified-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 9px;
+            padding: 6px 11px;
+            border-radius: 20px;
+            background: #ecfdf5;
+            color: #15803d;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* =========================================
+           LOGO SECTION
+        ========================================= */
+
+        .logo-section {
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 20px;
+            background: #fafafa;
+            margin-bottom: 28px;
+        }
+
+        .logo-preview-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+
+        .logo-preview {
+            width: 110px;
+            height: 110px;
+            border-radius: 18px;
+            background: #111827;
+            color: white;
+            border: 1px solid #d1d5db;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            flex-shrink: 0;
+            font-size: 38px;
+            font-weight: 700;
+        }
+
+        .logo-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .logo-info {
+            flex: 1;
+            min-width: 220px;
+        }
+
+        .logo-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 5px;
+        }
+
+        .logo-description {
+            color: #6b7280;
+            font-size: 13px;
+            line-height: 1.6;
+            margin-bottom: 13px;
+        }
+
+        .logo-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .logo-button {
+            min-width: 120px;
+        }
+
+        .logo-file-input {
+            display: none;
+        }
+
+        .logo-file-name {
+            color: #6b7280;
+            font-size: 12px;
+            margin-top: 9px;
+        }
+
+        /* =========================================
+           SECTION TITLE
+        ========================================= */
+
+        .section-title {
+            color: #111827;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .section-description {
+            color: #6b7280;
+            font-size: 13px;
+            margin-bottom: 20px;
+        }
+
+        /* =========================================
+           FORM
+        ========================================= */
+
+        .form-label {
+            color: #374151;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .form-control,
+        .form-select {
+            border-color: #d1d5db;
+            min-height: 44px;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #9ca3af;
+            box-shadow: 0 0 0 0.2rem rgba(17, 24, 39, 0.08);
+        }
+
+        textarea.form-control {
+            min-height: 130px;
+            resize: vertical;
+        }
+
+        /* =========================================
+           READ ONLY FIELDS
+        ========================================= */
+
+        .readonly-box {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 11px 14px;
+            color: #6b7280;
+            min-height: 44px;
+        }
+
+        /* =========================================
+           VERIFICATION CARD
+        ========================================= */
+
+        .verification-card {
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .verification-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            padding: 13px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .verification-row:last-child {
+            border-bottom: none;
+        }
+
+        .verification-label {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .verification-value {
+            color: #111827;
+            font-size: 14px;
+            font-weight: 600;
+            text-align: right;
+        }
+
+        /* =========================================
+           BUTTONS
+        ========================================= */
+
+        .save-button {
+            min-width: 130px;
+        }
+
+        /* =========================================
+           MESSAGE
+        ========================================= */
+
+        #messageBox {
+            display: none;
+        }
+
+        /* =========================================
+           RESPONSIVE
+        ========================================= */
+
+        @media (max-width: 768px) {
+
+            .sidebar {
+                min-height: auto;
+                border-right: none;
+                border-bottom: 1px solid #e5e7eb;
+            }
+
+            .main-content {
+                padding: 20px;
+            }
+
+            .profile-header {
+                align-items: flex-start;
+            }
+
+            .company-header-name {
+                font-size: 21px;
+            }
+
+            .verification-row {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .verification-value {
+                text-align: left;
+            }
+
+            .logo-preview-wrapper {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+        }
+
+    </style>
+
+    <!-- Shared Company Visual Polish -->
+    <link rel="stylesheet" href="css/company.css">
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=DM+Sans:wght@400;500;700&display=swap">
+    <link rel="stylesheet" href="css/theme-glass.css?v=1">
+</head>
+
+<body>
+
+<!-- ==================================================
+     NAVBAR
+================================================== -->
+
+<nav class="navbar navbar-expand-lg">
+
+    <div class="container-fluid px-4">
+
+        <a
+            class="navbar-brand"
+            href="company-dashboard.html"
+        >
+
+            <i class="bi bi-robot me-2"></i>
+
+            HireFlow AI
+
+        </a>
+
+        <div class="d-flex align-items-center gap-3">
+
+            <span
+                class="company-text"
+                id="navbarCompanyName"
+            >
+                Company
+            </span>
+
+            <button
+                type="button"
+                class="btn btn-outline-light btn-sm"
+                id="logoutButton"
+            >
+
+                <i class="bi bi-box-arrow-right me-1"></i>
+
+                Logout
+
+            </button>
+
+        </div>
+
+    </div>
+
+</nav>
+
+<div class="container-fluid">
+
+    <div class="row">
+
+        <!-- ==================================================
+             SIDEBAR
+        ================================================== -->
+
+        <aside class="col-md-3 col-lg-2 sidebar">
+
+            <nav class="nav flex-column">
+
+                <a
+                    href="company-dashboard.html"
+                    class="nav-link"
+                >
+
+                    <i class="bi bi-speedometer2"></i>
+
+                    Dashboard
+
+                </a>
+
+                <a
+                    href="company-profile.html"
+                    class="nav-link active"
+                >
+
+                    <i class="bi bi-person-badge"></i>
+
+                    HR Profile
+
+                </a>
+
+                <a
+                    href="company-invite-candidate.html"
+                    class="nav-link"
+                >
+
+                    <i class="bi bi-person-plus"></i>
+
+                    Invite a Candidate
+
+                </a>
+
+                <a
+                    href="company-candidate-tracking.html"
+                    class="nav-link"
+                    id="applicantsLink"
+                >
+                    <i class="bi bi-signpost-split"></i>
+                    Candidate Tracking
+                </a>
+
+                <hr class="mx-3">
+
+                <a
+                    href="company-settings.html"
+                    class="nav-link"
+                    id="settingsLink"
+                >
+
+                    <i class="bi bi-gear"></i>
+
+                    Settings
+
+                </a>
+
+            </nav>
+
+        </aside>
+
+        <!-- ==================================================
+             MAIN
+        ================================================== -->
+
+        <main class="col-md-9 col-lg-10 main-content">
+
+            <!-- PAGE HEADER -->
+
+            <div class="mb-4">
+
+                <h2 class="page-title mb-1">
+                    HR Profile
+                </h2>
+
+                <p class="page-subtitle mb-0">
+                    Basic information about you and your company.
+                </p>
+
+            </div>
+
+            <!-- MESSAGE -->
+
+            <div
+                id="messageBox"
+                class="alert"
+                role="alert"
+            >
+            </div>
+
+            <div class="row g-4">
+
+                <!-- ==================================================
+                     PROFILE FORM
+                ================================================== -->
+
+                <div class="col-lg-8">
+
+                    <div class="profile-card">
+
+                        <!-- PROFILE HEADER -->
+
+                        <div class="profile-header">
+
+                            <div
+                                class="company-avatar"
+                                id="companyAvatar"
+                            >
+                                C
+                            </div>
+
+                            <div>
+
+                                <div
+                                    class="company-header-name"
+                                    id="headerCompanyName"
+                                >
+                                    Company
+                                </div>
+
+                                <div
+                                    class="company-header-legal"
+                                    id="headerHrName"
+                                >
+                                    HR
+                                </div>
+
+                                <div class="verified-badge">
+
+                                    <i class="bi bi-patch-check-fill"></i>
+
+                                    Verified Company
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <!-- ==================================================
+                             COMPANY LOGO
+                        ================================================== -->
+
+                        <div class="logo-section">
+
+                            <div class="section-title">
+                                Company Logo
+                            </div>
+
+                            <div class="section-description">
+                                Upload a professional logo that candidates can recognize.
+                            </div>
+
+                            <div class="logo-preview-wrapper">
+
+                                <div
+                                    class="logo-preview"
+                                    id="logoPreview"
+                                >
+                                    C
+                                </div>
+
+                                <div class="logo-info">
+
+                                    <div class="logo-title">
+                                        Add your company logo
+                                    </div>
+
+                                    <div class="logo-description">
+                                        Use a clear square logo for the best appearance.
+                                        Supported formats: JPG, PNG and WEBP.
+                                        Maximum file size: 5 MB.
+                                    </div>
+
+                                    <div class="logo-buttons">
+
+                                        <input
+                                            type="file"
+                                            id="logoFileInput"
+                                            class="logo-file-input"
+                                            accept="image/jpeg,image/png,image/webp"
+                                        >
+
+                                        <button
+                                            type="button"
+                                            class="btn btn-dark btn-sm logo-button"
+                                            id="uploadLogoButton"
+                                        >
+
+                                            <i class="bi bi-upload me-1"></i>
+
+                                            Upload Logo
+
+                                        </button>
+
+                                        <button
+                                            type="button"
+                                            class="btn btn-outline-dark btn-sm logo-button"
+                                            id="removeLogoButton"
+                                        >
+
+                                            <i class="bi bi-trash me-1"></i>
+
+                                            Remove Logo
+
+                                        </button>
+
+                                    </div>
+
+                                    <div
+                                        class="logo-file-name"
+                                        id="logoFileName"
+                                    >
+                                        No new logo selected.
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <!-- ==================================================
+                             BASIC INFORMATION
+                        ================================================== -->
+
+                        <div class="section-title">
+                            Basic Information
+                        </div>
+
+                        <div class="section-description">
+                            Basic details about you and the company you represent.
+                        </div>
+
+                        <div class="row g-3 mb-4">
+
+                            <!-- HR NAME -->
+
+                            <div class="col-md-6">
+
+                                <label
+                                    for="hrName"
+                                    class="form-label"
+                                >
+                                    Your Name
+                                </label>
+
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="hrName"
+                                    maxlength="150"
+                                    placeholder="Your full name"
+                                >
+
+                            </div>
+
+                            <!-- COMPANY NAME (read-only) -->
+
+                            <div class="col-md-6">
+
+                                <label class="form-label">
+                                    Company Name
+                                </label>
+
+                                <div
+                                    class="readonly-box"
+                                    id="companyNameDisplay"
+                                >
+                                    -
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <!-- ==================================================
+                             ACCOUNT INFORMATION
+                        ================================================== -->
+
+                        <div class="section-title">
+                            Account Information
+                        </div>
+
+                        <div class="section-description">
+                            These details are linked to your company account. Change them from
+                            <a href="company-settings.html">Settings</a>.
+                        </div>
+
+                        <div class="row g-3 mb-4">
+
+                            <div class="col-md-6">
+
+                                <label class="form-label">
+                                    Company Email
+                                </label>
+
+                                <div
+                                    class="readonly-box"
+                                    id="companyEmail"
+                                >
+                                    -
+                                </div>
+
+                            </div>
+
+                            <div class="col-md-6">
+
+                                <label class="form-label">
+                                    Mobile Number
+                                </label>
+
+                                <div
+                                    class="readonly-box"
+                                    id="companyMobile"
+                                >
+                                    -
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <!-- SAVE -->
+
+                        <div class="d-flex justify-content-end">
+
+                            <button
+                                type="button"
+                                class="btn btn-dark save-button"
+                                id="saveProfileButton"
+                            >
+
+                                <i class="bi bi-check-lg me-1"></i>
+
+                                Save Changes
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- ==================================================
+                     RIGHT SIDE
+                ================================================== -->
+
+                <div class="col-lg-4">
+
+                    <!-- VERIFICATION -->
+
+                    <div class="profile-card">
+
+                        <div class="section-title">
+                            Verification
+                        </div>
+
+                        <div class="section-description">
+                            Your account's current verification status.
+                        </div>
+
+                        <div class="verification-card">
+
+                            <div class="verification-row">
+
+                                <div class="verification-label">
+                                    Business Status
+                                </div>
+
+                                <div
+                                    class="verification-value text-success"
+                                    id="verificationStatus"
+                                >
+                                    Verified
+                                </div>
+
+                            </div>
+
+                            <div class="verification-row">
+
+                                <div class="verification-label">
+                                    Email Verified
+                                </div>
+
+                                <div
+                                    class="verification-value"
+                                    id="emailVerified"
+                                >
+                                    No
+                                </div>
+
+                            </div>
+
+                            <div class="verification-row">
+
+                                <div class="verification-label">
+                                    Mobile Verified
+                                </div>
+
+                                <div
+                                    class="verification-value"
+                                    id="mobileVerified"
+                                >
+                                    No
+                                </div>
+
+                            </div>
+
+                            <div class="verification-row">
+
+                                <div class="verification-label">
+                                    Company ID
+                                </div>
+
+                                <div
+                                    class="verification-value"
+                                    id="companyId"
+                                >
+                                    -
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="alert alert-light border mt-3 mb-0 small">
+
+                            <i class="bi bi-shield-check me-1"></i>
+
+                            Your account is active and ready to use.
+
+                        </div>
+
+                    </div>
+
+                    <!-- HELP CARD -->
+
+                    <div class="profile-card mt-4">
+
+                        <div class="section-title">
+                            Profile Tips
+                        </div>
+
+                        <div class="section-description mb-0">
+                            A complete profile helps candidates recognize who's reaching out.
+                        </div>
+
+                        <div class="mt-3 small text-muted">
+
+                            <div class="mb-2">
+
+                                <i class="bi bi-check-circle me-2"></i>
+
+                                Keep your name up to date.
+
+                            </div>
+
+                            <div>
+
+                                <i class="bi bi-check-circle me-2"></i>
+
+                                Upload a clear company logo.
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </main>
+
+    </div>
+
+</div>
+
+<!-- Bootstrap JS -->
+
+<script
+    src="vendor/bootstrap/bootstrap.bundle.min.js"
+></script>
+
+<!-- Company Profile JS -->
+
+<script src="js/session-guard.js?v=3"></script>
+<script src="js/csrf-fetch.js"></script>
+<script src="js/company-profile.js?v=5"></script>
+
+</body>
+
+</html>

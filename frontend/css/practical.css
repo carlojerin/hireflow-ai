@@ -1,0 +1,125 @@
+/* Practical (work-sample) assessments: written tasks and the data table environment (see js/practical-environment.js). */
+
+.practical-card { text-align: left; }
+
+.practical-scenario {
+    background: rgba(79, 91, 255, 0.07);
+    border: 1px solid rgba(79, 91, 255, 0.18);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin: 10px 0 12px;
+    line-height: 1.6;
+    white-space: normal;
+}
+
+.practical-instructions { margin-bottom: 10px; }
+
+.practical-text { min-height: 190px; line-height: 1.55; resize: vertical; }
+
+.practical-counter { margin-top: 6px; text-align: right; }
+
+.practical-answer-row { display: flex; align-items: center; gap: 10px; margin-top: 10px; max-width: 460px; }
+
+.practical-unit { font-weight: 600; color: #5a5f8c; white-space: nowrap; }
+
+.practical-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+    gap: 16px;
+    align-items: start;
+}
+
+.practical-sheet {
+    position: sticky;
+    top: 12px;
+    background: rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(20, 24, 58, 0.1);
+    border-radius: 16px;
+    padding: 14px;
+    box-shadow: 0 10px 30px rgba(70, 60, 200, 0.12);
+    text-align: left;
+}
+
+.practical-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 10px 0; }
+.practical-tools input[type="search"] { max-width: 230px; }
+
+.practical-scroll { max-height: 440px; overflow: auto; border: 1px solid rgba(20, 24, 58, 0.1); border-radius: 10px; background: #fff; }
+
+.practical-table { border-collapse: collapse; width: 100%; font-size: 13px; font-variant-numeric: tabular-nums; }
+
+.practical-table th {
+    position: sticky;
+    top: 0;
+    background: #eef1ff;
+    color: #14183a;
+    text-align: left;
+    padding: 6px 8px;
+    white-space: nowrap;
+    border-bottom: 1px solid rgba(20, 24, 58, 0.12);
+    z-index: 1;
+}
+
+.practical-table th button { background: none; border: 0; padding: 0; font: inherit; font-weight: 600; color: inherit; cursor: pointer; }
+.practical-table th .practical-pick { margin-left: 4px; color: #4f5bff; }
+
+.practical-table td { padding: 5px 8px; border-bottom: 1px solid rgba(20, 24, 58, 0.06); cursor: cell; white-space: nowrap; user-select: none; }
+.practical-table tr:nth-child(even) td { background: #f8f9ff; }
+.practical-table td:hover { background: #e6e9ff; }
+.practical-table td.is-selected { background: #cfd6ff !important; outline: 1px solid #4f5bff; outline-offset: -1px; }
+
+.practical-status { margin-top: 10px; padding: 8px 10px; background: #14183a; color: #eef1ff; border-radius: 10px; }
+
+.practical-calc { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+.practical-calc input { max-width: 240px; }
+
+@media (max-width: 991px) {
+    .practical-layout { grid-template-columns: 1fr; }
+    .practical-sheet { position: static; }
+}
+
+
+/* voice role-play call */
+.roleplay-controls { display: flex; flex-wrap: wrap; gap: 10px; margin: 12px 0; }
+.roleplay-status { padding: 10px 14px; border-radius: 12px; background: rgba(79, 91, 255, 0.08); color: #14183a; font-weight: 500; }
+.roleplay-status.is-live { background: #e6efff; }
+.roleplay-status.is-error { background: #ffe9ec; color: #7a1228; }
+.roleplay-status.is-done { background: #e3f6ec; color: #0b5a3a; }
+.roleplay-meter { height: 6px; border-radius: 999px; background: rgba(20, 24, 58, 0.1); margin-top: 8px; overflow: hidden; }
+.roleplay-meter span { display: block; height: 100%; width: 0; background: linear-gradient(90deg, #5b5bff, #3e7bff); transition: width 0.08s linear; }
+.roleplay-caption { min-height: 28px; margin-top: 10px; font-style: italic; color: #3d4272; }
+
+
+/* web design editor */
+.pd-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.pd-swatch { display: inline-block; width: 14px; height: 14px; border-radius: 4px; vertical-align: -2px; border: 1px solid rgba(0,0,0,.2); }
+.pd-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.pd-chip { border: 1px solid rgba(79, 91, 255, .35); background: #fff; color: #2a33c9; border-radius: 999px; padding: 2px 10px; font-size: 12px; cursor: pointer; text-align: left; }
+.pd-chip:hover { background: #e6e9ff; }
+.pd-editor { background: rgba(255, 255, 255, 0.7); border: 1px solid rgba(20, 24, 58, 0.1); border-radius: 16px; padding: 12px; margin-bottom: 14px; text-align: left; }
+.pd-toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 10px; }
+.pd-body { display: grid; grid-template-columns: 170px minmax(0, 1fr) 230px; gap: 12px; align-items: start; }
+.pd-palette { display: flex; flex-direction: column; gap: 6px; }
+.pd-palette-item { border: 1px solid rgba(20, 24, 58, 0.18); background: #fff; border-radius: 10px; padding: 7px 10px; font-size: 13px; text-align: left; cursor: grab; }
+.pd-palette-item:hover { border-color: #4f5bff; background: #f3f5ff; }
+.pd-stage { overflow: auto; max-height: 720px; border: 1px solid rgba(20, 24, 58, 0.15); border-radius: 12px; background: #f1f2f7; padding: 8px; }
+.pd-canvas-wrap { position: relative; margin: 0 auto; }
+.pd-canvas { position: relative; background: #ffffff; background-image: linear-gradient(rgba(20,24,58,.05) 1px, transparent 1px), linear-gradient(90deg, rgba(20,24,58,.05) 1px, transparent 1px); background-size: 40px 40px; box-shadow: 0 4px 18px rgba(20,24,58,.12); touch-action: none; user-select: none; }
+.pd-canvas.pd-readonly { background-image: none; box-shadow: none; }
+.pd-el { cursor: move; }
+.pd-el.is-selected { outline: 2px solid #4f5bff; outline-offset: 1px; z-index: 5; }
+.pd-handle { position: absolute; right: 0; bottom: 0; width: 14px; height: 14px; background: #4f5bff; border-radius: 3px 0 0 0; cursor: nwse-resize; }
+.pd-static { border: 1px solid rgba(20, 24, 58, 0.15); border-radius: 8px; overflow: hidden; background: #fff; }
+.pd-props { background: #fff; border: 1px solid rgba(20, 24, 58, 0.12); border-radius: 12px; padding: 10px; font-size: 13px; }
+.pd-label { display: block; font-size: 11px; color: #5a5f8c; margin: 6px 0 2px; }
+.pd-row { display: flex; gap: 6px; }
+.pd-row > div { flex: 1; min-width: 0; }
+@media (max-width: 1100px) { .pd-body { grid-template-columns: 1fr; } .pd-palette { flex-direction: row; flex-wrap: wrap; } .pd-columns { grid-template-columns: 1fr; } }
+
+
+/* technical lab: an artifact with line numbers */
+.lab-scroll { background: #0f172a; color: #e2e8f0; font-family: ui-monospace, Consolas, 'Courier New', monospace; font-size: 12.5px; max-height: 480px; }
+.lab-line { display: flex; gap: 10px; padding: 0 8px; white-space: pre; cursor: pointer; }
+.lab-line:hover { background: rgba(148, 163, 184, .15); }
+.lab-line.is-marked { background: rgba(250, 204, 21, .28); }
+.lab-no { flex: 0 0 34px; text-align: right; color: #64748b; user-select: none; }
+.lab-text { flex: 1; min-width: 0; }

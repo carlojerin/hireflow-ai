@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AI Interview - HireFlow AI</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/ai-interview-v2.css?v=8">
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=DM+Sans:wght@400;500;700&display=swap">
+    <link rel="stylesheet" href="css/theme-glass.css?v=1">
+</head>
+
+
+<body class="dashboard-body" data-hf="calm">
+
+
+    <nav class="navbar navbar-dark jobpilot-navbar">
+        <div class="container-fluid px-4">
+            <a href="index.html" class="navbar-brand fw-bold">🚀 HireFlow AI</a>
+            <a href="assessment.html" data-dashboard-link class="btn btn-light btn-sm rounded-pill px-3">
+                <i class="bi bi-arrow-left me-1"></i> Back to Dashboard
+            </a>
+        </div>
+    </nav>
+
+
+    <main class="iv2-viewport">
+
+        <div class="iv2-page">
+
+            <div id="iv2Loading" class="text-center">
+                <div class="spinner-border text-primary" role="status"></div>
+                <div class="fw-semibold mt-3">Loading your AI interview...</div>
+            </div>
+
+            <div id="iv2Message"></div>
+
+            <div id="iv2Topbar" class="iv2-topbar" style="display:none;">
+
+                <div class="iv2-topbar-left">
+                    <span class="iv2-job-title" id="iv2JobTitle">Job Title</span>
+                    <span class="iv2-company-name" id="iv2CompanyName"></span>
+                </div>
+
+                <div class="iv2-topbar-right">
+                    <div class="iv2-integrity">
+                        <span class="iv2-integrity-dot" id="iv2IntegrityDot"></span>
+                        <span id="iv2IntegrityStatus">Camera initializing…</span>
+                    </div>
+                    <div class="iv2-timer" id="iv2Timer">30:00</div>
+                </div>
+
+            </div>
+
+            <div id="iv2Body" class="iv2-shell" style="display:none;">
+
+                <section class="iv2-stage-col iv2-room" aria-label="AI interview video room">
+
+                    <div class="iv2-room-main">
+
+                        <div class="iv2-avatar-frame" id="iv2AvatarFrame" data-state="idle" role="img" aria-label="AI interviewer (fixed image)">
+                            <!-- Task 8: the AI interviewer is a FIXED IMAGE (not a live avatar). The optional live
+                                 avatar video (Tavus) is only shown if that mode is explicitly enabled on the server. -->
+                            <img id="iv2InterviewerImage" class="iv2-interviewer-image" alt="AI Interviewer" width="640" height="640" decoding="async">
+                            <video id="iv2AvatarVideo" class="iv2-avatar-video" autoplay playsinline style="display:none;"></video>
+                            <div class="iv2-avatar-placeholder" id="iv2AvatarPlaceholder" style="display:none;">
+                                <i class="bi bi-robot" aria-hidden="true"></i>
+                            </div>
+                            <div class="iv2-interviewer-badge" role="status" aria-live="polite">
+                                <span class="iv2-speaking-indicator" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+                                <span class="iv2-interviewer-name">AI Interviewer</span>
+                                <span class="iv2-interviewer-state" id="iv2InterviewerState">Ready</span>
+                            </div>
+                        </div>
+
+                        <div class="iv2-candidate-frame" id="iv2CandidateFrame" role="img" aria-label="Your camera preview">
+                            <video id="iv2CandidateVideo" class="iv2-candidate-video" autoplay playsinline muted style="display:none;"></video>
+                            <div class="iv2-candidate-placeholder" id="iv2CandidatePlaceholder">
+                                <i class="bi bi-camera-video-off" aria-hidden="true"></i>
+                            </div>
+                            <div class="iv2-candidate-label">You</div>
+                        </div>
+
+                        <div class="iv2-caption" id="iv2Caption" aria-live="polite" hidden></div>
+
+                        <div class="iv2-recording-indicator" id="iv2RecordingIndicator" style="display:none;" role="status" aria-live="polite"></div>
+
+                    </div>
+
+                    <div class="iv2-room-statusbar">
+                        <span id="iv2AvatarStatus" aria-live="polite">Connecting…</span>
+                        <span class="iv2-room-dot" id="iv2RoomDot" aria-hidden="true"></span>
+                        <span id="iv2RoomStatusText" aria-live="polite">Room connecting…</span>
+                    </div>
+
+                    <div class="iv2-room-controls" role="group" aria-label="Interview call controls">
+
+                        <button type="button" class="iv2-join-btn" id="iv2JoinButton">
+                            <i class="bi bi-telephone-fill" aria-hidden="true"></i>
+                            <span>Start voice interview</span>
+                        </button>
+
+                        <button type="button" class="iv2-control-btn" id="iv2MicToggleButton" aria-pressed="true" aria-label="Mute microphone">
+                            <i class="bi bi-mic-fill" aria-hidden="true"></i>
+                            <span id="iv2MicToggleLabel">Mic On</span>
+                        </button>
+
+                        <button type="button" class="iv2-control-btn" id="iv2CameraRetryButton" style="display:none;" aria-label="Retry the camera">
+                            <i class="bi bi-arrow-repeat" aria-hidden="true"></i>
+                            <span>Retry camera</span>
+                        </button>
+
+                        <button type="button" class="iv2-control-btn" id="iv2CameraToggleButton" aria-pressed="true" aria-label="Turn camera off">
+                            <i class="bi bi-camera-video-fill" aria-hidden="true"></i>
+                            <span id="iv2CameraToggleLabel">Camera On</span>
+                        </button>
+
+                    </div>
+
+                </section>
+
+                <aside class="iv2-panel-col" aria-label="Transcript and interview settings">
+
+                    <div class="iv2-transcript-title"><i class="bi bi-chat-text me-1"></i> Live transcript</div>
+                    <div class="iv2-conversation" id="iv2Conversation" aria-live="polite"></div>
+
+                    <div class="iv2-voice-card" id="iv2VoiceCard" style="display:none;">
+
+                        <div class="iv2-voice-status" id="iv2VoiceStatus">
+                            <i class="bi bi-mic"></i>
+                            <span id="iv2VoiceStatusText">Your turn</span>
+                        </div>
+
+                        <div class="iv2-mic-meter" aria-hidden="true"><div class="iv2-mic-meter-bar" id="iv2MicLevelBar"></div></div>
+
+                        <button type="button" class="btn btn-primary rounded-pill px-4" id="iv2StartSpeakingButton">
+                            <i class="bi bi-mic-fill me-1"></i> Start Speaking
+                        </button>
+
+                        <div id="iv2TranscriptPreview" class="iv2-transcript-preview" style="display:none;">
+                            <div class="small text-muted fw-bold text-uppercase mb-1" style="font-size:11px;">Recognized answer</div>
+                            <div id="iv2TranscriptText" class="iv2-transcript-text"></div>
+                            <div class="iv2-transcript-actions">
+                                <button type="button" class="btn btn-primary rounded-pill px-3" id="iv2UseAnswerButton">
+                                    <i class="bi bi-check2 me-1"></i> Use Answer
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary rounded-pill px-3" id="iv2RetryVoiceButton">
+                                    <i class="bi bi-arrow-repeat me-1"></i> Speak Again
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <details class="iv2-input-card iv2-type-fallback" id="iv2TypeFallback">
+                        <summary><i class="bi bi-keyboard me-1"></i> Type your answer</summary>
+
+                        <div class="iv2-voice-toggle-row" hidden>
+                            <label class="iv2-voice-toggle">
+                                <input type="checkbox" id="iv2VoiceModeToggle">
+                                <span><i class="bi bi-soundwave me-1"></i> Voice Mode</span>
+                            </label>
+                        </div>
+
+                        <textarea
+                            id="iv2AnswerInput"
+                            class="iv2-textarea"
+                            placeholder="Type your response here..."
+                        ></textarea>
+
+                        <div class="iv2-input-footer">
+                            <span class="small text-muted">Only needed if you cannot speak. Take your time — there's no rush.</span>
+                            <button type="button" class="btn btn-primary rounded-pill px-4" id="iv2SubmitButton">
+                                <i class="bi bi-send me-1"></i> Submit Answer
+                            </button>
+                        </div>
+
+                    </details>
+
+                    <div class="iv2-progress-card" hidden style="display:none">
+                        <div class="small text-muted fw-bold text-uppercase mb-1" style="font-size:11px;">Conversation Progress</div>
+                        <div id="iv2ProgressList"></div>
+                    </div>
+
+                </aside>
+
+            </div>
+
+            <div id="iv2ResultSection" style="display:none;">
+                <div class="iv2-result-card">
+                    <div class="iv2-result-icon"><i class="bi bi-chat-dots"></i></div>
+                    <h3 class="fw-bold mb-2">Thank you. Your responses have been saved.</h3>
+                    <p class="text-muted mb-2">Your interview is complete. The hiring team will review it along with the rest of your assessment, and HR will contact you if you are selected to move forward. You can now leave this page.</p>
+                    <p class="small text-muted mb-0" id="iv2UploadStatus" aria-live="polite"></p>
+                    <a href="assessment.html" data-dashboard-link id="iv2BackButton" class="btn btn-outline-primary rounded-pill px-4 mt-3">
+                        Back to Dashboard
+                    </a>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="./js/session-guard.js?v=3"></script>
+    <script src="./js/csrf-fetch.js?v=1"></script>
+    <script src="./js/assessment-instructions.js?v=4"></script>
+    <script src="./js/device-check-lobby.js?v=1"></script>
+    <script src="./js/camera-quality.js?v=1"></script>
+    <script src="./js/face-proctor.js?v=4"></script>
+    <script src="./js/integrity-guards.js?v=3"></script>
+    <script src="./js/audio-proctor.js?v=1"></script>
+    <script src="./js/voice-identity-proctor.js?v=1"></script>
+    <script src="./js/screen-proctor.js?v=2"></script>
+    <script src="./js/assessment-integrity.js?v=103"></script>
+    <script src="./js/assessment-video-recorder.js?v=4"></script>
+    <script src="./js/phone-detector.js?v=6"></script>
+    <script src="./js/interview-voice-turn-logic-v2.js?v=4"></script>
+    <script src="./js/interview-visual-state-v2.js?v=1"></script>
+    <script src="./js/interview-voice-v2.js?v=10"></script>
+    <script src="https://cdn.jsdelivr.net/npm/livekit-client@2.22.3/dist/livekit-client.umd.min.js"></script>
+    <script src="./js/interview-avatar-turn-logic-v2.js?v=1"></script>
+    <script src="./js/interview-avatar-v2.js?v=9"></script>
+    <script src="./js/interview-video-room-turn-logic-v2.js?v=1"></script>
+    <script src="./js/interview-video-room-v2.js?v=3"></script>
+    <script src="./js/ai-interview-v2.js?v=30"></script>
+
+
+    <script src="./js/dashboard-link.js"></script>
+</body>
+
+</html>

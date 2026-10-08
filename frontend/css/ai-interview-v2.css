@@ -1,0 +1,847 @@
+/* =========================================================
+   JOBPILOT AI - AI INTERVIEW V2 (ADAPTIVE CONVERSATION)
+   Task 5H. Standalone stylesheet -- does not modify or depend on
+   interview.css, so the existing legacy AI Interview page keeps
+   rendering exactly as before. Reuses only the global tokens
+   already defined in css/style.css.
+
+   Single-frame layout: the video stage and the transcript/settings
+   panel sit side by side and fill the viewport below the navbar, so
+   every control (call buttons, live transcript, voice status, the
+   typed-answer fallback, conversation progress) is visible together
+   without scrolling the page. Only the transcript list and the
+   settings panel itself scroll internally if their content grows.
+   ========================================================= */
+
+:root {
+    --iv2-navbar-h: 64px;
+    --iv2-panel-w: 380px;
+}
+
+.iv2-viewport {
+    height: calc(100vh - var(--iv2-navbar-h));
+    padding: 18px 24px;
+    display: flex;
+    box-sizing: border-box;
+}
+
+.iv2-page {
+    width: 100%;
+    max-width: 1440px;
+    margin: 0 auto;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+
+/* ---------------------------------------------------------
+   TOP BAR
+   --------------------------------------------------------- */
+
+.iv2-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
+    flex: 0 0 auto;
+    background: var(--dark, #0f172a);
+    color: #e5e7eb;
+    border-radius: var(--radius-md, 18px);
+    padding: 12px 20px;
+    margin-bottom: 14px;
+}
+
+.iv2-topbar-left {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.iv2-job-title {
+    font-weight: 800;
+    font-size: 15px;
+    color: #f8fafc;
+}
+
+.iv2-company-name {
+    font-size: 12px;
+    color: #94a3b8;
+}
+
+.iv2-topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.iv2-integrity {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: #cbd5e1;
+}
+
+.iv2-integrity-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #64748b;
+    flex: none;
+}
+
+.iv2-integrity-dot.is-ready { background: #22c55e; box-shadow: 0 0 0 3px rgba(34,197,94,.18); }
+.iv2-integrity-dot.is-warning { background: #f59e0b; box-shadow: 0 0 0 3px rgba(245,158,11,.18); }
+.iv2-integrity-dot.is-error { background: #ef4444; box-shadow: 0 0 0 3px rgba(239,68,68,.18); }
+
+.iv2-timer {
+    font-variant-numeric: tabular-nums;
+    font-weight: 800;
+    font-size: 15px;
+    color: #fff;
+    background: rgba(255,255,255,0.08);
+    border-radius: 8px;
+    padding: 3px 12px;
+}
+
+.iv2-timer.is-urgent { color: #fecaca; background: rgba(239,68,68,0.22); }
+
+
+/* ---------------------------------------------------------
+   SHELL: stage + panel, side by side, fills the rest of the frame
+   --------------------------------------------------------- */
+
+.iv2-shell {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    gap: 16px;
+}
+
+.iv2-stage-col {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.iv2-panel-col {
+    flex: 0 0 var(--iv2-panel-w);
+    width: var(--iv2-panel-w);
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: var(--shadow-sm, 0 4px 15px rgba(15,23,42,.05));
+    overflow: hidden;
+}
+
+/* one seamless panel, Meet/chat-style: sections below are divided by a
+   hairline instead of stacking as separate floating cards */
+.iv2-panel-col > * {
+    flex: 0 0 auto;
+    border-radius: 0;
+    box-shadow: none;
+    background: transparent;
+    margin: 0;
+}
+
+.iv2-panel-col > .iv2-transcript-title {
+    flex: 0 0 auto;
+    padding: 16px 18px 10px;
+    margin: 0;
+}
+
+.iv2-panel-col > .iv2-conversation {
+    flex: 1 1 auto;
+    min-height: 60px;
+    padding: 0 18px 10px;
+}
+
+.iv2-panel-col > .iv2-voice-card,
+.iv2-panel-col > .iv2-input-card,
+.iv2-panel-col > .iv2-progress-card {
+    border-top: 1px solid var(--border, #e5e7eb);
+    padding: 14px 18px;
+}
+
+
+/* ---------------------------------------------------------
+   VIDEO STAGE (Meet-style: dark stage, round interviewer avatar,
+   self-view tile, caption bar, round call buttons)
+   --------------------------------------------------------- */
+
+.iv2-room {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.iv2-room-main {
+    position: relative;
+    flex: 1 1 auto;
+    min-height: 0;
+    border-radius: 20px;
+    overflow: hidden;
+    background: radial-gradient(ellipse at 50% 38%, #3c4043 0%, #202124 70%);
+}
+
+.iv2-avatar-frame {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 6%;
+    box-sizing: border-box;
+    background: transparent;
+    transition: box-shadow .25s ease;
+}
+
+/* Task 8: the fixed interviewer image. It is STATIC: only the frame ring and the
+   badge indicator change with state; the picture itself never moves or "talks". */
+.iv2-interviewer-image {
+    height: 56%;
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: center 22%;
+    box-shadow: 0 0 0 4px rgba(255,255,255,.08), 0 18px 50px rgba(0,0,0,.5);
+}
+
+.iv2-avatar-frame[data-state="speaking"] .iv2-interviewer-image {
+    box-shadow: 0 0 0 4px #8ab4f8, 0 0 0 14px rgba(138,180,248,.25), 0 18px 50px rgba(0,0,0,.5);
+}
+.iv2-avatar-frame[data-state="thinking"] .iv2-interviewer-image { box-shadow: 0 0 0 4px #fdd663, 0 18px 50px rgba(0,0,0,.5); }
+.iv2-avatar-frame[data-state="candidate-speaking"] .iv2-interviewer-image { box-shadow: 0 0 0 4px rgba(255,255,255,.35), 0 18px 50px rgba(0,0,0,.5); }
+.iv2-avatar-frame[data-state="error"] .iv2-interviewer-image { box-shadow: 0 0 0 4px #ef4444, 0 18px 50px rgba(0,0,0,.5); }
+.iv2-avatar-frame[data-state="completed"] .iv2-interviewer-image { filter: saturate(.7) brightness(.85); }
+
+.iv2-interviewer-badge {
+    position: absolute;
+    left: 14px;
+    bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    max-width: calc(100% - 28px);
+    padding: 6px 12px;
+    border-radius: 8px;
+    background: rgba(32,33,36,.72);
+    color: #fff;
+    font-size: 13px;
+    line-height: 1.2;
+    backdrop-filter: blur(4px);
+}
+
+.iv2-interviewer-name { font-weight: 700; }
+.iv2-interviewer-state { color: #cbd5e1; }
+
+/* equalizer bars: visible ONLY while the existing controller reports AI_SPEAKING (real audio playing) */
+.iv2-speaking-indicator {
+    display: none;
+    align-items: flex-end;
+    gap: 2px;
+    height: 14px;
+}
+
+.iv2-speaking-indicator i {
+    display: block;
+    width: 3px;
+    height: 100%;
+    border-radius: 2px;
+    background: #22c55e;
+    transform-origin: bottom;
+    animation: iv2-eq 0.9s ease-in-out infinite;
+}
+
+.iv2-speaking-indicator i:nth-child(2) { animation-delay: .15s; }
+.iv2-speaking-indicator i:nth-child(3) { animation-delay: .3s; }
+.iv2-speaking-indicator i:nth-child(4) { animation-delay: .45s; }
+
+.iv2-avatar-frame[data-state="speaking"] .iv2-speaking-indicator { display: inline-flex; }
+
+@keyframes iv2-eq {
+    0%, 100% { transform: scaleY(.25); }
+    50% { transform: scaleY(1); }
+}
+
+.iv2-avatar-frame[data-state="thinking"] .iv2-interviewer-state::after,
+.iv2-avatar-frame[data-state="preparing"] .iv2-interviewer-state::after {
+    content: "…";
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .iv2-speaking-indicator i { animation: none; transform: scaleY(.7); }
+}
+
+.iv2-avatar-video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+}
+
+.iv2-avatar-placeholder {
+    color: rgba(255,255,255,.85);
+    font-size: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.iv2-avatar-placeholder i {
+    transition: transform .3s ease;
+}
+
+.iv2-avatar-frame.is-ai-speaking .iv2-avatar-placeholder i {
+    animation: iv2-avatar-pulse 1s infinite;
+}
+
+@keyframes iv2-avatar-pulse {
+    0%, 100% { transform: scale(1); opacity: .85; }
+    50% { transform: scale(1.06); opacity: 1; }
+}
+
+.iv2-candidate-frame {
+    position: absolute;
+    right: 16px;
+    top: 16px;
+    width: min(20%, 200px);
+    aspect-ratio: 4 / 3;
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #3c4043;
+    box-shadow: 0 6px 22px rgba(0,0,0,.5);
+    transition: box-shadow .2s ease;
+    z-index: 3;
+}
+
+.iv2-candidate-frame.is-speaking {
+    box-shadow: 0 0 0 3px #38bdf8;
+}
+
+.iv2-candidate-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scaleX(-1);          /* a self-view is mirrored, like every video-call app */
+}
+
+.iv2-candidate-placeholder {
+    color: rgba(255,255,255,.6);
+    font-size: 28px;
+}
+
+.iv2-candidate-label {
+    position: absolute;
+    bottom: 6px;
+    left: 6px;
+    font-size: 10px;
+    font-weight: 700;
+    color: #fff;
+    background: rgba(15,23,42,.6);
+    border-radius: 6px;
+    padding: 2px 6px;
+}
+
+/* IntegrityMode's own floating camera-monitor panel (a separate,
+   unmodified system this page does not touch) is de-emphasized here
+   only visually, so the candidate isn't shown two overlapping camera
+   previews -- proctoring itself keeps running unchanged. */
+.integrity-camera-panel {
+    opacity: 0;
+    pointer-events: none;
+    width: 1px !important;
+    height: 1px !important;
+    overflow: hidden;
+}
+
+.iv2-recording-indicator {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: #fff;
+    background: rgba(185,28,28,.85);
+    border-radius: 999px;
+    padding: 3px 12px;
+    letter-spacing: .02em;
+    z-index: 3;
+}
+
+.iv2-caption {
+    position: absolute;
+    left: 50%;
+    bottom: 20px;
+    transform: translateX(-50%);
+    max-width: min(80%, 720px);
+    padding: 10px 16px;
+    border-radius: 10px;
+    background: rgba(32,33,36,.82);
+    color: #fff;
+    font-size: 15px;
+    line-height: 1.45;
+    text-align: center;
+    z-index: 4;
+    pointer-events: none;
+    max-height: 40%;
+    overflow: hidden;
+}
+.iv2-caption[hidden] { display: none; }
+
+.iv2-room-statusbar {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted, #64748b);
+    flex-wrap: wrap;
+}
+
+.iv2-room-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #cbd5e1;
+}
+
+.iv2-room-controls {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    padding: 2px 0;
+}
+
+.iv2-control-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    width: 60px;
+    height: 60px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: #3c4043;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,.25);
+    transition: background .15s ease, transform .1s ease;
+}
+
+.iv2-control-btn i { font-size: 19px; }
+
+.iv2-control-btn:hover { background: #4a4e51; }
+
+.iv2-control-btn:focus-visible {
+    outline: 2px solid var(--primary, #4f5bff);
+    outline-offset: 2px;
+}
+
+.iv2-control-btn.is-off { background: #ea4335; color: #fff; }
+
+.iv2-join-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    border: 0;
+    border-radius: 999px;
+    padding: 14px 28px;
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+    background: #188038;
+    box-shadow: 0 8px 22px rgba(22,163,74,.35);
+    cursor: pointer;
+    transition: transform .12s ease, background .15s ease;
+}
+
+.iv2-join-btn:hover { background: #137333; transform: translateY(-1px); }
+.iv2-join-btn:focus-visible { outline: 3px solid #86efac; outline-offset: 3px; }
+
+
+/* ---------------------------------------------------------
+   PANEL: transcript + voice status + typed fallback + progress
+   --------------------------------------------------------- */
+
+.iv2-transcript-title {
+    flex: 0 0 auto;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--muted, #64748b);
+    margin: 0 2px 6px;
+}
+
+.iv2-conversation {
+    flex: 1 1 auto;
+    min-height: 90px;
+    background: #ffffff;
+    border-radius: var(--radius-md, 18px);
+    box-shadow: var(--shadow-sm, 0 4px 15px rgba(15,23,42,.05));
+    padding: 18px 18px 8px;
+    margin-bottom: 12px;
+    overflow-y: auto;
+}
+
+.iv2-message-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.iv2-message-row.is-candidate {
+    flex-direction: row-reverse;
+}
+
+.iv2-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 13px;
+    font-weight: 800;
+    color: #fff;
+}
+
+.iv2-avatar.is-ai {
+    background: linear-gradient(135deg, var(--primary, #4f5bff), var(--primary-dark, #4f5bff));
+}
+
+.iv2-avatar.is-candidate {
+    background: #64748b;
+}
+
+.iv2-bubble {
+    max-width: 82%;
+    padding: 9px 13px;
+    border-radius: 14px;
+    font-size: 13.5px;
+    line-height: 1.5;
+    white-space: pre-wrap;
+}
+
+.iv2-message-row.is-ai .iv2-bubble {
+    background: #f1f5f9;
+    color: #0f172a;
+    border-bottom-left-radius: 4px;
+}
+
+.iv2-message-row.is-candidate .iv2-bubble {
+    background: var(--primary, #4f5bff);
+    color: #ffffff;
+    border-bottom-right-radius: 4px;
+}
+
+.iv2-message-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--muted, #64748b);
+    margin-bottom: 3px;
+}
+
+.iv2-typing-dots {
+    display: inline-flex;
+    gap: 3px;
+}
+
+.iv2-typing-dots span {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--muted, #64748b);
+    animation: iv2-bounce 1.2s infinite ease-in-out;
+}
+
+.iv2-typing-dots span:nth-child(2) { animation-delay: 0.15s; }
+.iv2-typing-dots span:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes iv2-bounce {
+    0%, 60%, 100% { transform: translateY(0); opacity: .5; }
+    30% { transform: translateY(-4px); opacity: 1; }
+}
+
+.iv2-voice-card {
+    flex: 0 0 auto;
+    background: #ffffff;
+    border-radius: var(--radius-md, 18px);
+    box-shadow: var(--shadow-sm, 0 4px 15px rgba(15,23,42,.05));
+    padding: 16px 16px;
+    margin-bottom: 12px;
+    text-align: center;
+}
+
+.iv2-voice-status {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--muted, #64748b);
+    margin-bottom: 12px;
+}
+
+.iv2-voice-status i {
+    font-size: 17px;
+}
+
+.iv2-voice-status.is-ai-speaking { color: var(--primary, #4f5bff); }
+.iv2-voice-status.is-ai-speaking i { animation: iv2-pulse 1.4s infinite; }
+.iv2-voice-status.is-listening { color: #16a34a; }
+.iv2-voice-status.is-candidate-speaking { color: #0891b2; }
+.iv2-voice-status.is-candidate-speaking i { animation: iv2-pulse 0.6s infinite; }
+.iv2-voice-status.is-processing { color: #d97706; }
+.iv2-voice-status.is-error { color: #dc2626; }
+
+.iv2-mic-meter {
+    height: 6px;
+    max-width: 220px;
+    margin: -4px auto 12px;
+    border-radius: 999px;
+    background: #e2e8f0;
+    overflow: hidden;
+}
+
+.iv2-mic-meter-bar {
+    height: 100%;
+    width: 0;
+    background: #16a34a;
+    transition: width .08s linear;
+}
+
+@keyframes iv2-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: .4; }
+}
+
+.iv2-transcript-preview {
+    margin-top: 14px;
+    text-align: left;
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 12px 14px;
+}
+
+.iv2-transcript-text {
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: #0f172a;
+    white-space: pre-wrap;
+    margin-bottom: 10px;
+}
+
+.iv2-transcript-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.iv2-type-fallback > summary {
+    cursor: pointer;
+    margin: -14px -18px;
+    padding: 14px 18px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--muted, #64748b);
+    list-style: none;
+}
+
+.iv2-type-fallback > summary::-webkit-details-marker { display: none; }
+.iv2-type-fallback[open] > summary { color: #0f172a; margin-bottom: 12px; }
+.iv2-type-fallback > .iv2-textarea { width: 100%; }
+
+.iv2-voice-toggle-row {
+    display: flex;
+    justify-content: flex-end;
+    margin: 0 16px 8px;
+}
+
+.iv2-voice-toggle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted, #64748b);
+    cursor: pointer;
+    user-select: none;
+}
+
+.iv2-voice-toggle input {
+    cursor: pointer;
+}
+
+.iv2-textarea {
+    min-height: 84px;
+    resize: vertical;
+    border: 1px solid var(--border, #e5e7eb);
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 13.5px;
+    line-height: 1.5;
+    font-family: inherit;
+}
+
+.iv2-textarea:focus {
+    outline: none;
+    border-color: var(--primary, #4f5bff);
+    box-shadow: 0 0 0 3px rgba(79,91,255,.12);
+}
+
+.iv2-input-footer {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.iv2-input-footer #iv2SubmitButton { align-self: flex-end; }
+
+
+/* ---------------------------------------------------------
+   PROGRESS (coarse, non-evaluative -- never scores/confidence)
+   --------------------------------------------------------- */
+
+.iv2-progress-card {
+    flex: 0 0 auto;
+    background: #ffffff;
+    border-radius: var(--radius-md, 18px);
+    box-shadow: var(--shadow-sm, 0 4px 15px rgba(15,23,42,.05));
+    padding: 14px 16px;
+}
+
+.iv2-progress-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 5px 0;
+    font-size: 12.5px;
+}
+
+.iv2-progress-dots {
+    display: flex;
+    gap: 4px;
+}
+
+.iv2-progress-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #e2e8f0;
+}
+
+.iv2-progress-dot.is-filled {
+    background: var(--primary, #4f5bff);
+}
+
+
+/* ---------------------------------------------------------
+   RESULT
+   --------------------------------------------------------- */
+
+.iv2-result-card {
+    max-width: 560px;
+    margin: 40px auto;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: var(--shadow-md, 0 12px 35px rgba(15,23,42,.08));
+    padding: 36px;
+    text-align: center;
+}
+
+.iv2-result-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 14px;
+    font-size: 28px;
+    color: #fff;
+    background: linear-gradient(135deg, var(--primary, #4f5bff), var(--primary-dark, #4f5bff));
+}
+
+
+/* ---------------------------------------------------------
+   RESPONSIVE: below this width, the call and the panel no longer
+   fit side by side -- stack them and let the page itself scroll.
+   --------------------------------------------------------- */
+
+@media (max-width: 991.98px) {
+
+    .iv2-viewport {
+        height: auto;
+        min-height: calc(100vh - var(--iv2-navbar-h));
+        padding: 14px 14px 24px;
+    }
+
+    .iv2-page { height: auto; }
+
+    .iv2-shell {
+        flex-direction: column;
+    }
+
+    .iv2-room {
+        flex: 0 0 auto;
+    }
+
+    .iv2-room-main {
+        min-height: 46vh;
+    }
+
+    .iv2-panel-col {
+        flex: 1 1 auto;
+        width: 100%;
+        overflow-y: visible;
+    }
+
+    .iv2-conversation {
+        max-height: 42vh;
+    }
+}
+
+@media (max-width: 575.98px) {
+
+    .iv2-interviewer-image { height: 46%; }
+    .iv2-candidate-frame { width: 32%; }
+    .iv2-caption { bottom: 54px; max-width: 92%; font-size: 14px; }
+    .iv2-bubble { max-width: 88%; font-size: 13px; }
+    .iv2-control-btn { width: 52px; height: 52px; }
+    .iv2-control-btn i { font-size: 17px; }
+}

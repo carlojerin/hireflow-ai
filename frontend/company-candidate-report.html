@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Candidate Report - HireFlow AI</title>
+
+    <link href="vendor/bootstrap/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="vendor/bootstrap-icons/bootstrap-icons.min.css">
+
+    <link rel="stylesheet" href="css/company.css">
+
+    <style>
+
+        :root {
+            --ink: #0f172a;
+            --ink-soft: #475569;
+            --muted: #64748b;
+            --border: #e6e8ee;
+            --surface: #ffffff;
+            --bg: #f7f8fb;
+            --accent: #4f5bff;
+            --accent-soft: #eef0ff;
+            --success: #047857;
+            --success-soft: #ecfdf5;
+            --danger: #b91c1c;
+            --danger-soft: #fef2f2;
+            --radius: 12px;
+            --radius-sm: 10px;
+            --shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 8px rgba(15, 23, 42, 0.04);
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--ink);
+            font-family: "Inter", "Segoe UI", Arial, sans-serif;
+            font-size: 14px;
+        }
+
+        .main-content {
+            padding: 28px 32px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .ats-header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+
+        .ats-title { font-size: 22px; font-weight: 700; color: var(--ink); margin: 0 0 3px; }
+        .ats-subtitle { color: var(--muted); font-size: 13.5px; margin: 0; }
+
+        .btn-ats-outline {
+            background: #fff; border: 1px solid var(--border); color: var(--ink-soft);
+            font-size: 13.5px; font-weight: 600; padding: 8px 16px; border-radius: var(--radius-sm);
+            transition: all 0.15s ease; text-decoration: none; display: inline-flex; align-items: center;
+        }
+        .btn-ats-outline:hover { border-color: #cbd2e0; background: #fafbfd; color: var(--ink); }
+
+        .card-surface {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 20px 22px;
+            margin-bottom: 18px;
+        }
+
+        .section-label {
+            font-size: 11px; font-weight: 700; color: var(--muted);
+            text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 10px;
+        }
+
+        .tab-row {
+            display: flex; gap: 8px; margin-bottom: 18px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .tab-btn {
+            background: none; border: none; padding: 10px 4px; margin-right: 18px;
+            font-size: 14px; font-weight: 650; color: var(--muted); cursor: pointer;
+            border-bottom: 2px solid transparent; transition: all 0.15s ease;
+        }
+        .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+        .tab-btn:hover:not(.active) { color: var(--ink); }
+
+        .narrative-box {
+            background: var(--accent-soft); border: 1px solid #d9d9ff;
+            border-radius: var(--radius); padding: 16px 18px; font-size: 14px;
+            line-height: 1.6; color: var(--ink);
+        }
+
+        .stage-progress-row { display: flex; flex-wrap: wrap; gap: 10px; }
+
+        .stage-chip {
+            display: flex; align-items: center; gap: 8px;
+            padding: 8px 14px; border-radius: 999px; font-size: 13px; font-weight: 650;
+            border: 1px solid var(--border); background: #fafbfd;
+        }
+        .stage-chip.done { background: var(--success-soft); color: var(--success); border-color: #bbf7d0; }
+        .stage-chip.failed { background: var(--danger-soft); color: var(--danger); border-color: #fecaca; }
+        .stage-chip.current { background: var(--accent-soft); color: var(--accent); border-color: #c7d2fe; }
+        .stage-chip.locked { color: var(--muted); }
+
+        .score-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 14px; margin-top: 14px;
+        }
+
+        .score-card {
+            border: 1px solid var(--border); border-radius: var(--radius-sm);
+            padding: 14px 16px; background: #fcfcfd;
+        }
+
+        .score-card-title { font-size: 12.5px; font-weight: 700; color: var(--ink-soft); margin-bottom: 6px; }
+        .score-card-value { font-size: 24px; font-weight: 700; color: var(--ink); }
+        .score-card-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+        .pass-pill { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 11.5px; font-weight: 700; margin-left: 8px; }
+        .pass-pill.pass { background: var(--success-soft); color: var(--success); }
+        .pass-pill.fail { background: var(--danger-soft); color: var(--danger); }
+
+        .evidence-list { margin: 0; padding-left: 18px; font-size: 13.5px; }
+        .evidence-list li { margin-bottom: 4px; color: var(--ink-soft); }
+
+        .question-review {
+            border: 1px solid var(--border); border-radius: var(--radius-sm);
+            padding: 12px 14px; margin-bottom: 10px;
+        }
+        .question-review.correct { border-left: 3px solid var(--success); }
+        .question-review.incorrect { border-left: 3px solid var(--danger); }
+        .question-review-text { font-size: 13.5px; font-weight: 600; margin-bottom: 6px; }
+        .question-review-answer { font-size: 12.5px; color: var(--ink-soft); }
+
+        .video-stage-list { display: flex; flex-direction: column; gap: 8px; }
+
+        .video-stage-btn {
+            display: flex; align-items: center; gap: 10px;
+            padding: 12px 14px; border-radius: var(--radius-sm);
+            border: 1px solid var(--border); background: #fff;
+            cursor: pointer; text-align: left; font-size: 13.5px; font-weight: 650; color: var(--ink-soft);
+            transition: all 0.15s ease;
+        }
+        .video-stage-btn:hover { border-color: #cbd2e0; }
+        .video-stage-btn.active { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+
+        .video-player-wrap {
+            background: #000; border-radius: var(--radius); overflow: hidden;
+            display: flex; align-items: center; justify-content: center; min-height: 360px;
+        }
+        .video-player-wrap video { width: 100%; max-height: 520px; display: block; }
+
+        .empty-state, .loading-state, .error-state {
+            background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+            padding: 55px 20px; text-align: center; box-shadow: var(--shadow);
+        }
+        .empty-icon {
+            width: 56px; height: 56px; border-radius: 14px; background: var(--bg); color: var(--muted);
+            display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; font-size: 24px;
+        }
+        .empty-title { font-size: 15.5px; font-weight: 650; margin-bottom: 5px; color: var(--ink); }
+        .empty-text { color: var(--muted); font-size: 13px; }
+
+    </style>
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=DM+Sans:wght@400;500;700&display=swap">
+    <link rel="stylesheet" href="css/theme-glass.css?v=1">
+</head>
+
+<body>
+
+<nav class="navbar">
+    <div class="container-fluid px-4">
+        <a class="navbar-brand" href="company-dashboard.html">
+            <i class="bi bi-robot me-2"></i>
+            HireFlow AI
+        </a>
+        <div class="d-flex align-items-center gap-3">
+            <span class="company-text" id="navbarCompanyName">Company</span>
+            <button type="button" class="btn btn-outline-light btn-sm" id="logoutBtn">
+                <i class="bi bi-box-arrow-right me-1"></i>
+                Logout
+            </button>
+        </div>
+    </div>
+</nav>
+
+<div class="container-fluid">
+    <div class="row">
+
+        <aside class="col-md-3 col-lg-2 sidebar">
+            <nav class="nav flex-column">
+                <div class="sidebar-section-label">Recruitment</div>
+                <a href="company-dashboard.html" class="nav-link">
+                    <i class="bi bi-speedometer2"></i>
+                    Dashboard
+                </a>
+                <a href="company-profile.html" class="nav-link">
+                    <i class="bi bi-person-badge"></i>
+                    HR Profile
+                </a>
+                <a href="company-invite-candidate.html" class="nav-link">
+                    <i class="bi bi-person-plus"></i>
+                    Invite a Candidate
+                </a>
+                <a href="company-candidate-tracking.html" class="nav-link active">
+                    <i class="bi bi-signpost-split"></i>
+                    Candidate Tracking
+                </a>
+                <hr class="mx-3">
+                <a href="company-settings.html" class="nav-link" id="settingsLink">
+                    <i class="bi bi-gear"></i>
+                    Settings
+                </a>
+            </nav>
+        </aside>
+
+        <main class="col-md-9 col-lg-10 main-content">
+
+            <div class="ats-header">
+                <div>
+                    <h1 class="ats-title" id="candidateHeaderName">Candidate Report</h1>
+                    <p class="ats-subtitle" id="candidateHeaderSub">Loading...</p>
+                </div>
+
+                <div class="d-flex flex-wrap gap-2">
+                    <button type="button" class="btn btn-primary" id="offerLetterBtn">
+                        <i class="bi bi-envelope-paper me-1"></i>
+                        Offer letter
+                    </button>
+                    <a href="company-candidate-tracking.html" class="btn-ats-outline">
+                        <i class="bi bi-arrow-left me-1"></i>
+                        Back to Tracking
+                    </a>
+                </div>
+            </div>
+
+            <div id="reportContainer">
+                <div class="loading-state">
+                    <div class="spinner-border text-secondary mb-3" role="status"></div>
+                    <div class="text-muted small">Loading candidate report...</div>
+                </div>
+            </div>
+
+        </main>
+
+    </div>
+</div>
+
+<div class="modal fade" id="offerLetterModal" tabindex="-1" aria-labelledby="offerLetterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="offerLetterTitle">Offer letter</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="small text-muted mb-2" id="offerLastSent"></div>
+
+                <label class="form-label" for="offerTo">To</label>
+                <input type="text" class="form-control mb-3" id="offerTo" readonly>
+
+                <label class="form-label" for="offerSubject">Subject</label>
+                <input type="text" class="form-control mb-3" id="offerSubject" maxlength="300">
+
+                <label class="form-label" for="offerBody">Message</label>
+                <textarea class="form-control mb-3" id="offerBody" rows="16" style="font-family: inherit; line-height: 1.55;"></textarea>
+
+                <label class="form-label" for="offerFiles">Attachments</label>
+                <input type="file" class="form-control" id="offerFiles" multiple
+                       accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,.png,.jpg,.jpeg,.gif,.webp">
+                <div class="small text-muted mt-1">Up to 5 files, 10 MB each: PDF, Word, Excel, PowerPoint, text or images.</div>
+                <div id="offerFileList" class="mt-2"></div>
+
+                <div id="offerStatus" class="small mt-2 text-muted" role="status" aria-live="polite"></div>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-outline-secondary" id="offerResetBtn">Reset to draft</button>
+                <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="offerSendBtn">
+                        <i class="bi bi-send me-1"></i>
+                        Send offer letter
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="vendor/bootstrap/bootstrap.bundle.min.js"></script>
+
+<script src="js/session-guard.js?v=3"></script>
+<script src="js/csrf-fetch.js"></script>
+<script src="js/practical-design.js?v=1"></script>
+<script src="js/company-candidate-report.js?v=15"></script>
+<script src="js/company-offer-letter.js?v=1"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,145 @@
+/* =========================================================
+   JOBPILOT AI — COMPANY / HR VISUAL POLISH
+
+   Loaded AFTER each page's own inline <style> block so these
+   rules win the cascade (same selectors, later source order)
+   without touching page markup, IDs or JavaScript. Recolors
+   the existing grayscale chrome to the HireFlow indigo/purple
+   brand already used on Candidate and Admin pages.
+   ========================================================= */
+
+:root {
+    --company-primary: #4f5bff;
+    --company-accent: #3e7bff;
+    --company-gradient: linear-gradient(135deg, #3b46e0, #3e7bff);
+}
+
+
+/* =========================================================
+   NAVBAR (company-dashboard/jobs/job-create/job-edit/
+   profile/applicants/shortlisted all share this selector)
+   ========================================================= */
+
+.navbar {
+    background: var(--company-gradient) !important;
+}
+
+.navbar-brand {
+    color: #ffffff !important;
+}
+
+.navbar-brand:hover {
+    color: #ffffff !important;
+}
+
+.company-text {
+    color: rgba(255, 255, 255, 0.85) !important;
+}
+
+.navbar .btn-outline-light {
+    border-color: rgba(255, 255, 255, 0.6);
+}
+
+
+/* =========================================================
+   SIDEBAR
+   ========================================================= */
+
+.sidebar .nav-link:hover {
+    background: #f3f1ff !important;
+    color: var(--company-primary) !important;
+}
+
+.sidebar .nav-link.active {
+    background: var(--company-gradient) !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+}
+
+
+/* =========================================================
+   LOGIN / REGISTER BRAND PANEL
+   ========================================================= */
+
+.brand-section {
+    background: var(--company-gradient) !important;
+}
+
+
+/* =========================================================
+   AVATARS / LOGOS / SMALL DARK BADGES
+   (same #111827 accent reused for identity across pages)
+   ========================================================= */
+
+.company-avatar,
+.logo-preview,
+.question-number {
+    background: var(--company-gradient) !important;
+}
+
+.job-section-badge {
+    background: var(--company-gradient) !important;
+}
+
+
+/* =========================================================
+   KPI / STAT CARD ICONS
+   ========================================================= */
+
+.stat-icon {
+    background: #eef2ff !important;
+    color: var(--company-primary) !important;
+}
+
+.stat-icon i {
+    color: var(--company-primary) !important;
+}
+
+.quick-action-icon {
+    background: #eef2ff !important;
+    color: var(--company-primary) !important;
+}
+
+.quick-action:hover {
+    border-color: #c7d2fe !important;
+}
+
+
+/* =========================================================
+   PRIMARY BUTTONS
+   ========================================================= */
+
+.btn-primary {
+    background: var(--company-gradient) !important;
+    border-color: transparent !important;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+    filter: brightness(1.05);
+}
+
+.btn-dark {
+    background: var(--company-gradient) !important;
+    border-color: transparent !important;
+}
+
+.btn-outline-dark {
+    color: var(--company-primary) !important;
+    border-color: #c7d2fe !important;
+}
+
+.btn-outline-dark:hover {
+    background: var(--company-primary) !important;
+    border-color: var(--company-primary) !important;
+    color: #ffffff !important;
+}
+
+
+/* =========================================================
+   LINKS
+   ========================================================= */
+
+a {
+    color: var(--company-primary);
+}

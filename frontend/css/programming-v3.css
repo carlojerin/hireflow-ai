@@ -1,0 +1,757 @@
+/* =========================================================
+   JOBPILOT AI - PROGRAMMING V3 (PROFESSIONAL ASSESSMENT UX)
+   Task 5G. Standalone stylesheet -- does NOT modify or depend on
+   programming-v2.css/programming-test.css, so the existing V2
+   candidate page keeps rendering exactly as before regardless of
+   anything here. Reuses only the global design tokens already
+   defined in css/style.css (:root --primary/--dark/--border/etc).
+   ========================================================= */
+
+.pv3-shell {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background: var(--light, #f8faff);
+    overflow: hidden;
+}
+
+
+/* ---------------------------------------------------------
+   TOP BAR
+   --------------------------------------------------------- */
+
+.pv3-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 8px 18px;
+    background: var(--dark, #0f172a);
+    color: #e5e7eb;
+    flex-shrink: 0;
+    z-index: 20;
+}
+
+.pv3-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+}
+
+.pv3-brand-logo {
+    font-weight: 800;
+    font-size: 14px;
+    color: #ffffff;
+    white-space: nowrap;
+}
+
+.pv3-brand-sep {
+    color: #475569;
+}
+
+.pv3-job-meta {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.15;
+    min-width: 0;
+}
+
+.pv3-job-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #f8fafc;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 260px;
+}
+
+.pv3-company-name {
+    font-size: 11px;
+    color: #94a3b8;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 260px;
+}
+
+.pv3-topbar-center {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #cbd5e1;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    flex-shrink: 0;
+}
+
+.pv3-topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    flex-shrink: 0;
+}
+
+.pv3-integrity {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: #cbd5e1;
+}
+
+.pv3-integrity-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #64748b;
+    flex-shrink: 0;
+}
+
+.pv3-integrity-dot.is-ready { background: #22c55e; box-shadow: 0 0 0 3px rgba(34,197,94,.18); }
+.pv3-integrity-dot.is-warning { background: #f59e0b; box-shadow: 0 0 0 3px rgba(245,158,11,.18); }
+.pv3-integrity-dot.is-error { background: #ef4444; box-shadow: 0 0 0 3px rgba(239,68,68,.18); }
+
+.pv3-timer {
+    font-variant-numeric: tabular-nums;
+    font-size: 16px;
+    font-weight: 800;
+    color: #ffffff;
+    background: rgba(255,255,255,0.08);
+    border-radius: 8px;
+    padding: 3px 12px;
+    min-width: 78px;
+    text-align: center;
+}
+
+.pv3-timer.is-urgent {
+    color: #fecaca;
+    background: rgba(239,68,68,0.22);
+}
+
+.pv3-status-badge {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: rgba(79,91,255,0.22);
+    color: #c7c3ff;
+}
+
+
+/* ---------------------------------------------------------
+   MESSAGE / LOADING (full-page states before workspace shows)
+   --------------------------------------------------------- */
+
+.pv3-center-state {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 40px 20px;
+    text-align: center;
+}
+
+
+/* ---------------------------------------------------------
+   MAIN WORKSPACE GRID
+   --------------------------------------------------------- */
+
+.pv3-workspace {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 200px minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) minmax(160px, 30%);
+    grid-template-areas:
+        "nav problem editor"
+        "nav bottom  bottom";
+    min-height: 0;
+    overflow: hidden;
+}
+
+.pv3-nav-panel {
+    grid-area: nav;
+    background: #ffffff;
+    border-right: 1px solid var(--border, #e5e7eb);
+    overflow-y: auto;
+    padding: 10px 0;
+}
+
+.pv3-nav-heading {
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted, #64748b);
+    padding: 4px 14px 8px;
+}
+
+.pv3-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    width: 100%;
+    padding: 9px 14px;
+    border: none;
+    background: transparent;
+    text-align: left;
+    font-size: 13px;
+    font-weight: 600;
+    color: #334155;
+    cursor: pointer;
+    border-left: 3px solid transparent;
+}
+
+.pv3-nav-item:hover {
+    background: #f1f5f9;
+}
+
+.pv3-nav-item.is-active {
+    background: #eef2ff;
+    border-left-color: var(--primary, #4f5bff);
+    color: var(--primary-dark, #4f5bff);
+}
+
+.pv3-nav-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #cbd5e1;
+    flex-shrink: 0;
+}
+
+.pv3-nav-dot.state-run { background: #93c5fd; }
+.pv3-nav-dot.state-passed { background: #22c55e; }
+.pv3-nav-dot.state-failed { background: #ef4444; }
+.pv3-nav-dot.state-submitted { background: #16a34a; box-shadow: 0 0 0 2px rgba(22,163,74,.2); }
+.pv3-nav-dot.state-locked { background: #94a3b8; }
+
+.pv3-nav-item-label {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.pv3-nav-item-points {
+    font-size: 10px;
+    color: var(--muted, #64748b);
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+
+/* ---------------------------------------------------------
+   PROBLEM PANEL
+   --------------------------------------------------------- */
+
+.pv3-problem-panel {
+    grid-area: problem;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    border-right: 1px solid var(--border, #e5e7eb);
+    background: #ffffff;
+}
+
+.pv3-problem-header {
+    padding: 14px 18px 0;
+    flex-shrink: 0;
+}
+
+.pv3-problem-title {
+    font-size: 17px;
+    font-weight: 800;
+    color: var(--dark, #0f172a);
+    margin: 0 0 6px;
+}
+
+.pv3-badges {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+}
+
+.pv3-badge {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    padding: 2px 9px;
+    border-radius: 999px;
+}
+
+.pv3-badge.difficulty-easy { background: #dcfce7; color: #166534; }
+.pv3-badge.difficulty-medium { background: #fef3c7; color: #92400e; }
+.pv3-badge.difficulty-hard { background: #fee2e2; color: #991b1b; }
+.pv3-badge.pv3-points { background: #eef2ff; color: #3b46e0; }
+
+.pv3-tabs {
+    display: flex;
+    gap: 2px;
+    border-bottom: 1px solid var(--border, #e5e7eb);
+    padding: 0 14px;
+}
+
+.pv3-tab-btn {
+    border: none;
+    background: transparent;
+    padding: 8px 12px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--muted, #64748b);
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+}
+
+.pv3-tab-btn.is-active {
+    color: var(--primary-dark, #4f5bff);
+    border-bottom-color: var(--primary, #4f5bff);
+}
+
+.pv3-tab-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 14px 18px 24px;
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: #1f2937;
+}
+
+.pv3-tab-pane { display: none; }
+.pv3-tab-pane.is-active { display: block; }
+
+.pv3-section-label {
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--muted, #64748b);
+    margin: 16px 0 6px;
+}
+
+.pv3-section-label:first-child { margin-top: 0; }
+
+.pv3-scenario-box {
+    background: #f8faff;
+    border: 1px solid #e0e7ff;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-style: italic;
+    color: #2c36c4;
+    margin-bottom: 4px;
+}
+
+.pv3-requirements-list {
+    margin: 0;
+    padding-left: 18px;
+}
+
+.pv3-requirements-list li { margin-bottom: 4px; }
+
+.pv3-example-block {
+    background: #0f172a;
+    color: #e2e8f0;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 12.5px;
+    margin-bottom: 10px;
+    white-space: pre-wrap;
+    overflow-x: auto;
+}
+
+.pv3-example-block .pv3-ex-label {
+    color: #94a3b8;
+    text-transform: uppercase;
+    font-size: 10px;
+    font-weight: 700;
+    display: block;
+    margin-bottom: 2px;
+}
+
+
+/* ---------------------------------------------------------
+   EDITOR PANEL
+   --------------------------------------------------------- */
+
+.pv3-editor-panel {
+    grid-area: editor;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    background: #1e1e2e;
+}
+
+.pv3-editor-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 8px 12px;
+    background: #181825;
+    border-bottom: 1px solid #2a2a3d;
+    flex-shrink: 0;
+}
+
+.pv3-editor-toolbar-left,
+.pv3-editor-toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.pv3-select {
+    background: #2a2a3d;
+    color: #e2e8f0;
+    border: 1px solid #3a3a52;
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.pv3-icon-btn {
+    background: #2a2a3d;
+    color: #cbd5e1;
+    border: 1px solid #3a3a52;
+    border-radius: 6px;
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.pv3-icon-btn:hover { background: #3a3a52; }
+
+.pv3-editor-host {
+    flex: 1;
+    min-height: 0;
+    position: relative;
+}
+
+.pv3-editor-fallback-wrap {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    background: #1e1e2e;
+}
+
+.pv3-line-numbers {
+    width: 44px;
+    flex-shrink: 0;
+    background: #181825;
+    color: #565675;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 13px;
+    line-height: 20px;
+    text-align: right;
+    padding: 10px 8px 10px 0;
+    overflow: hidden;
+    user-select: none;
+}
+
+.pv3-fallback-textarea {
+    flex: 1;
+    resize: none;
+    border: none;
+    outline: none;
+    background: #1e1e2e;
+    color: #e2e8f0;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 13px;
+    line-height: 20px;
+    padding: 10px 12px;
+    white-space: pre;
+    overflow: auto;
+    tab-size: 4;
+}
+
+.pv3-editor-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 8px 12px;
+    background: #181825;
+    border-top: 1px solid #2a2a3d;
+    flex-shrink: 0;
+}
+
+.pv3-hint-text {
+    font-size: 11px;
+    color: #64748b;
+}
+
+.pv3-hint-text kbd {
+    background: #2a2a3d;
+    border: 1px solid #3a3a52;
+    border-radius: 3px;
+    padding: 1px 4px;
+    color: #cbd5e1;
+    font-size: 10px;
+}
+
+
+/* ---------------------------------------------------------
+   BOTTOM PANEL: SAMPLE TESTS / OUTPUT / ERRORS
+   --------------------------------------------------------- */
+
+.pv3-bottom-panel {
+    grid-area: bottom;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    border-top: 1px solid var(--border, #e5e7eb);
+    background: #ffffff;
+}
+
+.pv3-bottom-tabs {
+    display: flex;
+    gap: 2px;
+    padding: 0 14px;
+    border-bottom: 1px solid var(--border, #e5e7eb);
+    flex-shrink: 0;
+    background: #fafbff;
+}
+
+.pv3-bottom-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px 16px;
+    font-size: 12.5px;
+}
+
+.pv3-bottom-pane { display: none; }
+
+.pv3-preview-frame { width: 100%; height: 300px; border: 1px solid #dee2e6; border-radius: 8px; background: #fff; }
+.pv3-preview-console { margin: 4px 0 0; padding: 8px 10px; min-height: 44px; max-height: 110px; overflow: auto; font-size: 12px;
+    background: #0f172a; color: #e2e8f0; border-radius: 8px; white-space: pre-wrap; }
+.pv3-preview-console .is-error { color: #fca5a5; }
+.pv3-preview-console .is-warn { color: #fde68a; }
+.pv3-bottom-pane.is-active { display: block; }
+
+.pv3-test-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    border: 1px solid var(--border, #e5e7eb);
+    border-radius: 8px;
+    padding: 8px 12px;
+    margin-bottom: 8px;
+}
+
+.pv3-test-row.is-pass { border-left: 3px solid #22c55e; }
+.pv3-test-row.is-fail { border-left: 3px solid #ef4444; }
+
+.pv3-test-io {
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 11.5px;
+    background: #f8fafc;
+    border-radius: 6px;
+    padding: 6px 8px;
+    margin-top: 6px;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.pv3-run-summary {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    font-size: 12px;
+    color: var(--muted, #64748b);
+    margin-bottom: 10px;
+}
+
+.pv3-output-block {
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 12px;
+    white-space: pre-wrap;
+    word-break: break-word;
+    background: #0f172a;
+    color: #e2e8f0;
+    border-radius: 8px;
+    padding: 10px 12px;
+}
+
+
+/* ---------------------------------------------------------
+   ACTION BAR (Run / Submit)
+   --------------------------------------------------------- */
+
+.pv3-action-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 18px;
+    background: #ffffff;
+    border-top: 1px solid var(--border, #e5e7eb);
+    flex-shrink: 0;
+}
+
+.pv3-btn {
+    border: none;
+    border-radius: 8px;
+    padding: 8px 18px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.pv3-btn-run {
+    background: #eef2ff;
+    color: var(--primary-dark, #4f5bff);
+    border: 1px solid #c7d2fe;
+}
+
+.pv3-btn-run:hover { background: #e0e7ff; }
+
+.pv3-btn-submit {
+    background: var(--primary, #4f5bff);
+    color: #ffffff;
+}
+
+.pv3-btn-submit:hover { background: var(--primary-dark, #4f5bff); }
+
+.pv3-btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+
+/* ---------------------------------------------------------
+   RESULT SCREEN
+   --------------------------------------------------------- */
+
+.pv3-result-card {
+    max-width: 640px;
+    margin: 40px auto;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: var(--shadow-md, 0 12px 35px rgba(15,23,42,.08));
+    padding: 36px;
+    text-align: center;
+}
+
+.pv3-result-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 14px;
+    font-size: 28px;
+    color: #fff;
+    background: linear-gradient(135deg, var(--primary, #4f5bff), var(--primary-dark, #4f5bff));
+}
+
+.pv3-question-result-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 9px 0;
+    border-top: 1px dashed var(--border, #e5e7eb);
+    font-size: 13px;
+}
+
+.pv3-question-result-row:first-of-type { border-top: none; }
+
+
+/* ---------------------------------------------------------
+   RESPONSIVE
+   --------------------------------------------------------- */
+
+@media (max-width: 991.98px) {
+
+    .pv3-workspace {
+        grid-template-columns: 1fr;
+        /* The nav row is a FIXED track (not "auto") -- a CSS Grid
+           item whose own overflow is not "visible" gets an
+           automatic minimum size of 0 (not its content size), so
+           an "auto" track sharing a height-constrained grid (this
+           workspace sits inside a 100vh flex shell) could collapse
+           the nav strip to near-nothing under pressure. A fixed
+           64px track sidesteps that entirely. */
+        grid-template-rows: 64px auto auto minmax(140px, 220px);
+        grid-template-areas:
+            "nav"
+            "problem"
+            "editor"
+            "bottom";
+        overflow-y: auto;
+    }
+
+    .pv3-nav-panel {
+        display: flex;
+        align-items: center;
+        overflow-x: auto;
+        overflow-y: hidden;
+        border-right: none;
+        border-bottom: 1px solid var(--border, #e5e7eb);
+        padding: 8px;
+        gap: 6px;
+    }
+
+    /* #pv3NavList is the actual parent of the .pv3-nav-item
+       buttons -- .pv3-nav-panel going flex-row above only lays out
+       ITS OWN direct children (the (hidden) heading and this list
+       wrapper), so the buttons inside still need their own
+       container flexed or they stack as plain blocks. */
+    #pv3NavList {
+        display: flex;
+        gap: 6px;
+    }
+
+    .pv3-nav-heading { display: none; }
+
+    .pv3-nav-item {
+        flex-shrink: 0;
+        width: auto;
+        border-left: none;
+        border-bottom: 3px solid transparent;
+        border-radius: 8px;
+        background: #f1f5f9;
+    }
+
+    .pv3-nav-item.is-active {
+        border-left: none;
+        border-bottom-color: var(--primary, #4f5bff);
+    }
+
+    .pv3-problem-panel,
+    .pv3-editor-panel {
+        border-right: none;
+        min-height: 320px;
+    }
+
+    .pv3-job-title, .pv3-company-name { max-width: 140px; }
+
+    .pv3-topbar-center { display: none; }
+}
+
+
+@media (max-width: 575.98px) {
+
+    .pv3-topbar { flex-wrap: wrap; row-gap: 6px; }
+    .pv3-topbar-right { gap: 10px; }
+    .pv3-timer { font-size: 14px; padding: 2px 8px; min-width: 62px; }
+}

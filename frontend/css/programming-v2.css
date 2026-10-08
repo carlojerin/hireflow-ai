@@ -1,0 +1,160 @@
+/* =========================================================
+   JOBPILOT AI - PROGRAMMING V2 (MULTI-LANGUAGE)
+   Additive only — reuses every .programming-* class from
+   css/programming-test.css (header card, timer, nav, card,
+   difficulty badge, example block, code editor, run result,
+   result icon/row) so the two pages share one visual language.
+   This file adds only what programming-test.css doesn't have:
+   the two-column workspace layout, the language selector, and
+   the integrity status dot.
+   ========================================================= */
+
+.pv2-page {
+    max-width: 1180px;
+}
+
+
+.pv2-multilang-badge {
+    background: rgba(255, 255, 255, 0.18);
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    padding: 6px 12px;
+}
+
+
+.pv2-integrity-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #9ca3af;
+    display: inline-block;
+    flex-shrink: 0;
+}
+
+
+.pv2-integrity-dot.is-ready {
+    background: #16a34a;
+    box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.15);
+}
+
+
+.pv2-integrity-dot.is-warning {
+    background: #f59e0b;
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15);
+}
+
+
+.pv2-integrity-dot.is-error {
+    background: #ef4444;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+}
+
+
+/* ---------------------------------------------------------
+   TWO-COLUMN WORKSPACE: question panel | editor+output panel
+   --------------------------------------------------------- */
+
+.pv2-workspace {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 20px;
+    align-items: start;
+}
+
+
+.pv2-question-panel,
+.pv2-editor-panel {
+    min-width: 0;
+}
+
+
+.pv2-question-panel .programming-card {
+    max-height: 720px;
+    overflow-y: auto;
+}
+
+
+.pv2-editor-card {
+    position: sticky;
+    top: 16px;
+}
+
+
+.pv2-language-select {
+    width: auto;
+    min-width: 160px;
+    font-weight: 600;
+}
+
+
+.pv2-code-editor {
+    min-height: 360px;
+}
+
+
+.pv2-run-result {
+    margin-top: 4px;
+}
+
+
+.pv2-language-unavailable-badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: #fee2e2;
+    color: #991b1b;
+    margin-left: 6px;
+}
+
+
+.pv2-subpart-row {
+    font-size: 13px;
+    padding: 6px 0;
+    border-top: 1px dashed #e5e7eb;
+}
+
+
+.pv2-subpart-row:first-of-type {
+    border-top: none;
+}
+
+
+.pv2-answered-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #16a34a;
+    display: inline-block;
+    margin-left: 4px;
+    vertical-align: middle;
+}
+
+
+/* ---------------------------------------------------------
+   RESPONSIVE: stack panels below desktop width
+   --------------------------------------------------------- */
+
+@media (max-width: 991.98px) {
+
+    .pv2-workspace {
+        grid-template-columns: 1fr;
+    }
+
+    .pv2-editor-card {
+        position: static;
+    }
+
+    .pv2-question-panel .programming-card {
+        max-height: none;
+    }
+
+    .pv2-code-editor {
+        min-height: 280px;
+    }
+}

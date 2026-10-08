@@ -1,0 +1,277 @@
+/* =========================================================
+   JOBPILOT AI - ASSESSMENT (SELF INTRODUCTION)
+   Uses the same design tokens as css/style.css.
+   ========================================================= */
+
+.assessment-page {
+    max-width: 850px;
+    margin: 0 auto;
+}
+
+
+.assessment-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 22px;
+    padding: 36px;
+    box-shadow: 0 15px 45px rgba(31, 41, 55, 0.08);
+}
+
+
+.assessment-icon {
+    width: 72px;
+    height: 72px;
+    border-radius: 20px;
+    margin: 0 auto 18px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 32px;
+
+    background: linear-gradient(135deg, #4f5bff, #3e7bff);
+    color: #ffffff;
+}
+
+
+/* ---------------------------------------------------------
+   PROGRESS TRACKER
+   --------------------------------------------------------- */
+
+.assessment-progress {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 28px;
+}
+
+
+.assessment-progress-step {
+    flex: 1;
+    text-align: center;
+    position: relative;
+}
+
+
+.assessment-progress-step::before {
+    content: "";
+    position: absolute;
+    top: 11px;
+    left: -50%;
+    width: 100%;
+    height: 2px;
+    background: #e5e7eb;
+    z-index: 0;
+}
+
+
+.assessment-progress-step:first-child::before {
+    display: none;
+}
+
+
+.assessment-progress-dot {
+    position: relative;
+    z-index: 1;
+
+    width: 24px;
+    height: 24px;
+    margin: 0 auto 8px;
+    border-radius: 50%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 12px;
+    font-weight: 700;
+
+    background: #ffffff;
+    border: 2px solid #cbd5e1;
+    color: #94a3b8;
+}
+
+
+.assessment-progress-step.is-done .assessment-progress-dot {
+    background: #4f5bff;
+    border-color: #4f5bff;
+    color: #ffffff;
+}
+
+
+.assessment-progress-step.is-done::before {
+    background: #4f5bff;
+}
+
+
+.assessment-progress-step.is-active .assessment-progress-dot {
+    background: #ede9fe;
+    border-color: #4f5bff;
+    color: #4f5bff;
+}
+
+
+.assessment-progress-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #94a3b8;
+}
+
+
+.assessment-progress-step.is-done .assessment-progress-label,
+.assessment-progress-step.is-active .assessment-progress-label {
+    color: #1f2937;
+}
+
+
+/* ---------------------------------------------------------
+   SELF-INTRO INSTRUCTIONS
+   --------------------------------------------------------- */
+
+.assessment-topics {
+    text-align: left;
+    background: #f8fafc;
+    border-radius: 16px;
+    padding: 18px 22px;
+    margin: 18px 0;
+}
+
+
+.assessment-topics ul {
+    margin: 8px 0 0;
+    padding-left: 20px;
+}
+
+
+.assessment-topics li {
+    margin-bottom: 4px;
+    color: #334155;
+}
+
+
+/* ---------------------------------------------------------
+   RECORDING AREA
+   --------------------------------------------------------- */
+
+.assessment-video-frame {
+    width: 100%;
+    max-width: 480px;
+    margin: 0 auto 18px;
+    border-radius: 18px;
+    overflow: hidden;
+    background: #0f172a;
+    aspect-ratio: 4 / 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+
+.assessment-video-frame video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+
+.assessment-video-placeholder {
+    color: #94a3b8;
+    font-size: 14px;
+    text-align: center;
+    padding: 20px;
+}
+
+
+.assessment-rec-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(15, 23, 42, 0.65);
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 5px 10px;
+    border-radius: 999px;
+}
+
+
+.assessment-rec-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #ef4444;
+    animation: assessment-pulse 1.2s infinite;
+}
+
+
+@keyframes assessment-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.25; }
+}
+
+
+.assessment-timer {
+    font-size: 34px;
+    font-weight: 800;
+    color: #1f2937;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.02em;
+}
+
+
+.assessment-timer.is-low {
+    color: #ef4444;
+}
+
+
+.assessment-timer-label {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #5b6bff;
+    margin-bottom: 4px;
+}
+
+
+/* ---------------------------------------------------------
+   RESULT
+   --------------------------------------------------------- */
+
+.assessment-stat-box {
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 14px;
+}
+
+
+/* ---------------------------------------------------------
+   APTITUDE PERSONALIZATION PREVIEW (Task 4B)
+   --------------------------------------------------------- */
+
+.assessment-aptitude-preview {
+    background: #f8fafc;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    padding: 18px 20px;
+}
+
+
+.assessment-chip {
+    display: inline-block;
+    background: #ede9fe;
+    color: #4c1d95;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 999px;
+    margin: 0 6px 6px 0;
+}

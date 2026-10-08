@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <!-- Prevent browser caching -->
+    <meta
+        http-equiv="Cache-Control"
+        content="no-cache, no-store, must-revalidate"
+    >
+
+    <meta
+        http-equiv="Pragma"
+        content="no-cache"
+    >
+
+    <meta
+        http-equiv="Expires"
+        content="0"
+    >
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Aptitude Test - HireFlow AI</title>
+
+
+    <!-- Bootstrap -->
+    <link
+        href="vendor/bootstrap/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+
+    <!-- Bootstrap Icons -->
+    <link
+        rel="stylesheet"
+        href="vendor/bootstrap-icons/bootstrap-icons.min.css"
+    >
+
+
+    <!-- HireFlow CSS -->
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
+
+
+    <style>
+
+        .aptitude-page {
+            max-width: 850px;
+            margin: 0 auto;
+        }
+
+
+        .aptitude-card {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 22px;
+            padding: 36px;
+            box-shadow: 0 15px 45px rgba(31, 41, 55, 0.08);
+        }
+
+
+        .aptitude-icon {
+            width: 72px;
+            height: 72px;
+            border-radius: 20px;
+            margin: 0 auto 18px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 32px;
+
+            background: linear-gradient(
+                135deg,
+                #4f5bff,
+                #3e7bff
+            );
+
+            color: #ffffff;
+        }
+
+
+        .question-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            background: #ffffff;
+        }
+
+
+        .question-number {
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #5b6bff;
+            margin-bottom: 8px;
+        }
+
+
+        .question-text {
+            font-size: 15px;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 14px;
+            white-space: pre-wrap;
+        }
+
+
+        .option-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: 0.15s ease;
+        }
+
+
+        .option-label:hover {
+            border-color: #a5b4fc;
+            background: #f5f3ff;
+        }
+
+
+        .option-label input:checked ~ span {
+            font-weight: 700;
+        }
+
+
+        .result-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+
+        .result-badge.passed {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+
+        .result-badge.failed {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+
+        #testLoading {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+
+        /* =====================================================
+           STRICT ASSESSMENT MODE (Task 4D-STRICT-1)
+           ===================================================== */
+
+        .strict-mode-banner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+
+            background: #eef2ff;
+            border: 1px solid #c7d2fe;
+            border-radius: 14px;
+            padding: 12px 18px;
+            margin-bottom: 16px;
+        }
+
+
+        .strict-mode-banner-title {
+            font-weight: 800;
+            font-size: 13px;
+            color: #2c36c4;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+
+        .strict-mode-banner-text {
+            font-size: 12.5px;
+            color: #3b46e0;
+        }
+
+
+        .strict-mode-warning-count {
+            font-weight: 800;
+            font-size: 13px;
+            padding: 6px 14px;
+            border-radius: 999px;
+            background: #ffffff;
+            color: #2c36c4;
+            border: 1px solid #c7d2fe;
+            white-space: nowrap;
+        }
+
+
+        .strict-mode-warning-count.has-warnings {
+            background: #fef3c7;
+            border-color: #fcd34d;
+            color: #92400e;
+        }
+
+
+        .exam-timer {
+            font-weight: 800;
+            font-size: 14px;
+            padding: 6px 14px;
+            border-radius: 999px;
+            background: #ffffff;
+            color: #1f2937;
+            border: 1px solid #e5e7eb;
+            white-space: nowrap;
+        }
+
+
+        .exam-timer.is-low {
+            background: #fee2e2;
+            border-color: #fecaca;
+            color: #991b1b;
+        }
+
+
+        #integrityWarningAlert {
+            display: none;
+        }
+
+    </style>
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=DM+Sans:wght@400;500;700&display=swap">
+    <link rel="stylesheet" href="css/theme-glass.css?v=1">
+</head>
+
+
+<body class="dashboard-body" data-hf="calm">
+
+
+    <!-- ==================================================
+         NAVBAR
+         ================================================== -->
+
+    <nav class="navbar navbar-dark jobpilot-navbar">
+
+        <div class="container-fluid px-4">
+
+            <a
+                href="index.html"
+                class="navbar-brand fw-bold"
+            >
+                🚀 HireFlow AI
+            </a>
+
+
+            <div class="d-flex align-items-center gap-2">
+
+                <a
+                    href="assessment.html" data-dashboard-link
+                    class="btn btn-light btn-sm rounded-pill px-3"
+                >
+
+                    <i class="bi bi-speedometer2 me-1"></i>
+
+                    Back to Dashboard
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </nav>
+
+
+
+    <!-- ==================================================
+         MAIN
+         ================================================== -->
+
+    <main class="container-fluid px-4 py-5">
+
+        <div class="aptitude-page">
+
+
+            <!-- LOADING -->
+
+            <div id="testLoading">
+
+                <div
+                    class="spinner-border text-primary"
+                    role="status"
+                ></div>
+
+                <div class="fw-semibold mt-3" id="testLoadingText">
+                    Loading your aptitude test...
+                </div>
+
+            </div>
+
+
+            <!-- MESSAGE (errors / not eligible) -->
+
+            <div id="testMessage"></div>
+
+
+            <!-- INTRO (not started yet) -->
+
+            <div
+                id="testIntroSection"
+                class="aptitude-card text-center"
+                style="display:none;"
+            >
+
+                <div class="aptitude-icon">
+                    <i class="bi bi-clipboard-check"></i>
+                </div>
+
+                <h2 class="fw-bold mb-1" id="introJobTitle">
+                    Aptitude Test
+                </h2>
+
+                <p class="text-muted mb-4" id="introCompanyName">
+                </p>
+
+                <p class="text-muted">
+                    This test has multiple-choice questions
+                    personalised to this role, covering the
+                    knowledge and problem-solving it needs.
+                    You need
+                    <strong>70% or higher</strong>
+                    to pass. You have
+                    <strong>20 minutes</strong>
+                    once you start, and can only submit this
+                    test once.
+                </p>
+
+                <div class="alert alert-secondary text-start small">
+                    <i class="bi bi-shield-lock-fill me-1"></i>
+                    <strong>Your assessment runs in strict mode.</strong>
+                    Please remain in fullscreen and on this screen
+                    until you submit. Switching tabs, minimizing
+                    the window, or exiting fullscreen may be
+                    recorded as an assessment integrity event.
+                </div>
+
+                <button
+                    type="button"
+                    id="startTestButton"
+                    class="btn btn-primary rounded-pill px-4 mt-2"
+                >
+
+                    <i class="bi bi-play-fill me-1"></i>
+
+                    Start Aptitude Test
+
+                </button>
+
+            </div>
+
+
+            <!-- QUESTIONS -->
+
+            <div
+                id="testQuestionsSection"
+                style="display:none;"
+            >
+
+                <!-- STRICT MODE BANNER -->
+
+                <div
+                    id="strictModeBanner"
+                    class="strict-mode-banner"
+                >
+
+                    <div>
+                        <div class="strict-mode-banner-title">
+                            <i class="bi bi-shield-lock-fill"></i>
+                            Strict Assessment Mode
+                        </div>
+                        <div class="strict-mode-banner-text">
+                            Remain in fullscreen and stay on this
+                            assessment screen until you submit.
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-center gap-2">
+
+                        <div
+                            class="exam-timer"
+                            id="examTimer"
+                        >
+                            20:00
+                        </div>
+
+                        <div
+                            class="strict-mode-warning-count"
+                            id="integrityWarningCount"
+                        >
+                            Integrity warnings: 0
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- INTEGRITY WARNING (shown transiently on a
+                     violation, hidden otherwise) -->
+
+                <div
+                    id="integrityWarningAlert"
+                    class="alert alert-warning text-start"
+                    role="alert"
+                >
+                    <div class="fw-bold" id="integrityWarningTitle">
+                        <i class="bi bi-exclamation-triangle-fill me-1"></i>
+                        Assessment Warning
+                    </div>
+                    <div id="integrityWarningText">
+                    </div>
+                </div>
+
+
+                <div class="aptitude-card mb-3">
+
+                    <h2
+                        class="fw-bold mb-1"
+                        id="questionsJobTitle"
+                    >
+                        Aptitude Test
+                    </h2>
+
+                    <p
+                        class="text-muted mb-0"
+                        id="questionsCompanyName"
+                    >
+                    </p>
+
+                </div>
+
+                <div id="questionsContainer">
+                </div>
+
+                <div class="aptitude-card text-center">
+
+                    <button
+                        type="button"
+                        id="submitTestButton"
+                        class="btn btn-primary rounded-pill px-4"
+                    >
+
+                        <i class="bi bi-send-check me-1"></i>
+
+                        Submit Test
+
+                    </button>
+
+                    <div
+                        class="small text-muted mt-2"
+                        id="submitHint"
+                    >
+                        Answer all questions before submitting.
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- RESULT -->
+
+            <div
+                id="testResultSection"
+                class="aptitude-card text-center"
+                style="display:none;"
+            >
+
+                <div class="aptitude-icon" id="resultIcon">
+                    <i class="bi bi-award"></i>
+                </div>
+
+                <h2 class="fw-bold mb-1" id="resultJobTitle">
+                    Aptitude Test
+                </h2>
+
+                <p class="text-muted mb-4" id="resultCompanyName">
+                </p>
+
+                <div id="resultBadge"></div>
+
+                <div
+                    class="row g-3 mt-3 justify-content-center"
+                >
+
+                    <div class="col-6 col-md-4">
+
+                        <div
+                            style="
+                                background:#f8fafc;
+                                border-radius:12px;
+                                padding:14px;
+                            "
+                        >
+                            <div class="small text-muted">
+                                Score
+                            </div>
+                            <div
+                                class="fw-bold fs-5"
+                                id="resultScore"
+                            >
+                                -
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="col-6 col-md-4">
+
+                        <div
+                            style="
+                                background:#f8fafc;
+                                border-radius:12px;
+                                padding:14px;
+                            "
+                        >
+                            <div class="small text-muted">
+                                Percentage
+                            </div>
+                            <div
+                                class="fw-bold fs-5"
+                                id="resultPercentage"
+                            >
+                                -
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="col-6 col-md-4">
+
+                        <div
+                            style="
+                                background:#f8fafc;
+                                border-radius:12px;
+                                padding:14px;
+                            "
+                        >
+                            <div class="small text-muted">
+                                Completed
+                            </div>
+                            <div
+                                class="fw-bold"
+                                id="resultDate"
+                                style="font-size:13px;"
+                            >
+                                -
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <a
+                    href="assessment.html" data-dashboard-link
+                    class="btn btn-outline-primary rounded-pill px-4 mt-4"
+                >
+                    Back to Dashboard
+                </a>
+
+            </div>
+
+
+            <!-- TERMINATED (Task 4D-STRICT-1 — strict mode
+                 violation policy reached the termination limit) -->
+
+            <div
+                id="testTerminatedSection"
+                class="aptitude-card text-center"
+                style="display:none;"
+            >
+
+                <div
+                    class="aptitude-icon"
+                    style="background:linear-gradient(135deg,#dc2626,#991b1b);"
+                >
+                    <i class="bi bi-shield-x"></i>
+                </div>
+
+                <h2 class="fw-bold mb-1">
+                    Assessment Terminated
+                </h2>
+
+                <p class="text-muted">
+                    The assessment was automatically terminated
+                    because the maximum number of assessment
+                    integrity violations was reached.
+                </p>
+
+                <p class="text-muted small">
+                    An assessment integrity violation was detected
+                    (for example, repeatedly leaving the assessment
+                    screen or exiting fullscreen). Contact your
+                    recruiter if you believe this happened in error.
+                </p>
+
+                <a
+                    href="assessment.html" data-dashboard-link
+                    class="btn btn-outline-primary rounded-pill px-4 mt-2"
+                >
+                    Back to Dashboard
+                </a>
+
+            </div>
+
+        </div>
+
+    </main>
+
+
+    <!-- ==================================================
+         BOOTSTRAP JS
+         ================================================== -->
+
+    <script
+        src="vendor/bootstrap/bootstrap.bundle.min.js"
+    ></script>
+
+
+    <!-- ==================================================
+         APTITUDE TEST
+         ================================================== -->
+
+    <script src="./js/session-guard.js?v=3"></script>
+<script src="./js/csrf-fetch.js?v=1"></script>
+    <script src="./js/assessment-instructions.js?v=4"></script>
+    <script src="./js/camera-quality.js?v=1"></script>
+    <script src="./js/face-proctor.js?v=4"></script>
+    <script src="./js/exam-lock.js?v=3"></script>
+    <script src="./js/integrity-guards.js?v=3"></script>
+    <script src="./js/audio-proctor.js?v=1"></script>
+    <script src="./js/screen-proctor.js?v=2"></script>
+    <script src="./js/assessment-integrity.js?v=103"></script>
+    <script src="./js/assessment-video-recorder.js?v=4"></script>
+    <script src="./js/phone-detector.js?v=6"></script>
+    <script src="./js/aptitude-test.js?v=11"></script>
+
+
+    <script src="./js/dashboard-link.js"></script>
+    <script src="./js/assessment-titles.js?v=3"></script>
+</body>
+
+</html>

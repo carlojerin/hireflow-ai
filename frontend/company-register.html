@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>HR Registration - HireFlow AI</title>
+
+
+    <!-- Bootstrap -->
+
+    <link
+        href="vendor/bootstrap/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+
+    <!-- Bootstrap Icons -->
+
+    <link
+        rel="stylesheet"
+        href="vendor/bootstrap-icons/bootstrap-icons.min.css"
+    >
+
+
+    <style>
+
+        body {
+            min-height: 100vh;
+            background: #f5f7fb;
+            font-family: Arial, sans-serif;
+        }
+
+
+        .page-wrapper {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 15px;
+        }
+
+
+        .register-card {
+            width: 100%;
+            max-width: 900px;
+            background: white;
+            border-radius: 18px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+
+        .brand-section {
+            background: #111827;
+            color: white;
+            padding: 35px;
+        }
+
+
+        .brand-title {
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+
+        .brand-subtitle {
+            color: #d1d5db;
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+
+
+        .verification-note {
+            margin-top: 25px;
+            padding: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+
+        .form-section {
+            padding: 35px;
+        }
+
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 18px;
+        }
+
+
+        .form-label {
+            font-weight: 600;
+            color: #374151;
+        }
+
+
+        .form-control,
+        .form-select {
+            min-height: 46px;
+            border-radius: 9px;
+        }
+
+
+        textarea.form-control {
+            min-height: 110px;
+            resize: vertical;
+        }
+
+
+        .required-star {
+            color: #dc2626;
+        }
+
+
+        .register-button {
+            min-height: 48px;
+            border-radius: 9px;
+            font-weight: 600;
+        }
+
+
+        .login-text {
+            color: #6b7280;
+        }
+
+
+        .login-link {
+            color: #111827;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+
+        .login-link:hover {
+            text-decoration: underline;
+        }
+
+
+        .security-note {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 15px;
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+
+        /* =========================================
+           PASSWORD FIELD
+        ========================================= */
+
+        .password-wrapper {
+            position: relative;
+        }
+
+
+        .password-wrapper .form-control {
+            padding-right: 48px;
+        }
+
+
+        .password-toggle {
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+            border: none;
+            background: transparent;
+            color: #6b7280;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+
+        .password-toggle:hover {
+            background: #f3f4f6;
+            color: #111827;
+        }
+
+
+        .password-toggle:focus {
+            outline: none;
+            box-shadow: none;
+        }
+
+
+        /* =========================================
+           VERIFICATION IDENTIFIER
+        ========================================= */
+
+        .verification-field {
+            transition: 0.2s;
+        }
+
+
+        .verification-help {
+            margin-top: 8px;
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+
+        .verification-field.d-none {
+            display: none !important;
+        }
+
+
+        @media (max-width: 768px) {
+
+            .brand-section,
+            .form-section {
+                padding: 25px;
+            }
+
+        }
+
+    </style>
+
+    <!-- Shared Company Visual Polish -->
+    <link rel="stylesheet" href="css/company.css">
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=DM+Sans:wght@400;500;700&display=swap">
+    <link rel="stylesheet" href="css/theme-glass.css?v=1">
+</head>
+
+
+<body>
+
+
+<div class="page-wrapper">
+
+    <div class="register-card">
+
+        <div class="row g-0">
+
+
+            <!-- ==================================================
+                 BRAND / INFORMATION
+            ================================================== -->
+
+            <div class="col-lg-4">
+
+                <div class="brand-section h-100">
+
+                    <div class="brand-title">
+
+                        <i class="bi bi-robot me-2"></i>
+
+                        HireFlow AI
+
+                    </div>
+
+
+                    <p class="brand-subtitle">
+
+                        Create your HR account — no waiting, no
+                        approval needed. Start inviting candidates
+                        right away.
+
+                    </p>
+
+
+                    <div class="mt-4 small text-light">
+
+                        <div class="mb-2">
+
+                            <i class="bi bi-check-circle me-2"></i>
+
+                            Your HR account is ready instantly
+
+                        </div>
+
+
+                        <div class="mb-2">
+
+                            <i class="bi bi-check-circle me-2"></i>
+
+                            Invite candidates with a resume upload
+
+                        </div>
+
+
+                        <div>
+
+                            <i class="bi bi-check-circle me-2"></i>
+
+                            AI analyzes and assesses every candidate
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ==================================================
+                 REGISTRATION FORM
+            ================================================== -->
+
+            <div class="col-lg-8">
+
+                <div class="form-section">
+
+
+                    <div class="mb-4">
+
+                        <h2 class="mb-1">
+
+                            HR Registration
+
+                        </h2>
+
+
+                        <p class="text-muted mb-0">
+
+                            Create your HR account to start
+                            inviting and assessing candidates.
+
+                        </p>
+
+                    </div>
+
+
+                    <!-- MESSAGE -->
+
+                    <div
+                        id="messageBox"
+                        class="alert d-none"
+                        role="alert"
+                    >
+                    </div>
+
+
+                    <!-- ==================================================
+                         COMPANY
+                    ================================================== -->
+
+                    <div class="section-title">
+
+                        Company
+
+                    </div>
+
+
+                    <div class="row g-3 mb-4">
+
+
+                        <!-- COMPANY NAME -->
+
+                        <div class="col-md-6">
+
+                            <label
+                                for="companyName"
+                                class="form-label"
+                            >
+
+                                Company Name
+                                <span class="required-star">*</span>
+
+                            </label>
+
+
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="companyName"
+                                placeholder="ABC Technologies"
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ==================================================
+                         HR DETAILS
+                    ================================================== -->
+
+                    <div class="section-title">
+
+                        HR Details
+
+                    </div>
+
+                    <p class="text-muted mb-3" style="font-size: 13px; margin-top: -10px;">
+                        This is you — the account you'll log in with.
+                    </p>
+
+
+                    <div class="row g-3 mb-4">
+
+
+                        <!-- HR NAME -->
+
+                        <div class="col-md-6">
+
+                            <label
+                                for="hrName"
+                                class="form-label"
+                            >
+
+                                Your Name
+                                <span class="required-star">*</span>
+
+                            </label>
+
+
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="hrName"
+                                placeholder="Your full name"
+                                required
+                            >
+
+                        </div>
+
+
+                        <!-- EMAIL -->
+
+                        <div class="col-md-6">
+
+                            <label
+                                for="companyEmail"
+                                class="form-label"
+                            >
+
+                                Your Email
+                                <span class="required-star">*</span>
+
+                            </label>
+
+
+                            <input
+                                type="email"
+                                class="form-control"
+                                id="companyEmail"
+                                placeholder="hr@company.com"
+                                required
+                            >
+
+                        </div>
+
+
+                        <!-- MOBILE -->
+
+                        <div class="col-md-6">
+
+                            <label
+                                for="companyMobile"
+                                class="form-label"
+                            >
+
+                                Your Mobile Number
+                                <span class="required-star">*</span>
+
+                            </label>
+
+
+                            <input
+                                type="tel"
+                                class="form-control"
+                                id="companyMobile"
+                                placeholder="9876543210"
+                                required
+                            >
+
+                        </div>
+
+
+                        <!-- PASSWORD -->
+
+                        <div class="col-md-6">
+
+                            <label
+                                for="companyPassword"
+                                class="form-label"
+                            >
+
+                                Password
+                                <span class="required-star">*</span>
+
+                            </label>
+
+
+                            <div class="password-wrapper">
+
+                                <input
+                                    type="password"
+                                    class="form-control"
+                                    id="companyPassword"
+                                    placeholder="Minimum 8 characters"
+                                    required
+                                >
+
+
+                                <button
+                                    type="button"
+                                    class="password-toggle"
+                                    id="toggleCompanyPassword"
+                                    aria-label="Show password"
+                                    title="Show password"
+                                >
+
+                                    <i class="bi bi-eye"></i>
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- CONFIRM PASSWORD -->
+
+                        <div class="col-md-6">
+
+                            <label
+                                for="confirmPassword"
+                                class="form-label"
+                            >
+
+                                Confirm Password
+                                <span class="required-star">*</span>
+
+                            </label>
+
+
+                            <div class="password-wrapper">
+
+                                <input
+                                    type="password"
+                                    class="form-control"
+                                    id="confirmPassword"
+                                    placeholder="Re-enter password"
+                                    required
+                                >
+
+
+                                <button
+                                    type="button"
+                                    class="password-toggle"
+                                    id="toggleConfirmPassword"
+                                    aria-label="Show password"
+                                    title="Show password"
+                                >
+
+                                    <i class="bi bi-eye"></i>
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ==================================================
+                         SUBMIT
+                    ================================================== -->
+
+                    <button
+                        type="button"
+                        class="btn btn-dark w-100 register-button"
+                        id="registerCompanyButton"
+                    >
+
+                        <i class="bi bi-building-add me-2"></i>
+
+                        Create Account
+
+                    </button>
+
+
+                    <div class="text-center mt-4">
+
+                        <span class="login-text">
+
+                            Already registered?
+
+                        </span>
+
+
+                        <a
+                            href="company-login.html"
+                            class="login-link ms-1"
+                        >
+
+                            HR Login
+
+                        </a>
+
+                    </div>
+
+
+                    <div class="text-center mt-3">
+
+                        <a
+                            href="index.html"
+                            class="text-muted text-decoration-none small"
+                        >
+
+                            <i class="bi bi-arrow-left me-1"></i>
+
+                            Back to HireFlow
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- Bootstrap JS -->
+
+<script
+    src="vendor/bootstrap/bootstrap.bundle.min.js"
+></script>
+
+
+<!-- Password Toggle -->
+
+<script>
+
+    function setupPasswordToggle(
+        inputId,
+        buttonId
+    ) {
+
+        const input =
+            document.getElementById(inputId);
+
+        const button =
+            document.getElementById(buttonId);
+
+
+        if (!input || !button) {
+
+            return;
+
+        }
+
+
+        button.addEventListener(
+            "click",
+            function () {
+
+                const icon =
+                    button.querySelector("i");
+
+
+                if (
+                    input.type === "password"
+                ) {
+
+                    input.type = "text";
+
+
+                    icon.classList.remove(
+                        "bi-eye"
+                    );
+
+
+                    icon.classList.add(
+                        "bi-eye-slash"
+                    );
+
+
+                    button.setAttribute(
+                        "aria-label",
+                        "Hide password"
+                    );
+
+
+                    button.setAttribute(
+                        "title",
+                        "Hide password"
+                    );
+
+                } else {
+
+                    input.type = "password";
+
+
+                    icon.classList.remove(
+                        "bi-eye-slash"
+                    );
+
+
+                    icon.classList.add(
+                        "bi-eye"
+                    );
+
+
+                    button.setAttribute(
+                        "aria-label",
+                        "Show password"
+                    );
+
+
+                    button.setAttribute(
+                        "title",
+                        "Show password"
+                    );
+
+                }
+
+            }
+        );
+
+    }
+
+
+    setupPasswordToggle(
+        "companyPassword",
+        "toggleCompanyPassword"
+    );
+
+
+    setupPasswordToggle(
+        "confirmPassword",
+        "toggleConfirmPassword"
+    );
+
+</script>
+
+
+<!-- Company Registration JS -->
+
+<script src="js/company-register.js?v=4"></script>
+
+
+</body>
+
+</html>

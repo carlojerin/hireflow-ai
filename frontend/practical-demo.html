@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Practical Assessment Demo - HireFlow AI</title>
+<link rel="stylesheet" href="css/bootstrap.min.css">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=DM+Sans:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="css/theme-glass.css?v=1">
+<link rel="stylesheet" href="css/practical.css?v=1">
+<style>
+    .demo-wrap { max-width: 1180px; margin: 0 auto; padding: 24px 16px 60px; }
+    .demo-tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+    .question-card { background: rgba(255,255,255,.7); border: 1px solid rgba(255,255,255,.9); border-radius: 16px; padding: 18px; margin-bottom: 14px; box-shadow: 0 10px 30px rgba(70,60,200,.12); }
+    .question-number { font-weight: 700; margin-bottom: 6px; }
+</style>
+</head>
+<body>
+<div class="demo-wrap">
+    <h1 class="h3">Practical assessment environments</h1>
+    <p class="text-muted">Sample of what a candidate sees. This page is only a preview: nothing is saved or graded.</p>
+    <div class="demo-tabs">
+        <button class="btn btn-primary" id="showData">Data task (MIS / finance / operations)</button>
+        <button class="btn btn-outline-primary" id="showLab">Technical lab (DevOps / security / network)</button>
+        <button class="btn btn-outline-primary" id="showDesign">Web design task (drag and drop)</button>
+        <button class="btn btn-outline-primary" id="showWritten">Written task (support / sales / HR / marketing)</button>
+    </div>
+    <div id="questionsContainer"></div>
+</div>
+<script src="practical-demo-data.js"></script>
+<script src="js/practical-environment.js"></script>
+<script src="js/practical-design.js"></script>
+<script>
+    (function () {
+        function show(which) {
+            const test = window.PRACTICAL_DEMO[which];
+            const old = document.getElementById("questionsContainer");
+            const fresh = old.cloneNode(false);
+            old.replaceWith(fresh);
+            fresh.innerHTML = window.PracticalEnvironment.renderHtml(test, new Map());
+            window.PracticalEnvironment.init(fresh, test, function () {});
+            window.__container = fresh;
+        }
+        document.getElementById("showData").addEventListener("click", function () { show("data"); });
+        document.getElementById("showWritten").addEventListener("click", function () { show("written"); });
+        document.getElementById("showDesign").addEventListener("click", function () { show("design"); });
+        document.getElementById("showLab").addEventListener("click", function () { show("lab"); });
+        show("data");
+    })();
+</script>
+</body>
+</html>

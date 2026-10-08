@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Candidate Tracking - HireFlow AI</title>
+
+    <link href="vendor/bootstrap/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="vendor/bootstrap-icons/bootstrap-icons.min.css">
+
+    <link rel="stylesheet" href="css/company.css">
+
+    <style>
+
+        :root {
+            --ink: #0f172a;
+            --ink-soft: #475569;
+            --muted: #64748b;
+            --border: #e6e8ee;
+            --surface: #ffffff;
+            --bg: #f7f8fb;
+            --accent: #4f5bff;
+            --accent-soft: #eef0ff;
+            --radius: 12px;
+            --radius-sm: 10px;
+            --shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 8px rgba(15, 23, 42, 0.04);
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--ink);
+            font-family: "Inter", "Segoe UI", Arial, sans-serif;
+            font-size: 14px;
+        }
+
+        .main-content {
+            padding: 28px 32px;
+            max-width: 1360px;
+            margin: 0 auto;
+        }
+
+        .ats-header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            margin-bottom: 22px;
+        }
+
+        .ats-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--ink);
+            margin: 0 0 3px;
+            letter-spacing: -0.01em;
+        }
+
+        .ats-subtitle {
+            color: var(--muted);
+            font-size: 13.5px;
+            margin: 0;
+        }
+
+        .btn-ats-outline {
+            background: #fff;
+            border: 1px solid var(--border);
+            color: var(--ink-soft);
+            font-size: 13.5px;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            transition: all 0.15s ease;
+        }
+
+        .btn-ats-outline:hover {
+            border-color: #cbd2e0;
+            background: #fafbfd;
+            color: var(--ink);
+        }
+
+        /* KPI row */
+
+        .kpi-row {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        @media (max-width: 1100px) {
+            .kpi-row { grid-template-columns: repeat(3, 1fr); }
+        }
+
+        @media (max-width: 700px) {
+            .kpi-row { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        .kpi-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 12px 14px;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: border-color 0.15s ease;
+        }
+
+        .kpi-card:hover { border-color: #cbd2e0; }
+
+        .kpi-card.active {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px var(--accent-soft);
+        }
+
+        .kpi-label {
+            font-size: 10.5px;
+            font-weight: 700;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        .kpi-value {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--ink);
+            margin-top: 2px;
+        }
+
+        /* Toolbar */
+
+        .toolbar {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 14px 16px;
+            box-shadow: var(--shadow);
+            margin-bottom: 18px;
+        }
+
+        .toolbar-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            margin-bottom: 5px;
+        }
+
+        .toolbar .form-select { font-size: 13px; }
+
+        .score-pill { display: inline-block; min-width: 54px; text-align: center; padding: 3px 10px; border-radius: 999px; font-weight: 700; font-size: 13px; }
+        .score-high { background: #ecfdf5; color: #047857; }
+        .score-mid  { background: #fffbeb; color: #b45309; }
+        .score-low  { background: #fef2f2; color: #b91c1c; }
+        .score-none { background: #f3f4f6; color: #6b7280; font-weight: 500; }
+        .score-sub  { font-size: 11px; color: var(--muted); margin-top: 3px; }
+
+        .risk-pill { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 999px; font-weight: 700; font-size: 12px; }
+        .risk-clean  { background: #ecfdf5; color: #047857; }
+        .risk-low    { background: #eff6ff; color: #1d4ed8; }
+        .risk-medium { background: #fffbeb; color: #b45309; }
+        .risk-high   { background: #fef2f2; color: #b91c1c; }
+        .risk-none   { background: #f3f4f6; color: #6b7280; font-weight: 500; }
+        .risk-detail { font-size: 11px; color: var(--muted); margin-top: 3px; max-width: 230px; line-height: 1.35; }
+
+        /* Table */
+
+        .tracking-table-wrap {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .tracking-table-scroll { overflow-x: auto; }
+
+        .tracking-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 860px;
+        }
+
+        .tracking-table thead th {
+            text-align: left;
+            font-size: 10.5px;
+            font-weight: 700;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            padding: 11px 14px;
+            border-bottom: 1px solid var(--border);
+            background: #fbfbfd;
+            white-space: nowrap;
+        }
+
+        .tracking-table tbody td {
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--border);
+            vertical-align: middle;
+        }
+
+        .tracking-table tbody tr:last-child td { border-bottom: none; }
+        .tracking-table tbody tr:hover { background: #fafbfd; }
+
+        .cand-avatar { width: 40px; height: 40px; flex: 0 0 40px; border-radius: 50%; object-fit: cover; border: 1px solid rgba(15,23,42,.12); background: #e5e7eb; }
+        .cand-avatar-initials { display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: #475569; background: #eef0ff; }
+        .candidate-name { font-size: 14px; font-weight: 650; color: var(--ink); }
+        .candidate-email { font-size: 12px; color: var(--muted); margin-top: 1px; }
+
+        .level-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 12px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 650;
+            white-space: nowrap;
+        }
+
+        .level-badge .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        .level-invited     { background: #eff6ff; color: #1d4ed8; }
+        .level-scheduled    { background: #f5f3ff; color: #3b46e0; }
+        .level-not_started  { background: #f3f4f6; color: #4b5563; }
+        .level-in_progress  { background: var(--accent-soft); color: #3b46e0; }
+        .level-success      { background: #ecfdf5; color: #047857; }
+        .level-danger       { background: #fef2f2; color: #b91c1c; }
+        .level-expired      { background: #f3f4f6; color: #6b7280; }
+
+        .timestamp-line { font-size: 12.5px; color: var(--ink-soft); }
+        .timestamp-sub { font-size: 11px; color: var(--muted); margin-top: 1px; }
+
+        .empty-state, .loading-state, .error-state {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 55px 20px;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+
+        .empty-icon {
+            width: 56px; height: 56px; border-radius: 14px;
+            background: var(--bg); color: var(--muted);
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 14px; font-size: 24px;
+        }
+
+        .empty-title { font-size: 15.5px; font-weight: 650; margin-bottom: 5px; color: var(--ink); }
+        .empty-text { color: var(--muted); font-size: 13px; }
+
+        @media (max-width: 768px) {
+            .sidebar { min-height: auto; border-right: none; border-bottom: 1px solid var(--border); }
+            .main-content { padding: 18px; }
+        }
+
+    </style>
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=DM+Sans:wght@400;500;700&display=swap">
+    <link rel="stylesheet" href="css/theme-glass.css?v=1">
+</head>
+
+<body>
+
+<nav class="navbar">
+    <div class="container-fluid px-4">
+        <a class="navbar-brand" href="company-dashboard.html">
+            <i class="bi bi-robot me-2"></i>
+            HireFlow AI
+        </a>
+        <div class="d-flex align-items-center gap-3">
+            <span class="company-text" id="navbarCompanyName">Company</span>
+            <button type="button" class="btn btn-outline-light btn-sm" id="logoutBtn">
+                <i class="bi bi-box-arrow-right me-1"></i>
+                Logout
+            </button>
+        </div>
+    </div>
+</nav>
+
+<div class="container-fluid">
+    <div class="row">
+
+        <aside class="col-md-3 col-lg-2 sidebar">
+            <nav class="nav flex-column">
+
+                <div class="sidebar-section-label">Recruitment</div>
+
+                <a href="company-dashboard.html" class="nav-link">
+                    <i class="bi bi-speedometer2"></i>
+                    Dashboard
+                </a>
+
+                <a href="company-profile.html" class="nav-link">
+                    <i class="bi bi-person-badge"></i>
+                    HR Profile
+                </a>
+
+                <a href="company-invite-candidate.html" class="nav-link">
+                    <i class="bi bi-person-plus"></i>
+                    Invite a Candidate
+                </a>
+
+                <a href="company-candidate-tracking.html" class="nav-link active">
+                    <i class="bi bi-signpost-split"></i>
+                    Candidate Tracking
+                </a>
+
+                <hr class="mx-3">
+
+                <a href="company-settings.html" class="nav-link" id="settingsLink">
+                    <i class="bi bi-gear"></i>
+                    Settings
+                </a>
+
+            </nav>
+        </aside>
+
+        <main class="col-md-9 col-lg-10 main-content">
+
+            <div class="ats-header">
+                <div>
+                    <h1 class="ats-title">Candidate Tracking</h1>
+                    <p class="ats-subtitle">
+                        Every candidate you've invited, and exactly where they are right now.
+                    </p>
+                </div>
+
+                <button type="button" class="btn-ats-outline" id="refreshBtn">
+                    <i class="bi bi-arrow-clockwise me-1"></i>
+                    Refresh
+                </button>
+            </div>
+
+            <div class="kpi-row" id="kpiRow">
+
+                <div class="kpi-card active" data-filter="">
+                    <div class="kpi-label">All Candidates</div>
+                    <div class="kpi-value" id="kpiAll">0</div>
+                </div>
+
+                <div class="kpi-card" data-filter="invited">
+                    <div class="kpi-label">Invited</div>
+                    <div class="kpi-value" id="kpiInvited">0</div>
+                </div>
+
+                <div class="kpi-card" data-filter="scheduled">
+                    <div class="kpi-label">Scheduled</div>
+                    <div class="kpi-value" id="kpiScheduled">0</div>
+                </div>
+
+                <div class="kpi-card" data-filter="in_progress,not_started">
+                    <div class="kpi-label">In Progress</div>
+                    <div class="kpi-value" id="kpiInProgress">0</div>
+                </div>
+
+                <div class="kpi-card" data-filter="success">
+                    <div class="kpi-label">Passed / Hired</div>
+                    <div class="kpi-value" id="kpiSuccess">0</div>
+                </div>
+
+                <div class="kpi-card" data-filter="danger,expired">
+                    <div class="kpi-label">Failed / Expired</div>
+                    <div class="kpi-value" id="kpiDanger">0</div>
+                </div>
+
+            </div>
+
+            <div class="toolbar">
+                <div class="row g-3 align-items-end">
+                    <div class="col-lg-4">
+                        <div class="toolbar-label">Search</div>
+                        <input type="text" class="form-control form-control-sm" id="searchInput"
+                               placeholder="Name, email or job title...">
+                    </div>
+                    <div class="col-6 col-lg-2">
+                        <div class="toolbar-label">Score</div>
+                        <select class="form-select form-select-sm" id="minScoreSelect" aria-label="Minimum overall score">
+                            <option value="0">Any score</option>
+                            <option value="90">90% and above</option>
+                            <option value="80">80% and above</option>
+                            <option value="70">70% and above</option>
+                            <option value="60">60% and above</option>
+                            <option value="50">50% and above</option>
+                        </select>
+                    </div>
+                    <div class="col-6 col-lg-3">
+                        <div class="toolbar-label">Integrity</div>
+                        <select class="form-select form-select-sm" id="integritySelect" aria-label="Integrity filter">
+                            <option value="any">Any integrity</option>
+                            <option value="clean">Clean only (nothing recorded)</option>
+                            <option value="low">Low risk or better</option>
+                            <option value="medium">Medium risk or better (hide high)</option>
+                            <option value="high">High risk only</option>
+                        </select>
+                    </div>
+                    <div class="col-12 col-lg-3">
+                        <div class="toolbar-label">Sort by</div>
+                        <select class="form-select form-select-sm" id="sortSelect" aria-label="Sort candidates">
+                            <option value="newest">Newest invited</option>
+                            <option value="score">Highest score</option>
+                            <option value="integrity">Fewest integrity issues</option>
+                            <option value="best">Best overall (score, then integrity)</option>
+                        </select>
+                    </div>
+                    <div class="col-12 d-flex justify-content-between flex-wrap gap-2">
+                        <span class="text-muted small" id="resultCount">0 candidates</span>
+                        <span class="text-muted small" id="integrityLegend" title="">
+                            <i class="bi bi-info-circle"></i> How integrity risk is decided
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="trackingContainer">
+                <div class="loading-state">
+                    <div class="spinner-border text-secondary mb-3" role="status"></div>
+                    <div class="text-muted small">Loading candidate tracking...</div>
+                </div>
+            </div>
+
+        </main>
+
+    </div>
+</div>
+
+<script src="vendor/bootstrap/bootstrap.bundle.min.js"></script>
+
+<script src="js/session-guard.js?v=3"></script>
+<script src="js/csrf-fetch.js"></script>
+<script src="js/company-candidate-tracking.js?v=4"></script>
+
+</body>
+
+</html>

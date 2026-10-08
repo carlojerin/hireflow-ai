@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Schedule Your Assessment - HireFlow AI</title>
+
+    <link href="vendor/bootstrap/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="vendor/bootstrap-icons/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: 'IBM Plex Sans', 'Segoe UI', Arial, sans-serif;
+            background:
+                radial-gradient(circle at 15% 0%, rgba(99,102,241,.10), transparent 30%),
+                radial-gradient(circle at 90% 15%, rgba(236,72,153,.08), transparent 30%),
+                #f8faff;
+        }
+
+        h1, h2, h3, .sa-brand { font-family: 'Sora', 'IBM Plex Sans', sans-serif; }
+
+        .sa-navbar { background: #111827; }
+        .sa-brand { color: #fff; font-weight: 700; }
+        .sa-brand:hover { color: #fff; }
+
+        .sa-card {
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 12px 35px rgba(15,23,42,.08);
+            padding: 40px 36px;
+            max-width: 460px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .sa-job-chip {
+            background: #f5f3ff;
+            border: 1px solid #ddd6fe;
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-size: 13.5px;
+            color: #5b21b6;
+            margin-bottom: 22px;
+        }
+
+        .sa-label {
+            font-size: 12.5px;
+            font-weight: 700;
+            color: #334155;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .sa-hint {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-top: 6px;
+        }
+
+        .sa-submit-btn {
+            border: 0;
+            background: #4f5bff;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 700;
+            padding: 12px 26px;
+            border-radius: 999px;
+            width: 100%;
+            box-shadow: 0 8px 20px rgba(79,91,255,.3);
+        }
+
+        .sa-submit-btn:hover { background: #4f5bff; color: #fff; }
+        .sa-submit-btn:disabled { opacity: .7; }
+
+        .sa-start-now-link {
+            display: block;
+            text-align: center;
+            margin-top: 14px;
+            font-size: 13px;
+            color: #4f5bff;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .sa-success-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: #ecfdf5;
+            color: #16a34a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            margin: 0 auto 18px;
+        }
+
+        .sa-scheduled-time {
+            background: #f5f3ff;
+            border: 1px solid #ddd6fe;
+            border-radius: 12px;
+            padding: 14px 18px;
+            text-align: center;
+            font-weight: 700;
+            color: #5b21b6;
+            font-size: 15.5px;
+            margin: 16px 0 22px;
+        }
+
+        .sa-spinner {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 4px solid #ede9fe;
+            border-top-color: #4f5bff;
+            margin: 0 auto 16px;
+            animation: sa-spin 1s linear infinite;
+        }
+
+        @keyframes sa-spin { to { transform: rotate(360deg); } }
+
+        .sa-danger-banner {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: 12px;
+            padding: 12px 16px;
+            color: #991b1b;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+    </style>
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=DM+Sans:wght@400;500;700&display=swap">
+    <link rel="stylesheet" href="css/theme-glass.css?v=1">
+</head>
+
+<body>
+
+    <nav class="navbar sa-navbar">
+        <div class="container">
+            <a href="index.html" class="navbar-brand sa-brand">🚀 HireFlow AI</a>
+        </div>
+    </nav>
+
+    <div class="d-flex align-items-center justify-content-center" style="min-height: calc(100vh - 56px); padding: 24px;">
+
+        <div class="sa-card">
+
+            <!-- LOADING -->
+            <div id="saLoading" class="text-center">
+                <div class="sa-spinner"></div>
+                <p class="text-muted mb-0" style="font-size: 13.5px;">Loading your invite…</p>
+            </div>
+
+            <!-- SCHEDULE FORM -->
+            <div id="saForm" style="display:none;">
+
+                <h1 class="fw-bold mb-1" style="font-size: 21px;">Schedule Your Assessment</h1>
+                <p class="text-muted mb-3" style="font-size: 13.5px;">
+                    Hi <span id="saCandidateName">there</span> — pick a time that works for you.
+                </p>
+
+                <div class="sa-job-chip">
+                    <i class="bi bi-briefcase me-1"></i>
+                    <span id="saJobTitle">—</span> at <span id="saCompanyName">—</span>
+                </div>
+
+                <div id="saErrorBox"></div>
+
+                <label class="sa-label" for="saDateTimeInput">When would you like to start?</label>
+                <input type="datetime-local" class="form-control" id="saDateTimeInput">
+                <div class="sa-hint" id="saDeadlineHint">You can pick any time before your deadline.</div>
+
+                <button type="button" class="sa-submit-btn mt-4" id="saConfirmButton">
+                    <i class="bi bi-calendar-check me-1"></i>
+                    Confirm Schedule
+                </button>
+
+                <a href="#" class="sa-start-now-link" id="saStartNowLink">
+                    Actually, I'll start right now instead →
+                </a>
+
+            </div>
+
+            <!-- CONFIRMATION -->
+            <div id="saConfirmed" style="display:none;" class="text-center">
+
+                <div class="sa-success-icon"><i class="bi bi-check-lg"></i></div>
+
+                <h1 class="fw-bold mb-2" style="font-size: 20px;">You're all set!</h1>
+                <p class="text-muted mb-0" style="font-size: 13.5px;">
+                    You've scheduled your assessment for:
+                </p>
+
+                <div class="sa-scheduled-time" id="saConfirmedTime">—</div>
+
+                <p class="text-muted mb-3" style="font-size: 12.5px;">
+                    We've emailed you a confirmation, and we'll remind you again before your deadline.
+                </p>
+
+                <a href="#" class="sa-submit-btn d-inline-block text-decoration-none" id="saConfirmedStartLink" style="width:auto; padding: 10px 24px;">
+                    Start Now Instead
+                </a>
+
+            </div>
+
+            <!-- ERROR (link invalid/expired) -->
+            <div id="saError" style="display:none;" class="text-center">
+                <div class="mb-3" style="font-size:40px;" id="saErrorIcon">⚠️</div>
+                <h1 class="fw-bold mb-2" style="font-size: 21px;" id="saErrorTitle">This link isn't valid</h1>
+                <p class="text-muted mb-0" id="saErrorText" style="font-size: 13.5px;">
+                    Contact the company that invited you if you think this is a mistake.
+                </p>
+                <a href="index.html" class="btn btn-outline-primary rounded-pill px-4 mt-3">
+                    Back to Home
+                </a>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script src="./js/schedule-assessment.js?v=1"></script>
+
+</body>
+
+</html>
