@@ -34,7 +34,7 @@ os.makedirs(SNAPSHOT_STORAGE_ROOT, exist_ok=True)
 ALLOWED_STAGES = {"aptitude", "programming", "ai_interview", "self_intro", "situational_judgment", "technical_domain"}
 ALLOWED_REASONS = {
     "identity_reference", "periodic", "completion", "face_missing", "multiple_faces_detected", "looking_away",
-    "gaze_away", "looking_away_repeated", "camera_covered", "mobile_phone_detected",
+    "gaze_away", "looking_away_repeated", "camera_covered", "mobile_phone_detected", "unauthorized_object_detected",
 }
 MAX_SNAPSHOT_BYTES = 200 * 1024
 MAX_SNAPSHOTS_PER_STAGE = 80            # bounded: a stage is at most ~1 hour

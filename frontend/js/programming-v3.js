@@ -229,6 +229,10 @@ function startCountdown(expiresAtIso) {
 // INTEGRITY (reused, unmodified system)
 // ============================================================
 
+// the number of integrity warnings that ends the assessment; the server's value replaces this default as soon as it is known
+let integrityMaxWarnings = 3;
+
+
 function setIntegrityDot(kind, label) {
 
     const dot = document.getElementById("pv3IntegrityDot");
@@ -239,6 +243,8 @@ function setIntegrityDot(kind, label) {
 
 
 function handleIntegrityStateChange(state) {
+    if (state && state.maxWarnings) integrityMaxWarnings = state.maxWarnings;
+
 
     if (!state) return;
 
@@ -251,13 +257,13 @@ function handleIntegrityStateChange(state) {
 
         setIntegrityDot(
             "warning",
-            `Integrity warning (${state.warningCount || 1} of ${state.maxWarnings || 3})`,
+            `Integrity ${state.warningCount || 1}/${integrityMaxWarnings}`,
         );
 
     } else if (!terminatedByIntegrity) {
 
         if (cameraStreamActive) {
-            setIntegrityDot("ready", "Camera ready — monitoring active");
+            setIntegrityDot("ready", `Camera ready · Integrity 0/${integrityMaxWarnings}`);
         } else {
             setIntegrityDot("error", "Camera unavailable — proceeding without video monitoring");
         }
@@ -330,7 +336,7 @@ async function activateStrictModeForProgrammingV3() {
         cameraStreamActive = !!cameraStream;
 
         if (cameraStreamActive) {
-            setIntegrityDot("ready", "Camera ready — monitoring active");
+            setIntegrityDot("ready", `Camera ready · Integrity 0/${integrityMaxWarnings}`);
             startPhoneDetection();
 
             if (window.AssessmentVideoRecorder && window.AssessmentVideoRecorder.isSupported()) {
@@ -1179,9 +1185,7 @@ function renderFinalResult(data) {
         : (data.total_score ? Math.round((data.score / data.total_score) * 10000) / 100 : data.score);
 
     document.getElementById("pv3ResultBadge").innerHTML = `
-        <span class="fs-4 fw-bold ${passed ? "text-success" : "text-danger"}">
-            ${passed ? "Passed" : "Not Passed"} — ${escapeHtml(String(percentage ?? "-"))}%
-        </span>
+        <span class="fs-4 fw-bold">Score: ${escapeHtml(String(percentage ?? "-"))}%</span>
     `;
 
     // The per-question breakdown (`report.questions`, with earned_

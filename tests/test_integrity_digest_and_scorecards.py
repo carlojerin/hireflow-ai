@@ -83,3 +83,12 @@ def test_the_hr_list_gets_a_score_and_integrity_per_candidate_and_the_report_get
     assert report["digest"] == card["integrity"]                                                       # the dashboard and the report can never disagree
 
     assert _scorecards_by_application(db, []) == {}
+
+
+def test_an_unauthorized_object_is_a_counted_strike_like_a_phone():
+    from backend.app.services.assessment import integrity_service as svc
+    from backend.app.services.assessment.integrity_digest import SIGNALS, SERIOUS
+
+    assert "object" in svc.METADATA_ALLOWED_KEYS_BY_EVENT_TYPE["unauthorized_object_detected"]
+    assert SIGNALS["unauthorized_object_detected"][1] == "strike"
+    assert "unauthorized_object_detected" in SERIOUS

@@ -315,7 +315,7 @@ def test_full_correct_submission_scores_100_and_passes():
 
 
 # 17: failed score stops progression
-def test_full_wrong_submission_fails_and_stops_progression():
+def test_full_wrong_submission_fails_but_still_reaches_the_interview():
     db = _make_db()
     user, job, application, session_record = _seed(db)
     assessment, _ = start_programming_assessment_v2(
@@ -331,7 +331,8 @@ def test_full_wrong_submission_fails_and_stops_progression():
 
     assert result["passed"] is False
     assert application.status == "programming_failed"
-    assert get_assignment(db, application.id, "ai_interview") is None
+    # a failed score no longer stops the candidate: they still reach the interview and HR decides from the results
+    assert get_assignment(db, application.id, "ai_interview") is not None
 
 
 # 15: partial score

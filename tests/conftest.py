@@ -21,3 +21,14 @@ os.environ["AI_DESIGN_VISION_MODELS"] = "off"
 # set, so blanking them here (before any backend module loads the .env) makes the mailer skip sending. Tests of the mailer set their own values.
 for _name in ("SMTP_HOST", "SMTP_USERNAME", "SMTP_PASSWORD", "SMTP_FROM_EMAIL", "GOOGLE_REFRESH_TOKEN", "GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET", "GMAIL_SENDER_EMAIL"):
     os.environ[_name] = ""
+
+# Likewise no test may spend the developer's real AI quota (Groq / Gemini): a test that needs a key sets its own dummy value, and anything that
+# would otherwise call out fails fast and takes the offline fallback path.
+for _name in ("GROQ_API_KEY", "GEMINI_API_KEY"):
+    os.environ[_name] = ""
+
+# The tests must not depend on the developer's own .env (their provider / model choices, keys, mail settings). Every backend module calls load_dotenv() when
+# it is imported; with that turned into a no-op, a test sees only the values this file and the test itself set. (The real app is unaffected.)
+import dotenv as _dotenv
+
+_dotenv.load_dotenv = lambda *args, **kwargs: False

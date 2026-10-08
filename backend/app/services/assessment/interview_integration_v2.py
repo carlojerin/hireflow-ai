@@ -79,8 +79,8 @@ INTERVIEW_V2_DEADLINE_MINUTES = 30
 # END_INTERVIEW is even considered; MAX=8 caps a single attempt at
 # roughly the same real-world length as the legacy interview's
 # fixed 5 questions plus follow-up room, never unbounded.
-INTERVIEW_V2_MIN_TURNS = 8
-INTERVIEW_V2_MAX_TURNS = 8
+INTERVIEW_V2_MIN_TURNS = 10
+INTERVIEW_V2_MAX_TURNS = 10                # six role questions, two about AI, one job-fit question, then the salary question
 
 INTERVIEW_V2_READY_STAGES = ("ai_interview", "completed")
 
@@ -846,7 +846,7 @@ WORK_FIT_COMPETENCY = "Closing Thoughts & Fit"
 #   turn 6     how would you use AI to do a real task of THIS role  (AI Tool Fluency)
 #   turn 7     expected package                                      (Salary Expectations)
 #   turn 8     anything we have not covered + why you fit / how you work (Closing Thoughts & Fit)
-FREE_TURNS = 5
+FREE_TURNS = 6
 
 AI_TOOL_QUESTIONS = {
     "technical": "Which AI tools have you used recently in your work, like Claude, Cursor, Copilot or ChatGPT, and what do you use them for?",
@@ -887,6 +887,12 @@ def _ai_for_role_question(job_title: str | None) -> str:
     ) + "How would you use AI to get that task done faster or better, and what would you still check yourself?"
 
 
+def _ai_limits_question() -> str:
+    """The second AI question: where AI is not enough, and how the candidate keeps its output correct."""
+
+    return "Where does AI get things wrong or fall short in your kind of work, and how do you make sure its output is correct before you rely on it?"
+
+
 def _ai_follow_up_question(answer_text: str) -> str:
 
     tool = named_ai_tool(answer_text)
@@ -910,10 +916,10 @@ def _work_fit_question(company: str | None) -> str:
 
 def _enforce_closing_sequence(decision, blueprint, all_turns, current_turn_row, answer_text: str = "", company: str | None = None, job_title: str | None = None):
     """
-    Product rule: six questions about the role (five chosen by the model, the sixth always "how would you use AI on a real task of
-    this job"), then the expected package, then a closing question (anything not covered / why they fit). The model's own turn
-    choice cannot be trusted to get there (or to stop an early END_INTERVIEW), so the sequence is enforced here, from what has
-    actually been asked so far.
+    Product rule, ten questions: six about the role (chosen by the model), then TWO about AI (a real task of this job; where AI falls
+    short and how the answer is checked), then the job-fit closing question (anything not covered / why they fit), and the expected
+    salary package last. The model's own turn choice cannot be trusted to get there (or to stop an early END_INTERVIEW), so the
+    sequence is enforced here, from what has actually been asked so far.
     """
 
     asked = {(t.competency or "").lower(): 0 for t in all_turns}
@@ -936,14 +942,17 @@ def _enforce_closing_sequence(decision, blueprint, all_turns, current_turn_row, 
     shape = getattr(blueprint, "role_shape", "technical")
 
     # strictly in order, each one only once
-    if current == work_key:
-        return decision                                              # the last question was just answered
-
     if current == package_key:
-        return _force(WORK_FIT_COMPETENCY, _work_fit_question(company), "SCENARIO", "basic")
+        return decision                                              # the last question (salary) was just answered
+
+    if current == work_key:
+        return _force(PACKAGE_COMPETENCY, _package_question(), "EXPERIENCE", "basic")
 
     if current == ai_key:
-        return _force(PACKAGE_COMPETENCY, _package_question(), "EXPERIENCE", "basic")
+        if asked.get(ai_key, 0) >= 2:                                # both AI questions have been asked (this answer was the second)
+            return _force(WORK_FIT_COMPETENCY, _work_fit_question(company), "SCENARIO", "basic")
+
+        return _force(AI_TOOL_COMPETENCY, _ai_limits_question(), "SCENARIO", "intermediate")
 
     if turn_number >= FREE_TURNS and asked.get(ai_key, 0) == 0:
         return _force(AI_TOOL_COMPETENCY, _ai_for_role_question(job_title), "SCENARIO", "intermediate")

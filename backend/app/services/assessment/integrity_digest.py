@@ -25,6 +25,7 @@ SIGNALS = {
     "face_missing": ("Face not visible", "strike"),
     "multiple_faces_detected": ("More than one person in view", "strike"),
     "mobile_phone_detected": ("Mobile phone in view", "strike"),
+    "unauthorized_object_detected": ("Another device or object in view", "strike"),
     "gaze_away_sustained": ("Eyes off the screen for 20+ seconds", "strike"),
     "looking_away_repeated": ("Looked away repeatedly", "strike"),
     "screen_share_stopped": ("Stopped sharing the screen", "strike"),
@@ -44,7 +45,7 @@ SIGNALS = {
 }
 
 # any one of these is serious on its own: another person, a phone, a covered camera, no screen share, or typing by a tool
-SERIOUS = {"multiple_faces_detected", "mobile_phone_detected", "camera_covered", "screen_share_stopped", "automated_typing_suspected", "voice_detected"}
+SERIOUS = {"multiple_faces_detected", "mobile_phone_detected", "unauthorized_object_detected", "camera_covered", "screen_share_stopped", "automated_typing_suspected", "voice_detected"}
 
 RISK_ORDER = {"clean": 0, "low": 1, "medium": 2, "high": 3}
 

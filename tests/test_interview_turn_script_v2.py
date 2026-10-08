@@ -40,40 +40,42 @@ def test_a_full_interview_follows_the_script_and_ends_with_the_closing():
         original = rt.CLOSING_DEADLINE_SECONDS
         rt.CLOSING_DEADLINE_SECONDS = 8
         try:
-            session, conn, pub, *_ = await base._make(work=base.FakeWork(complete_at=8))
+            session, conn, pub, *_ = await base._make(work=base.FakeWork(complete_at=10))
             await session.start()
             await asyncio.sleep(0.3)
 
             await _ask_question(conn, "Hi Arjun. Tell me about your Hospital Management System.")        # question 1 (the opening)
-            assert "question 1 of 8" in _armed(conn)[-1] and "(question 2 of 8)" in _armed(conn)[-1]
+            assert "question 1 of 10" in _armed(conn)[-1] and "(question 2 of 10)" in _armed(conn)[-1]
 
-            for number in range(2, 9):
+            for number in range(2, 11):
                 await _answer(conn)
                 await _ask_question(conn, f"This is spoken question number {number}?")
                 step = _armed(conn)[-1]
-                assert f"answering question {number} of 8" in step, (number, step)
+                assert f"answering question {number} of 10" in step, (number, step)
 
-                if number <= 4:
-                    assert f"(question {number + 1} of 8)" in step and "EXACTLY" not in step                  # a role follow-up, the model's own words
-                elif number == 5:
-                    assert "(question 6 of 8)" in step and "EXACTLY" in step and "use AI" in step           # the AI-use question, word for word
+                if number <= 5:
+                    assert f"(question {number + 1} of 10)" in step and "EXACTLY" not in step                 # a role follow-up, the model's own words
                 elif number == 6:
-                    assert "(question 7 of 8)" in step and "EXACTLY" in step and "salary package" in step
+                    assert "(question 7 of 10)" in step and "EXACTLY" in step and "use AI" in step           # the AI-use question, word for word
                 elif number == 7:
-                    assert "(question 8 of 8)" in step and "EXACTLY" in step and "right fit" in step
+                    assert "(question 8 of 10)" in step and "EXACTLY" in step and "fall short" in step       # the second AI question
+                elif number == 8:
+                    assert "(question 9 of 10)" in step and "EXACTLY" in step and "right fit" in step        # the closing / job-fit question
+                elif number == 9:
+                    assert "(question 10 of 10)" in step and "EXACTLY" in step and "salary package" in step  # the salary question, last
                 else:
                     assert "FINAL question" in step and "closing speech" in step                              # armed to close before the last answer
 
-            assert session._open_turn == 8 and session.stats.get("stray_goodbyes", 0) == 0 and not session._closing_sent
+            assert session._open_turn == 10 and session.stats.get("stray_goodbyes", 0) == 0 and not session._closing_sent
 
-            await _answer(conn, "Because I am a good designer.")                                            # a SHORT answer to the final question
+            await _answer(conn, "Around six lakhs a year, with some flexibility.")                         # a SHORT answer to the final question
             conn.feed("audio", PCM)
             conn.feed("output_text", "Thank you so much, Arjun. The interview is now complete and the hiring team will review it. Take care.")
             conn.feed("turn_complete")
             await asyncio.sleep(2.2)
 
             assert ("state", "complete") in pub.log and session.stats["forced_closes"] == 0                  # the screen is told to close, without the watchdog
-            assert session.work.spoken[-1].startswith("This is spoken question number 8")                  # the closing is never written back as a question
+            assert session.work.spoken[-1].startswith("This is spoken question number 10")                 # the closing is never written back as a question
         finally:
             rt.CLOSING_DEADLINE_SECONDS = original
     _run(go())
@@ -81,7 +83,7 @@ def test_a_full_interview_follows_the_script_and_ends_with_the_closing():
 
 def test_repeating_a_question_or_a_backchannel_does_not_move_the_script():
     async def go():
-        session, conn, pub, *_ = await base._make(work=base.FakeWork(complete_at=8))
+        session, conn, pub, *_ = await base._make(work=base.FakeWork(complete_at=10))
         await session.start()
         await asyncio.sleep(0.3)
         await _ask_question(conn, "Hi. Tell me about your project.")
@@ -105,7 +107,7 @@ def test_repeating_a_question_or_a_backchannel_does_not_move_the_script():
 
 def test_the_one_dont_know_swap_keeps_the_position_and_the_second_one_moves_on():
     async def go():
-        session, conn, pub, *_ = await base._make(work=base.FakeWork(complete_at=8))
+        session, conn, pub, *_ = await base._make(work=base.FakeWork(complete_at=10))
         await session.start()
         await asyncio.sleep(0.3)
         await _ask_question(conn, "Hi. Tell me about your project.")
@@ -125,7 +127,7 @@ def test_the_one_dont_know_swap_keeps_the_position_and_the_second_one_moves_on()
 
 def test_a_goodbye_by_the_model_is_corrected_once_and_the_correction_carries_the_scripted_step():
     async def go():
-        session, conn, pub, *_ = await base._make(work=base.FakeWork(complete_at=8))
+        session, conn, pub, *_ = await base._make(work=base.FakeWork(complete_at=10))
         await session.start()
         await asyncio.sleep(0.3)
         await _ask_question(conn, "Hi. Tell me about your project.")
@@ -133,7 +135,7 @@ def test_a_goodbye_by_the_model_is_corrected_once_and_the_correction_carries_the
         await _ask_question(conn, "Thanks for taking the time today. The interview is complete.")
         assert session.stats["stray_goodbyes"] == 1
         correction = conn.notes[-1][0]
-        assert "NOT the end" in correction and "(question 2 of 8)" in correction                            # told what to ask next, not just "carry on"
+        assert "NOT the end" in correction and "(question 2 of 10)" in correction                            # told what to ask next, not just "carry on"
 
         await _ask_question(conn, "Thanks for taking the time today. The interview is complete.")          # a second slip is not corrected again (no loop)
         assert session.stats["stray_goodbyes"] == 1
@@ -141,14 +143,14 @@ def test_a_goodbye_by_the_model_is_corrected_once_and_the_correction_carries_the
     _run(go())
 
 
-def test_the_plan_carries_the_three_fixed_questions_for_the_real_interview():
-    plan = rt.InterviewPlan(instruction="x", opening_message="Hi", first_question="Q1?", max_turns=8,
-                            fixed_questions={6: "AI Q?", 7: "Package Q?", 8: "Fit Q?"})
+def test_the_plan_carries_the_four_fixed_questions_for_the_real_interview():
+    plan = rt.InterviewPlan(instruction="x", opening_message="Hi", first_question="Q1?", max_turns=10,
+                            fixed_questions={7: "AI Q?", 8: "AI limits Q?", 9: "Fit Q?", 10: "Package Q?"})
 
     async def go():
         session, *_ = await base._make(work=base.FakeWork(plan=plan))
         await session.start()
-        assert session._fixed_question(6) == "AI Q?" and session._fixed_question(8) == "Fit Q?"
+        assert session._fixed_question(7) == "AI Q?" and session._fixed_question(9) == "Fit Q?" and session._fixed_question(10) == "Package Q?"
         await session.close()
     _run(go())
 
@@ -164,7 +166,7 @@ def test_i_cannot_hear_you_is_a_request_to_hear_it_again_not_an_answer():
 
 def test_repeated_i_cannot_hear_you_never_use_up_the_questions_so_the_ai_and_salary_questions_are_still_asked():
     async def go():
-        session, conn, pub, *_ = await base._make(work=base.FakeWork(complete_at=8))
+        session, conn, pub, *_ = await base._make(work=base.FakeWork(complete_at=10))
         await session.start()
         await asyncio.sleep(0.3)
         await _ask_question(conn, "Hi. Tell me about your project.")                      # question 1
@@ -177,14 +179,14 @@ def test_repeated_i_cannot_hear_you_never_use_up_the_questions_so_the_ai_and_sal
             await _ask_question(conn, "I was asking the second question again?")
         assert session._open_turn == 2                                                    # still question 2 after three "can't hear you"
 
-        for number in range(3, 9):
+        for number in range(3, 11):
             await _answer(conn)
             await _ask_question(conn, f"Spoken question {number}?")
             assert session._open_turn == number
 
-        step_after_5 = [t for t, c in conn.notes if "answering question 5 of 8" in t][-1]
-        step_after_6 = [t for t, c in conn.notes if "answering question 6 of 8" in t][-1]
-        assert "use AI" in step_after_5 and "salary package" in step_after_6               # nothing was skipped: the AI-use and salary questions are still scripted
+        step_after_6 = [t for t, c in conn.notes if "answering question 6 of 10" in t][-1]
+        step_after_9 = [t for t, c in conn.notes if "answering question 9 of 10" in t][-1]
+        assert "use AI" in step_after_6 and "salary package" in step_after_9               # nothing was skipped: the AI-use and salary questions are still scripted
         await session.close()
     _run(go())
 
@@ -223,7 +225,7 @@ def test_a_long_reply_is_always_an_answer_even_with_trigger_words():
 
 def test_every_kind_of_non_answer_keeps_the_position_and_three_in_a_row_are_counted_so_it_never_stalls():
     async def go():
-        session, conn, pub, *_ = await base._make(work=base.FakeWork(complete_at=8))
+        session, conn, pub, *_ = await base._make(work=base.FakeWork(complete_at=10))
         await session.start()
         await asyncio.sleep(0.3)
         await _ask_question(conn, "Hi. Tell me about your project.")
@@ -254,7 +256,7 @@ class _FlagWork(base.FakeWork):
 
 def test_an_attempt_to_manipulate_the_interviewer_is_flagged_for_the_recruiter_and_does_not_count():
     async def go():
-        work = _FlagWork(complete_at=8)
+        work = _FlagWork(complete_at=10)
         session, conn, pub, *_ = await base._make(work=work)
         await session.start()
         await asyncio.sleep(0.3)
@@ -277,7 +279,7 @@ def test_the_interviewer_instruction_carries_the_situations_playbook():
         job=JobContextV2(title="UI/UX Designer", company="TechNova", description="d", required_skills="Figma", responsibilities="r", requirements="q", technologies="Figma", employment_type="Full-time", work_mode="Remote"),
         candidate=CandidateContextV2(full_name="Arjun", experience_level="Entry Level", education="B.Des", skills=["Figma"], resume_summary="s", resume_projects_or_experience=["p"], profile_projects="p"),
         aptitude=AptitudeEvidenceV2(available=False), programming=ProgrammingEvidenceSummaryV2(available=False))
-    text = rt.build_realtime_instruction(ctx, build_interview_blueprint_v2(ctx), "Hi", "First?", 8)
+    text = rt.build_realtime_instruction(ctx, build_interview_blueprint_v2(ctx), "Hi", "First?", 10)
     for needle in ("SITUATIONS", "Could not hear", "ignore your rules", "whether you are a person", "never give a count", "never accuse", "NEXT STEP"):
         assert needle in text, needle
 

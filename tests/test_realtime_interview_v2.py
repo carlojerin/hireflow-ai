@@ -117,7 +117,7 @@ class FakePublisher:
 class FakeWork:
     def __init__(self, complete_at=None, plan=None):
         self.answers, self.spoken, self.complete_at = [], [], complete_at
-        self.plan = plan or rt.InterviewPlan(instruction="INSTRUCTION-TEXT", opening_message="Hi Arjun", first_question="Tell me about your Hospital Management System.", max_turns=8)
+        self.plan = plan or rt.InterviewPlan(instruction="INSTRUCTION-TEXT", opening_message="Hi Arjun", first_question="Tell me about your Hospital Management System.", max_turns=10)
 
     def load_plan(self):
         return self.plan
@@ -276,7 +276,7 @@ def test_each_candidate_answer_is_recorded_exactly_once_and_the_model_is_armed_w
         assert work.answers == ["I built a REST API using FastAPI and PostgreSQL."]
         assert ("PRIVATE NOTE: question 2", False) not in conn.notes         # the brain's after-the-fact hint is no longer sent: it arrived after the model had begun to reply
         armed = [text for text, turn_complete in conn.notes if text.startswith("NEXT STEP") and not turn_complete]
-        assert armed and "question 2 of 8" in armed[-1]                      # the scripted next step was sent BEFORE the answer, as a note that forces no response
+        assert armed and "question 2 of 10" in armed[-1]                      # the scripted next step was sent BEFORE the answer, as a note that forces no response
         assert work.spoken == ["How did you handle authentication?"]        # what was actually said is written back
         await session.close()
     _run(go())
@@ -627,7 +627,7 @@ def test_plan_comes_from_the_persisted_interview_and_the_persisted_first_questio
         db, user, app, session, work = _work_fixture()
         plan = work.load_plan()
     first = VT._competencies(session)
-    assert plan.max_turns == 8 and "Backend Developer" in plan.instruction and "TestCo" in plan.instruction
+    assert plan.max_turns == 10 and "Backend Developer" in plan.instruction and "TestCo" in plan.instruction
     assert plan.first_question in plan.instruction and plan.turn_number == 1 and first[0] in plan.instruction
 
 
@@ -639,7 +639,7 @@ def test_recorded_answers_use_the_existing_brain_and_records_and_the_spoken_ques
         result = work.record_answer("I built a REST API using Python and FastAPI. I implemented authentication and connected it to PostgreSQL.")
         turns = VT._turns(db, session)
         assert result["interview_complete"] is False and result["turn_number"] == 2 and "PRIVATE NOTE" in result["note"]
-        assert "authentication" in result["note"].lower() and "Question 2 of at most 8" in result["note"]
+        assert "authentication" in result["note"].lower() and "Question 2 of at most 10" in result["note"]
         assert len(turns) == 2 and turns[0].candidate_answer.startswith("I built a REST API") and turns[0].answer_analysis_json and turns[0].next_action
         assert turns[1].candidate_answer is None
         work.record_ai_question("Nice. How did you keep the FastAPI authentication tokens secure?")
@@ -659,7 +659,7 @@ def test_a_full_realtime_conversation_finalizes_through_the_existing_finalizer_a
     work = rt.DbRealtimeWork(app_id, session_factory=lambda: db)
     with VT._isolated(VT.FakeGroq(session)):
         outcomes = []
-        for i in range(1, 9):
+        for i in range(1, 11):
             outcomes.append(work.record_answer(f"Answer number {i}: I used FastAPI with PostgreSQL and wrote tests for the authentication endpoints."))
             if not outcomes[-1]["interview_complete"]:
                 work.record_ai_question(f"Spoken question {i + 1}: how did you design the schema for that part?")
@@ -669,11 +669,11 @@ def test_a_full_realtime_conversation_finalizes_through_the_existing_finalizer_a
     fresh = db.query(AIInterviewSessionV2).filter(AIInterviewSessionV2.application_id == app_id).first()
     assert outcomes[-1]["interview_complete"] is True and "PRIVATE NOTE" in outcomes[-1]["note"] and "complete" in outcomes[-1]["note"]
     assert fresh.status == "completed" and fresh.final_evaluation_json                            # the existing finalizer ran
-    assert len(turns) == 8 and all(t.candidate_answer for t in turns)
+    assert len(turns) == 10 and all(t.candidate_answer for t in turns)
     for t in turns:
         AnswerAnalysisV2.model_validate_json(t.answer_analysis_json)                             # every stored analysis is HR-readable
     assert turns[1].question.startswith("Spoken question 2")                                    # HR sees the real conversation
-    assert "FINAL question" in outcomes[6]["note"] or outcomes[6]["turn_number"] == 8            # the model is warned before the last one
+    assert "FINAL question" in outcomes[8]["note"] or outcomes[8]["turn_number"] == 10            # the model is warned before the last one
 
 
 def test_realtime_never_touches_gemini_text_stt_or_tts_in_the_analysis_path_and_uses_the_configured_brain_only():

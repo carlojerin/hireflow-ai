@@ -43,6 +43,7 @@ _SIGNALS = [
     ("gaze_away_sustained", "the eyes stayed off the screen for 20 seconds or more", "the eyes stayed off the screen for 20 seconds or more"),
     ("camera_covered", "the camera was covered", "the camera was covered"),
     ("mobile_phone_detected", "a phone was visible", "a phone was visible"),
+    ("unauthorized_object_detected", "another device or object was visible", "another device or object was visible"),
     ("tab_hidden", "the test tab was left", "the test tab was left"),
     ("window_blur", "the test window lost focus", "the test window lost focus"),
     ("fullscreen_exited", "full screen was exited", "full screen was exited"),

@@ -83,7 +83,7 @@ def test_the_phone_detector_picks_one_complete_set_and_defaults_to_its_own_files
 def test_the_test_pages_load_the_updated_detectors_and_the_licences_are_recorded():
     for page in ("aptitude-test", "sjt-test", "tda-test", "programming-test", "programming-v2", "programming-v3", "ai-interview-v2", "assessment"):
         html = _read("frontend", f"{page}.html")
-        assert "face-proctor.js?v=4" in html and "phone-detector.js?v=6" in html, page
+        assert "face-proctor.js?v=4" in html and "phone-detector.js?v=7" in html, page
 
     readme = _read("frontend", "vendor", "README.md")
     assert "AGPL-3.0" in readme and "Apache-2.0" in readme and "MIT" in readme and "falls back to the original internet addresses" in readme

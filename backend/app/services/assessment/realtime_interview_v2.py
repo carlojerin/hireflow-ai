@@ -103,7 +103,7 @@ _DONT_KNOW = re.compile(
 # The model's own working notes must never reach the screen or the record: a heading block ("**Planning the next question**" and the paragraph
 # under it), a line that echoes a PRIVATE NOTE, or a bracketed stage direction. Only the words actually spoken are kept.
 _HEADING_BLOCK = re.compile(r"\*\*[^*\n]{2,160}\*\*[ \t]*\n+[^\n]*(?:\n+|$)")
-_NOTE_ECHO = re.compile(r"(PRIVATE NOTE[^\n]*|^\s*(Required question|Suggested question|Next, steer|Coverage so far|Question \d+ of at most).*$)", re.IGNORECASE | re.MULTILINE)
+_NOTE_ECHO = re.compile(r"(PRIVATE NOTE[^\n]*|NEXT STEP\s*\(private[^\n]*|^\s*(Required question|Suggested question|Next, steer|Coverage so far|Question \d+ of at most).*$)", re.IGNORECASE | re.MULTILINE)
 _STAGE_DIRECTION = re.compile(r"\[[^\]\n]{2,120}\]")
 
 
@@ -149,7 +149,7 @@ def is_meta_request(text: str) -> bool:
 
 
 # "Sorry, I can't hear you" / "I didn't get that" / "it is not clear": the candidate could not hear or follow the question. That is a request to hear it again,
-# NEVER an answer: it must not use up one of the eight questions (it did, and the interview ended before the AI-use and salary questions were asked).
+# NEVER an answer: it must not use up one of the ten questions (it did, and the interview ended before the AI-use and salary questions were asked).
 _CLARIFY = re.compile(
     r"\b(can'?t|cannot|can not|could not|couldn'?t|unable to|not able to)\s+(\w+\s+)?(hear|get|understand|catch|follow|make out)\b|"
     r"\b(didn'?t|did not|don'?t|do not|doesn'?t)\s+(\w+\s+)?(hear|catch|get|understand|follow)\b|"
@@ -169,7 +169,7 @@ def is_clarification(text: str) -> bool:
     return is_meta_request(text) or (bool(_CLARIFY.search(text)) and len(text.split()) <= 14)
 
 
-# What the candidate said when it is NOT an answer. None of these may use up one of the eight questions (a streak limit keeps the interview moving).
+# What the candidate said when it is NOT an answer. None of these may use up one of the ten questions (a streak limit keeps the interview moving).
 _NON_ANSWER = {
     "manipulation": re.compile(
         r"(ignore|forget|disregard|override)\s+(all\s+|any\s+|your\s+|the\s+|my\s+)?(previous\s+|prior\s+|above\s+|earlier\s+)?(instructions?|rules?|prompt|guidelines?)|"
@@ -305,16 +305,17 @@ HOW YOU TALK
   the candidate that are not listed here. Never mention being a model.
 
 SCOPE (JobPilot decides this, not you)
-- Only interview for the role below. Stay within the listed competencies and the job's technologies, EXCEPT for the last three
-  questions, which are fixed by HireFlow and are always in scope: how the candidate would use AI to do a real task of THIS role (question 6),
-  the salary package they expect (question 7), and a closing question (anything not covered, how they like to work, and why they fit the role,
-  question 8). When a PRIVATE NOTE gives you one of these, ask it in natural spoken form, exactly as suggested, and do not skip it.
+- Only interview for the role below. Stay within the listed competencies and the job's technologies, EXCEPT for the last four
+  questions, which are fixed by HireFlow and are always in scope: how the candidate would use AI to do a real task of THIS role (question 7),
+  where AI falls short and how they check its output (question 8), a closing question (anything not covered, how they like to work, and why
+  they fit the role, question 9), and the salary package they expect (question 10). When a PRIVATE NOTE gives you one of these, ask it in
+  natural spoken form, exactly as suggested, and do not skip it.
 - NEVER say or hint that the interview is ending, over, finished or nearly done ("that's the end", "that wraps up", "we're done") until a PRIVATE NOTE
-  tells you to close it. The role questions are NOT the end: after them the interview CONTINUES with the three fixed questions above, so move on
+  tells you to close it. The role questions are NOT the end: after them the interview CONTINUES with the four fixed questions above, so move on
   to them naturally, as if it were one conversation, without announcing a change of part.
-- THE SCRIPT. The interview is exactly {max_turns} questions: five about the role, then how the candidate would use AI on a real task of this job,
-  then the salary they expect, then a closing question. After EVERY question you ask, JobPilot sends a private "NEXT STEP" note that says exactly what
-  to do once the candidate answers. Follow it exactly. Never ask the AI, salary or closing question before a NEXT STEP note gives it to you, never skip
+- THE SCRIPT. The interview is exactly {max_turns} questions: six about the role, then two about AI (a real task of this job, then where AI falls
+  short), then a closing question, then the salary they expect. After EVERY question you ask, JobPilot sends a private "NEXT STEP" note that says exactly what
+  to do once the candidate answers. Follow it exactly. Never ask an AI, closing or salary question before a NEXT STEP note gives it to you, never skip
   one, and never ask the same question twice unless the candidate asks you to repeat it.
 - The interview is exactly {max_turns} questions. JobPilot will send you PRIVATE NOTES between turns
   (they begin with "PRIVATE NOTE"): follow them. They name the competency to steer toward, may suggest a
@@ -394,7 +395,10 @@ class GoogleLiveConnection:
             output_audio_transcription=types.AudioTranscriptionConfig(),
             realtime_input_config=types.RealtimeInputConfig(
                 automatic_activity_detection=types.AutomaticActivityDetection(
-                    start_of_speech_sensitivity=types.StartSensitivity.START_SENSITIVITY_HIGH,   # yield fast when the candidate starts talking
+                    start_of_speech_sensitivity=(                       # HIGH by default (as it always was): yield fast when the candidate starts talking; AI_REALTIME_START_SENSITIVITY=low ignores short noises
+                        types.StartSensitivity.START_SENSITIVITY_HIGH if (os.getenv("AI_REALTIME_START_SENSITIVITY") or "high").strip().lower() != "low"
+                        else types.StartSensitivity.START_SENSITIVITY_LOW
+                    ),
                     # Measured live: END=HIGH with a 600 ms pause split ONE spoken answer at its sentence break and made the
                     # interviewer talk over the candidate. LOW + 900 ms waits for a real end of turn (~0.8-1.0 s to first audio).
                     end_of_speech_sensitivity=(
@@ -505,7 +509,7 @@ class InterviewPlan:
     turn_number: int = 1
     kind: str = "interview"               # "interview" | "roleplay" (a practical assessment: the AI plays a customer / client on a call)
     opening_note: Optional[str] = None    # what the model is told to do first; None = the interview's greeting + first question
-    fixed_questions: dict = field(default_factory=dict)   # {question number: exact text} for the last three questions (AI use, package, fit)
+    fixed_questions: dict = field(default_factory=dict)   # {question number: exact text} for the last four questions (AI use, AI limits, fit, package)
 
 
 class DbRealtimeWork:
@@ -578,13 +582,16 @@ class DbRealtimeWork:
                 f"{context.job.title} role at {context.job.company}."
             )
 
-            from backend.app.services.assessment.interview_integration_v2 import _ai_for_role_question, _package_question, _work_fit_question
+            from backend.app.services.assessment.interview_integration_v2 import (
+                _ai_for_role_question, _ai_limits_question, _package_question, _work_fit_question,
+            )
 
             return InterviewPlan(
                 fixed_questions={
-                    INTERVIEW_V2_MAX_TURNS - 2: _ai_for_role_question(context.job.title),
-                    INTERVIEW_V2_MAX_TURNS - 1: _package_question(),
-                    INTERVIEW_V2_MAX_TURNS: _work_fit_question(context.job.company),
+                    INTERVIEW_V2_MAX_TURNS - 3: _ai_for_role_question(context.job.title),
+                    INTERVIEW_V2_MAX_TURNS - 2: _ai_limits_question(),
+                    INTERVIEW_V2_MAX_TURNS - 1: _work_fit_question(context.job.company),
+                    INTERVIEW_V2_MAX_TURNS: _package_question(),
                 },
                 instruction=build_realtime_instruction(context, blueprint, opening_message, open_turn.question, INTERVIEW_V2_MAX_TURNS),
                 opening_message=opening_message,
@@ -807,7 +814,7 @@ class RealtimeInterviewSession:
     # model happened to say.
     # ----------------------------------------------------------------------------------------------------------------------
     def _max_turns(self) -> int:
-        return getattr(self._plan, "max_turns", None) or 8
+        return getattr(self._plan, "max_turns", None) or 10
 
     def _fixed_question(self, number: int) -> str:
         fixed = getattr(self._plan, "fixed_questions", None) or {}
@@ -815,14 +822,19 @@ class RealtimeInterviewSession:
         if fixed.get(number):
             return fixed[number]
 
-        from backend.app.services.assessment.interview_integration_v2 import _ai_for_role_question, _package_question, _work_fit_question
+        from backend.app.services.assessment.interview_integration_v2 import (
+            _ai_for_role_question, _ai_limits_question, _package_question, _work_fit_question,
+        )
 
         top = self._max_turns()
 
-        if number == top - 2:
+        if number == top - 3:
             return _ai_for_role_question(None)
 
-        return _package_question() if number == top - 1 else _work_fit_question(None)
+        if number == top - 2:
+            return _ai_limits_question()
+
+        return _work_fit_question(None) if number == top - 1 else _package_question()
 
     def _step_for(self, number: int) -> str:
         """What the model does when the candidate has answered the question before question `number`."""
@@ -835,7 +847,7 @@ class RealtimeInterviewSession:
                 + _CLOSING_REQUIREMENTS
             )
 
-        if number <= top - 3:
+        if number <= top - 4:
             return (
                 f"say ONE short natural acknowledgement of what they actually said, then ask ONE new question about the role, their resume or a point they just made "
                 f"(question {number} of {top}). Under 25 words. Never repeat a question already asked, do not ask about AI tools, salary or fit yet, "

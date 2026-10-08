@@ -113,3 +113,13 @@ def test_the_candidate_page_no_longer_draws_the_evaluation_categories():
     script = open(os.path.join(root, "frontend", "js", "ai-interview-v2.js"), encoding="utf-8").read()
     page = open(os.path.join(root, "frontend", "ai-interview-v2.html"), encoding="utf-8").read()
     assert "if (true) return;" in script and 'class="iv2-progress-card" hidden' in page
+
+
+def test_a_leaked_next_step_note_never_reaches_the_transcript():
+    from backend.app.services.assessment.realtime_interview_v2 import clean_spoken
+
+    leaked = ("NEXT STEP (private, do not read aloud): the candidate is now answering question 3 of 8. After they answer: say ONE short natural "
+              "acknowledgement, then ask ONE new question. EXCEPTION: if their reply is not an answer, repeat the SAME question: do not move on.")
+
+    assert clean_spoken(leaked) == ""
+    assert clean_spoken(leaked + "\nHow about a time you worked with someone?") == "How about a time you worked with someone?"

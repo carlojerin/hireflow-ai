@@ -220,13 +220,15 @@ def test_unknown_voice_is_rejected_and_voice_speed_lang_reach_the_model():
                 sys.modules["kokoro_onnx"] = saved
 
 
-def test_default_tts_provider_is_local_and_gemini_is_opt_in_only():
+def test_default_tts_provider_is_flash_live_and_local_and_gemini_are_opt_in_only():
     with _env(AI_TTS_PROVIDER=None):
+        assert isinstance(vp.get_tts_provider(), vp.FlashLiveTextToSpeechProviderV2)             # the product default
+    with _env(AI_TTS_PROVIDER="local"):
         assert isinstance(vp.get_tts_provider(), local.LocalKokoroTextToSpeechProviderV2)
     with _env(AI_TTS_PROVIDER="gemini"):
         assert isinstance(vp.get_tts_provider(), vp.GeminiTextToSpeechProviderV2)
     with _env(AI_TTS_PROVIDER="anything-else"):
-        assert isinstance(vp.get_tts_provider(), local.LocalKokoroTextToSpeechProviderV2)
+        assert isinstance(vp.get_tts_provider(), vp.FlashLiveTextToSpeechProviderV2)
 
 
 def test_local_failure_never_falls_back_to_gemini():

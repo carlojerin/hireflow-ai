@@ -1701,6 +1701,10 @@ async function startAssessmentSession() {
 // choosing a screen never costs the candidate speaking time. The self introduction has no strict mode, so nothing is reported here.
 async function requireScreenShare() {
 
+    // The self introduction is camera-only: the screen share starts with the role test (each test page asks for it itself).
+    return;
+
+    // eslint-disable-next-line no-unreachable
     if (window.ScreenProctor && !window.ScreenProctor.isActive()) {
         await window.ScreenProctor.gate({ assessmentType: "self_intro", applicationId: applicationId }, function () {});
     }

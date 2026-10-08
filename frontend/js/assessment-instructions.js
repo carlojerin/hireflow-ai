@@ -33,7 +33,7 @@
                 ["Step 4", "Spoken AI interview"],
             ],
             about: [
-                "It is <b>proctored</b>: you share your whole screen and keep your camera on from the first step to the last.",
+                "It is <b>proctored</b>: your camera stays on throughout, and from the role test onward your whole screen is also shared.",
                 "Each step has its own timer. Timers start when you press Start and cannot be paused.",
                 "Your results and these records go to the recruiter in one report.",
             ],
@@ -93,7 +93,7 @@
         ["bi-camera-video", "Your <b>camera is on</b>. Your video may be recorded, and small photos are taken regularly during the assessment and whenever a check below is triggered."],
         ["bi-person-bounding-box", "We check that <b>your face stays visible</b>, that <b>you are alone</b>, that you keep looking at the screen, and that the camera is not covered."],
         ["bi-people", "<b>Your photos are compared with each other by a computer</b> to help the recruiter check it is the same person throughout. A person makes the decision."],
-        ["bi-display", "<b>Your whole screen is shared and recorded.</b> Stopping the share pauses the test until you share again."],
+        ["bi-display", "<b>From the role test onward, your whole screen is shared and recorded.</b> Stopping the share pauses the test until you share again."],
         ["bi-fullscreen", "<b>Full screen and this window only.</b> Leaving full screen, switching tabs or switching to another application is detected at once."],
         ["bi-slash-circle", "<b>Copy, paste, right-click and developer-tool shortcuts are blocked</b> and recorded."],
     ];

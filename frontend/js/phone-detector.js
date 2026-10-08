@@ -177,6 +177,18 @@
     // "phone."
     const PHONE_DETECTION_TARGET_CLASS = "cell phone";
     const PHONE_CLASS_INDEX = 67;
+
+    // THE OBJECT TABLE. The model is the stock YOLOv8n trained on the 80 COCO classes: it can only find objects that are in that list, and it
+    // cannot be taught new ones here (a smartwatch, earbuds or a tablet have no class of their own; a tablet is usually read as a phone or a
+    // laptop). Every row below is a class it already knows. Add a row to watch another one, set enabled:false to stop watching one.
+    // 'threshold' is the per-anchor score needed (a higher number means fewer false alarms). Phones keep the original, tuned threshold.
+    // tv, keyboard and mouse are deliberately NOT watched: the candidate's own monitor, keyboard and mouse would fire all the time.
+    const OBJECT_TABLE = [
+        { name: "cell phone", classIndex: 67, label: "Mobile phone", threshold: PHONE_CONFIDENCE_THRESHOLD, enabled: true },
+        { name: "laptop", classIndex: 63, label: "Laptop or tablet-like device", threshold: 0.5, enabled: true },
+        { name: "remote", classIndex: 65, label: "Remote or small handheld device", threshold: 0.5, enabled: true },
+        { name: "book", classIndex: 73, label: "Book or notes", threshold: 0.5, enabled: true },
+    ];
     const COCO_NUM_CLASSES = 80;
 
     // YOLOv8n's fixed export input size (verified against the
@@ -537,34 +549,41 @@
 
     function decodePhoneDetections(output0Data, scale, offsetX, offsetY) {
 
-        const results = [];
-        const scoreRowOffset =
-            (4 + PHONE_CLASS_INDEX) * MODEL_NUM_ANCHORS;
+        const all = [];
 
-        for (let anchor = 0; anchor < MODEL_NUM_ANCHORS; anchor++) {
+        OBJECT_TABLE.forEach(function (entry) {
 
-            const score = output0Data[scoreRowOffset + anchor];
-
-            if (score < PHONE_CONFIDENCE_THRESHOLD) {
-                continue;
+            if (!entry.enabled) {
+                return;
             }
 
-            const cx = output0Data[0 * MODEL_NUM_ANCHORS + anchor];
-            const cy = output0Data[1 * MODEL_NUM_ANCHORS + anchor];
-            const w = output0Data[2 * MODEL_NUM_ANCHORS + anchor];
-            const h = output0Data[3 * MODEL_NUM_ANCHORS + anchor];
+            const results = [];
+            const scoreRowOffset = (4 + entry.classIndex) * MODEL_NUM_ANCHORS;
 
-            // Undo the letterbox (padding + scale) back to
-            // original video pixel coordinates.
-            const x1 = (cx - w / 2 - offsetX) / scale;
-            const y1 = (cy - h / 2 - offsetY) / scale;
-            const boxW = w / scale;
-            const boxH = h / scale;
+            for (let anchor = 0; anchor < MODEL_NUM_ANCHORS; anchor++) {
 
-            results.push({ bbox: [x1, y1, boxW, boxH], score: score });
-        }
+                const score = output0Data[scoreRowOffset + anchor];
 
-        return nonMaxSuppression(results, PHONE_NMS_IOU_THRESHOLD);
+                if (score < entry.threshold) {
+                    continue;
+                }
+
+                const cx = output0Data[0 * MODEL_NUM_ANCHORS + anchor];
+                const cy = output0Data[1 * MODEL_NUM_ANCHORS + anchor];
+                const w = output0Data[2 * MODEL_NUM_ANCHORS + anchor];
+                const h = output0Data[3 * MODEL_NUM_ANCHORS + anchor];
+
+                // Undo the letterbox (padding + scale) back to original video pixel coordinates.
+                const x1 = (cx - w / 2 - offsetX) / scale;
+                const y1 = (cy - h / 2 - offsetY) / scale;
+
+                results.push({ bbox: [x1, y1, w / scale, h / scale], score: score, object: entry.name });
+            }
+
+            nonMaxSuppression(results, PHONE_NMS_IOU_THRESHOLD).forEach(function (d) { all.push(d); });
+        });
+
+        return all;
     }
 
     function nonMaxSuppression(boxes, iouThreshold) {
@@ -962,6 +981,8 @@
         const detectFn = options.detectFn || runInference;
 
         activeTracker = createTracker();
+        const objectTrackers = { "cell phone": activeTracker };
+        const objectCooldowns = {};
         cooldownState = { lastEventAt: null };
         diagnostics = createDiagnostics();
 
@@ -1001,49 +1022,71 @@
                     );
 
                     const now = Date.now();
-                    const result = activeTracker.update(detections || [], now);
 
-                    if (!result.anyActive) {
-                        hideWarningBanner();
-                    }
+                    // split what was found by object; every watched object has its own tracker, so a phone and a book never merge
+                    const byObject = {};
+                    OBJECT_TABLE.forEach(function (entry) { if (entry.enabled) byObject[entry.name] = []; });
+                    (detections || []).forEach(function (d) {
+                        const key = d.object || "cell phone";
+                        (byObject[key] = byObject[key] || []).push(d);
+                    });
 
-                    result.newlyConfirmed.forEach(function (track) {
+                    let anyActive = false;
 
-                        diagnostics.recordConfirmedEpisode();
+                    Object.keys(byObject).forEach(function (objectName) {
 
-                        showWarningBanner(
-                            "Mobile phone detected. Please remove " +
-                            "unauthorized devices."
-                        );
+                        const tracker = objectTrackers[objectName] || (objectTrackers[objectName] = createTracker());
+                        const result = tracker.update(byObject[objectName], now);
+                        const entry = OBJECT_TABLE.filter(function (e) { return e.name === objectName; })[0] || { label: objectName };
 
-                        const withinCooldown = Boolean(
-                            cooldownState.lastEventAt !== null &&
-                            (now - cooldownState.lastEventAt) < PHONE_EVENT_COOLDOWN_MS
-                        );
-
-                        if (!withinCooldown) {
-                            cooldownState.lastEventAt = now;
+                        if (result.anyActive) {
+                            anyActive = true;
                         }
 
-                        const averageConfidence =
-                            track.scoreWindow.reduce(
-                                function (a, b) { return a + b; }, 0
-                            ) / track.scoreWindow.length;
+                        result.newlyConfirmed.forEach(function (track) {
 
-                        onConfirmedDetection(
-                            {
-                                object: PHONE_DETECTION_TARGET_CLASS,
-                                confidence:
-                                    Math.round(averageConfidence * 100) / 100,
-                                track_id: track.id,
-                                duration_ms: now - track.firstSeenAt,
-                                detections: track.scoreWindow.length,
-                                detector: "yolov8n",
-                                tracker: "iou",
-                            },
-                            { withinCooldown: withinCooldown }
-                        );
+                            diagnostics.recordConfirmedEpisode();
+
+                            showWarningBanner(
+                                objectName === "cell phone"
+                                    ? "Mobile phone detected. Please remove unauthorized devices."
+                                    : entry.label + " detected. Please remove unauthorized devices and objects."
+                            );
+
+                            const cooldown = objectName === "cell phone"
+                                ? cooldownState
+                                : (objectCooldowns[objectName] = objectCooldowns[objectName] || { lastEventAt: null });
+
+                            const withinCooldown = Boolean(
+                                cooldown.lastEventAt !== null &&
+                                (now - cooldown.lastEventAt) < PHONE_EVENT_COOLDOWN_MS
+                            );
+
+                            if (!withinCooldown) {
+                                cooldown.lastEventAt = now;
+                            }
+
+                            const averageConfidence =
+                                track.scoreWindow.reduce(function (a, b) { return a + b; }, 0) / track.scoreWindow.length;
+
+                            onConfirmedDetection(
+                                {
+                                    object: objectName,
+                                    confidence: Math.round(averageConfidence * 100) / 100,
+                                    track_id: track.id,
+                                    duration_ms: now - track.firstSeenAt,
+                                    detections: track.scoreWindow.length,
+                                    detector: "yolov8n",
+                                    tracker: "iou",
+                                },
+                                { withinCooldown: withinCooldown }
+                            );
+                        });
                     });
+
+                    if (!anyActive) {
+                        hideWarningBanner();
+                    }
                 })
                 .catch(function (error) {
 
@@ -1090,6 +1133,8 @@
         // header and Task 5B's automated tests.
         createTracker: createTracker,
         computeIoU: computeIoU,
+        decodeDetections: decodePhoneDetections,
+        objectTable: OBJECT_TABLE,
     };
 
 })();

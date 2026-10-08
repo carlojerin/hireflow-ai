@@ -163,7 +163,7 @@ const IntegrityMode = (function () {
 
     const SNAPSHOT_REASONS = {
         face_missing: true, multiple_faces_detected: true, looking_away: true, gaze_away: true, looking_away_repeated: true,
-        camera_covered: true, mobile_phone_detected: true,
+        camera_covered: true, mobile_phone_detected: true, unauthorized_object_detected: true,
     };
     const SNAPSHOT_MIN_GAP_MS = 8000;
     const SNAPSHOT_PERIODIC_MS = 120000;
@@ -233,6 +233,11 @@ const IntegrityMode = (function () {
 
         if (!config) {
             return null;
+        }
+
+        // the phone detector's object table also reports laptops, remotes, books...: they are their own event type, phones keep theirs
+        if (eventType === "mobile_phone_detected" && metadata && metadata.object && metadata.object !== "cell phone") {
+            eventType = "unauthorized_object_detected";
         }
 
         if (SNAPSHOT_REASONS[eventType]) {

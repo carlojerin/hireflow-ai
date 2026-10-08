@@ -153,6 +153,10 @@ function startCountdown(expiresAtIso) {
 // INTEGRITY (reused, unmodified system)
 // ============================================================
 
+// the number of integrity warnings that ends the assessment; the server's value replaces this default as soon as it is known
+let integrityMaxWarnings = 3;
+
+
 function setIntegrityDot(kind, label) {
     const dot = document.getElementById("iv2IntegrityDot");
     dot.classList.remove("is-ready", "is-warning", "is-error");
@@ -163,12 +167,14 @@ function setIntegrityDot(kind, label) {
 
 // What the AI says out loud the moment a camera / browser flag is accepted by the server (fixed lines, server side).
 const SPOKEN_NOTICE_EVENTS = new Set([
-    "face_missing", "multiple_faces_detected", "looking_away", "gaze_away", "camera_covered", "mobile_phone_detected",
+    "face_missing", "multiple_faces_detected", "looking_away", "gaze_away", "camera_covered", "mobile_phone_detected", "unauthorized_object_detected",
     "tab_hidden", "window_blur", "fullscreen_exited", "paste_detected", "blocked_shortcut",
 ]);
 
 
 function handleIntegrityStateChange(state, eventType) {
+    if (state && state.maxWarnings) integrityMaxWarnings = state.maxWarnings;
+
     if (!state) return;
 
     if (eventType && SPOKEN_NOTICE_EVENTS.has(eventType) && !terminatedByIntegrity && !assessmentLocked
@@ -182,10 +188,10 @@ function handleIntegrityStateChange(state, eventType) {
     }
 
     if (state.warningLevel === "warning" || state.warningCount > 0) {
-        setIntegrityDot("warning", `Integrity warning (${state.warningCount || 1} of ${state.maxWarnings || 3})`);
+        setIntegrityDot("warning", `Integrity ${state.warningCount || 1}/${integrityMaxWarnings}`);
     } else if (!terminatedByIntegrity) {
         if (cameraStreamActive) {
-            setIntegrityDot("ready", "Camera ready — monitoring active");
+            setIntegrityDot("ready", `Camera ready · Integrity 0/${integrityMaxWarnings}`);
         } else {
             setIntegrityDot("error", "Camera unavailable — proceeding without video monitoring");
         }
@@ -396,7 +402,7 @@ async function retryCamera() {
 function attachCandidateCamera(cameraStream, isRecovery) {
 
     cameraStreamActive = true;
-    setIntegrityDot("ready", "Camera ready — monitoring active");
+    setIntegrityDot("ready", `Camera ready · Integrity 0/${integrityMaxWarnings}`);
     setCameraRetryVisible(false);
     startPhoneDetection();
 

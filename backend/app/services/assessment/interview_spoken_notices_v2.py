@@ -33,6 +33,7 @@ NOTICE_TEXT = {
     "gaze_away_sustained": "I've noticed your eyes have been off the screen for a while now. Please keep your attention on the interview.",
     "camera_covered": "Your camera looks covered or blocked. Please uncover it so I can see you.",
     "mobile_phone_detected": "I can see a phone. Please put it out of sight and do not use it during the interview.",
+    "unauthorized_object_detected": "I can see another device or object that is not allowed. Please move it out of sight.",
     "tab_hidden": "Please stay on the interview window. Switching to another tab is not allowed.",
     "window_blur": "Please keep the interview window in focus and do not switch to another application.",
     "fullscreen_exited": "Please return to full screen mode and stay in it until the interview ends.",

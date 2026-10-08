@@ -96,6 +96,8 @@ VIOLATION_EVENT_TYPES = {
     # counting/cooldown/warning/termination policy as every other
     # violation type here. No second policy, no new scoring system.
     "mobile_phone_detected",
+    # Any OTHER gadget / object from the detector's object table (laptop, remote, book ...): same counting policy as a phone.
+    "unauthorized_object_detected",
     # Camera proctoring (face-proctor.js): the lens is covered / the picture stays black. Debounced client-side (3 s).
     "camera_covered",
     # Camera proctoring: eyes off the screen for a SUSTAINED 20 s continuously (not the softer
@@ -180,6 +182,10 @@ METADATA_ALLOWED_KEYS_BY_EVENT_TYPE = {
     # original Task 5 fields — still only ever structured,
     # whitelisted metadata, never a frame/image/embedding.
     "mobile_phone_detected": {
+        "object", "confidence", "source",
+        "track_id", "duration_ms", "detections", "detector", "tracker",
+    },
+    "unauthorized_object_detected": {
         "object", "confidence", "source",
         "track_id", "duration_ms", "detections", "detector", "tracker",
     },

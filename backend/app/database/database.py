@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, text
+from sqlalchemy import create_engine, event, text
 from sqlalchemy.orm import DeclarativeBase, sessionmaker
 
 
@@ -16,9 +16,23 @@ class Base(DeclarativeBase):
 engine = create_engine(
     DATABASE_URL,
     connect_args={
-        "check_same_thread": False
+        "check_same_thread": False,
+        "timeout": 30,
     },
 )
+
+
+# A candidate's test writes constantly (video chunks, autosave, integrity events). With SQLite's defaults a recruiter login at the same moment
+# could fail with "database is locked" after 5 s. WAL lets reads and writes overlap, and the busy timeout makes a write wait instead of failing.
+@event.listens_for(engine, "connect")
+def _tune_sqlite(dbapi_connection, _record):
+    cursor = dbapi_connection.cursor()
+    try:
+        cursor.execute("PRAGMA journal_mode=WAL")
+        cursor.execute("PRAGMA synchronous=NORMAL")
+        cursor.execute("PRAGMA busy_timeout=30000")
+    finally:
+        cursor.close()
 
 
 SessionLocal = sessionmaker(

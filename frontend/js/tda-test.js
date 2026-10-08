@@ -529,7 +529,7 @@ function updateIntegrityWarningCount(violationCount, maxViolations) {
     }
 
     el.textContent =
-        `Integrity warnings: ${violationCount}`;
+        (maxViolations ? `Integrity ${violationCount}/${maxViolations}` : `Integrity warnings: ${violationCount}`);
 
     el.classList.toggle(
         "has-warnings",
@@ -905,20 +905,14 @@ function renderResult(test) {
 
         badge.innerHTML = `
             <span
-                class="result-badge ${
-                    passed ? "passed" : "failed"
-                }"
+                class="result-badge completed"
             >
                 <i
                     class="bi ${
-                        passed
-                            ? "bi-check-circle-fill"
-                            : "bi-x-circle-fill"
+                        "bi-bar-chart-fill"
                     }"
                 ></i>
-                Technical Assessment ${
-                    passed ? "Passed" : "Failed"
-                }
+                Technical Assessment Completed
             </span>
         `;
     }
@@ -978,9 +972,7 @@ function renderResult(test) {
 
         icon.innerHTML = `
             <i class="bi ${
-                passed
-                    ? "bi-award-fill"
-                    : "bi-emoji-frown"
+                "bi-bar-chart-fill"
             }"></i>
         `;
     }

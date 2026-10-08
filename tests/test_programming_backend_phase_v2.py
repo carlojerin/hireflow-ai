@@ -388,7 +388,7 @@ def test_fallback_hierarchy_pool_then_role_aware_then_generic():
     from backend.app.services.assessment.programming_integration_v2 import candidate_view_v2
     fake_row = types.SimpleNamespace(
         generated_by=generic.generated_by, allowed_languages_json=json.dumps(["rust"]), status="in_progress", score=None, total_score=None,
-        passed=None, question_set_json=generic.question_set.model_dump_json(),
+        passed=None, question_set_json=generic.question_set.model_dump_json(), draft_code_json=None,
         assigned_at=__import__("datetime").datetime.utcnow(), expires_at=__import__("datetime").datetime.utcnow(),
     )
     view = candidate_view_v2(fake_row)

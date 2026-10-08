@@ -355,11 +355,14 @@ def test_inactive_or_missing_interview_is_refused_before_stt():
 def test_default_providers_are_the_local_ones_with_stable_names():
     with _isolated():
         assert vp.get_stt_provider().provider_name == "faster-whisper"
+        assert vp.get_tts_provider().provider_name == "flash_live"                              # the voice default is Gemini Flash Live; local Kokoro is opt-in
+        os.environ["AI_TTS_PROVIDER"] = "local"
         assert vp.get_tts_provider().provider_name == "kokoro"
+        os.environ.pop("AI_TTS_PROVIDER", None)
         assert prov.get_interview_llm_provider().name == "groq"
         assert vp.GeminiSpeechToTextProviderV2.provider_name == vp.GeminiTextToSpeechProviderV2.provider_name == "gemini"
     assert isinstance(vp.get_stt_provider(), local_stt.LocalWhisperSpeechToTextProviderV2)
-    assert isinstance(vp.get_tts_provider(), local_tts.LocalKokoroTextToSpeechProviderV2)
+    assert isinstance(vp.get_tts_provider(), vp.FlashLiveTextToSpeechProviderV2)
 
 
 def test_no_gemini_call_in_any_failure_path_even_with_a_key_present():

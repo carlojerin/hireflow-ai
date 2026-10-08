@@ -173,7 +173,7 @@ def test_the_instruction_teaches_coughs_repeats_and_hesitation():
     text = rt.build_realtime_instruction.__code__.co_consts
     source = " ".join(c for c in text if isinstance(c, str))
     # the template is an f-string: check the literal text pieces
-    for needle in ("A cough, sneeze", "Take care, have some water", "repeat the SAME question", "REPLACES the question", "question 6"):
+    for needle in ("A cough, sneeze", "Take care, have some water", "repeat the SAME question", "REPLACES the question", "question 7"):
         assert needle in source or needle.lower() in source.lower(), needle
 
 

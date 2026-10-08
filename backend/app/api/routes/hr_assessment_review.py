@@ -1109,6 +1109,7 @@ _EVENT_CATEGORY = {
     # is a distinct signal (visible device presence, not camera
     # health or face presence).
     "mobile_phone_detected": "device_detection",
+    "unauthorized_object_detected": "device_detection",
 }
 
 _EVENT_LABEL = {
@@ -1150,6 +1151,7 @@ _EVENT_LABEL = {
     "violation_warning": "Integrity warning issued",
     "assessment_auto_terminated": "Assessment automatically terminated",
     "mobile_phone_detected": "Potential Integrity Event — mobile phone detected",
+    "unauthorized_object_detected": "Potential Integrity Event — unauthorized device or object detected",
 }
 
 
@@ -1465,6 +1467,7 @@ _FLAG_SNAPSHOT_LABELS = {
     "face_missing": "No face in the picture",
     "multiple_faces_detected": "More than one person",
     "mobile_phone_detected": "A phone was visible",
+    "unauthorized_object_detected": "Another device or object was visible",
     "camera_covered": "Camera covered",
     "looking_away": "Looked away from the screen",
     "looking_away_repeated": "Looked away again after a warning",

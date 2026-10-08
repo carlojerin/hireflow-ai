@@ -348,7 +348,7 @@ _ACTIVE_CHECKS = {
 # much smaller one: camera attention FLAGS only. They are stored for the recruiter (and feed the "observed behaviour" paragraph under the
 # video) and are never counted toward a warning, never shown to the candidate, and can never end the introduction.
 SELF_INTRO_CAMERA_EVENTS = {
-    "face_missing", "multiple_faces_detected", "looking_away", "gaze_away", "gaze_away_sustained", "camera_covered", "mobile_phone_detected",
+    "face_missing", "multiple_faces_detected", "looking_away", "gaze_away", "gaze_away_sustained", "camera_covered", "mobile_phone_detected", "unauthorized_object_detected",
     "poor_lighting",
 }
 SELF_INTRO_MIN_GAP_SECONDS = 5

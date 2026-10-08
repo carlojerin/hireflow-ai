@@ -1,5 +1,5 @@
-"""Every interview ends with the same three questions, after the model's own resume / job questions:
-how they would use AI on a real task of the role (turn 6), expected package (turn 7), a standard closing question: anything not covered + why they fit (turn 8). The model's own turn choice cannot skip, reorder or end before them."""
+"""Every interview ends with the same four questions, after the model's own six resume / job questions:
+how they would use AI on a real task of the role (turn 7), where AI falls short and how they check it (turn 8), a standard closing question: anything not covered + why they fit (turn 9), then the expected salary package (turn 10). The model's own turn choice cannot skip, reorder or end before them."""
 
 import sys
 import os
@@ -38,42 +38,46 @@ def _history(*competencies):
     return [_turn(i + 1, c) for i, c in enumerate(competencies)]
 
 
-def test_the_interview_is_eight_questions_long():
-    assert INTERVIEW_V2_MIN_TURNS == INTERVIEW_V2_MAX_TURNS == 8 and FREE_TURNS == 5
+def test_the_interview_is_ten_questions_long():
+    assert INTERVIEW_V2_MIN_TURNS == INTERVIEW_V2_MAX_TURNS == 10 and FREE_TURNS == 6
 
 
-def test_the_model_decides_the_first_five_questions():
-    turns = _history("Python", "Python", "SQL", "SQL")
+def test_the_model_decides_the_first_six_questions():
+    turns = _history("Python", "Python", "SQL", "SQL", "SQL")
     free = _decision()
     assert _enforce_closing_sequence(free, _blueprint(), turns, turns[-1]) is free
 
 
-def test_the_sixth_question_is_how_the_candidate_would_use_ai_on_a_real_task_of_this_role_even_if_the_model_wants_to_end():
-    turns = _history("Python", "Python", "SQL", "SQL", "SQL")
+def test_the_seventh_question_is_how_the_candidate_would_use_ai_on_a_real_task_of_this_role_even_if_the_model_wants_to_end():
+    turns = _history("Python", "Python", "SQL", "SQL", "SQL", "SQL")
     out = _enforce_closing_sequence(_decision("END_INTERVIEW"), _blueprint(), turns, turns[-1], job_title="MIS Executive")
     assert out.next_competency == AI_TOOL_COMPETENCY
     assert "as a MIS Executive role" in out.next_question and "use AI" in out.next_question and "still check yourself" in out.next_question
 
 
 def test_without_a_job_title_the_ai_question_still_reads_naturally():
-    turns = _history("Python", "Python", "SQL", "SQL", "SQL")
+    turns = _history("Python", "Python", "SQL", "SQL", "SQL", "SQL")
     out = _enforce_closing_sequence(_decision(), _blueprint("non_technical"), turns, turns[-1])
     assert "in this role" in out.next_question and "Canva" not in out.next_question
 
 
-def test_after_the_ai_question_comes_the_package_then_the_closing_question_then_it_is_over():
-    turns = _history("Python", "Python", "SQL", "SQL", "SQL", AI_TOOL_COMPETENCY)
-    package = _enforce_closing_sequence(_decision(), _blueprint(), turns, turns[-1])
-    assert package.next_competency == PACKAGE_COMPETENCY and "package" in package.next_question
+def test_after_the_first_ai_question_comes_the_second_then_the_closing_question_then_the_salary_then_it_is_over():
+    turns = _history("Python", "Python", "SQL", "SQL", "SQL", "SQL", AI_TOOL_COMPETENCY)
+    second_ai = _enforce_closing_sequence(_decision(), _blueprint(), turns, turns[-1])
+    assert second_ai.next_competency == AI_TOOL_COMPETENCY and "fall short" in second_ai.next_question and "correct" in second_ai.next_question
 
-    turns.append(_turn(7, PACKAGE_COMPETENCY))
+    turns.append(_turn(8, AI_TOOL_COMPETENCY))
     work = _enforce_closing_sequence(_decision(), _blueprint(), turns, turns[-1], company="Acme Ltd")
     assert work.next_competency == WORK_FIT_COMPETENCY
     assert "anything we haven't covered" in work.next_question and "right fit" in work.next_question
 
-    turns.append(_turn(8, WORK_FIT_COMPETENCY))
+    turns.append(_turn(9, WORK_FIT_COMPETENCY))
+    package = _enforce_closing_sequence(_decision(), _blueprint(), turns, turns[-1])
+    assert package.next_competency == PACKAGE_COMPETENCY and "package" in package.next_question
+
+    turns.append(_turn(10, PACKAGE_COMPETENCY))
     last = _decision()
-    assert _enforce_closing_sequence(last, _blueprint(), turns, turns[-1]) is last        # question 8 answered: the interview ends
+    assert _enforce_closing_sequence(last, _blueprint(), turns, turns[-1]) is last        # question 10 answered: the interview ends
 
 
 def test_named_ai_tool_matching():
@@ -84,7 +88,7 @@ def test_named_ai_tool_matching():
 
 
 def test_the_model_cannot_end_the_interview_before_the_fixed_questions_even_in_the_first_turns():
-    for count in (1, 2, 3, 4):
+    for count in (1, 2, 3, 4, 5):
         turns = _history(*["Python"] * count)
         out = _enforce_closing_sequence(_decision("END_INTERVIEW"), _blueprint(), turns, turns[-1])
         assert out.next_action != "END_INTERVIEW" and out.next_question, count
@@ -95,7 +99,7 @@ def test_the_interviewer_is_told_the_interview_is_not_over_after_the_role_questi
     from backend.app.services.assessment import realtime_interview_v2 as rt
 
     prompt = inspect.getsource(rt.build_realtime_instruction)
-    assert "NEVER say or hint that the interview is ending" in prompt and "CONTINUES with the three fixed questions" in prompt
+    assert "NEVER say or hint that the interview is ending" in prompt and "CONTINUES with the four fixed questions" in prompt
 
     source = inspect.getsource(rt.DbRealtimeWork.record_answer)
     assert "Required question" in source and "NOT ending" in source and "AI_TOOL_COMPETENCY" in source
