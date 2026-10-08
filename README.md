@@ -32,8 +32,9 @@ A catalogue of **96 IT roles in 16 domains** (plus an AI planner for unknown tit
 
 ### The AI interview
 
-A spoken, adaptive interview over LiveKit with Gemini Live: five role questions, then how the candidate would use AI on a real task of the job, expected
-salary, and a closing question, then a full closing speech. The server holds the script (it arms the model with its next step before the candidate
+A spoken, adaptive interview over LiveKit with Gemini Live, exactly ten questions: six about the role (from the resume and the job requirements), two about
+AI (how the candidate would use it on a real task of the job, and where it falls short), a closing job-fit question, and the expected salary last, then a full
+closing speech. The server holds the script (it arms the model with its next step before the candidate
 answers), counts the position itself, and treats "I can't hear you", questions about the job, pauses and attempts to manipulate the interviewer as
 non-answers. Attempts to manipulate it are flagged for HR.
 
@@ -116,4 +117,6 @@ docker/                        sandbox images for the coding test
 ## Licences
 
 Third-party files and their licences are listed in `frontend/vendor/README.md`. **The bundled phone-detection model (YOLOv8n) is AGPL-3.0**; check it before
-any commercial use. See `LICENSE` for this project's own licence.
+any commercial use. The model file itself (`frontend/vendor/models/yolov8n.onnx`) is **not** in this repository: download it as described in
+`frontend/vendor/README.md` and place it at that path, otherwise phone detection will not run. No licence file has been added yet, so all rights
+to this project's own code stay with the author.
