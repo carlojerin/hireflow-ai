@@ -12,6 +12,7 @@ spoken AI interview. HR then reads **one report per candidate** with scores, an 
 HR uploads resume + job title/requirement
         -> AI analyses the resume against the role and picks the assessments
         -> candidate gets an emailed magic link (no password) and can schedule a time
+-> opening the link builds the candidate's account from the resume: active resume, analysis, name, phone, links and a filled profile
         -> self introduction  ->  role test  ->  hands-on task  ->  AI voice interview
         -> HR report: scores, AI summary, integrity breakdown, face check, offer letter
 ```

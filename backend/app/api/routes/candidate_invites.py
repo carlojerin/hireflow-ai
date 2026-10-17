@@ -13,6 +13,7 @@ from backend.app.models.job import Job
 from backend.app.models.job_application import JobApplication
 from backend.app.models.user import User
 
+from backend.app.services.resume.invite_profile import hydrate_candidate_from_invite
 from backend.app.services.auth.session_service import (
     create_session,
     generate_csrf_token,
@@ -203,6 +204,10 @@ def enter_via_invite(token: str, response: Response, db: Session = Depends(get_d
         )
         db.add(application)
         db.flush()
+
+    # Build the candidate's account from the resume HR uploaded: the active resume (so every assessment stage reads THIS resume), its analysis,
+    # the confirmed name and a filled profile. Never blocks the candidate from entering.
+    hydrate_candidate_from_invite(db, user, invite)
 
     db.commit()
     db.refresh(user)

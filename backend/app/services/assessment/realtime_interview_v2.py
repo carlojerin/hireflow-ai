@@ -1121,6 +1121,8 @@ class RealtimeInterviewSession:
             return
 
         note = self._last_note or "PRIVATE NOTE: Please reply to the candidate now."
+        note += (" (The candidate has not heard anything yet. Do NOT apologise and do NOT say you are repeating, restarting or starting over: "
+                 "just say it now, as if for the first time.)")
         try:
             await self.conn.send_note(note, turn_complete=True)
         except Exception as exc:

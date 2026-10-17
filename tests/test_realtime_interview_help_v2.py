@@ -188,6 +188,8 @@ def test_a_stalled_model_is_asked_again_instead_of_leaving_the_candidate_in_sile
 
             opening_notes = [text for text, _tc in conn.notes if "Begin now" in text]
             assert len(opening_notes) >= 2                                          # asked again
+            assert all("Do NOT apologise" in text for text in opening_notes[1:])    # the retry never makes the interviewer say "Sorry about that, let me start over"
+            assert "Do NOT apologise" not in opening_notes[0]
             assert session.stats["stall_recoveries"] >= 1
 
             conn.feed("audio", b"AAAA")                                             # the model finally speaks: the clock stops
