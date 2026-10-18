@@ -1275,6 +1275,12 @@ async function submitTest(user, forceSubmit) {
 
         if (!response.ok) {
 
+            // the first submit already went through (a second click, a slow reply): reload, which shows the saved result
+            if (response.status === 409 && /already.*(submitted|completed)/i.test((data && data.detail) || "")) {
+                window.location.reload();
+                return;
+            }
+
             throw new Error(
                 data.detail ||
                 "Unable to submit the aptitude test."

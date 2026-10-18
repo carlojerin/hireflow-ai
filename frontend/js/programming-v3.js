@@ -1068,6 +1068,13 @@ async function handleApiError(response, data, fallbackMessage) {
 
         const detail = (data && data.detail) || "";
 
+        if (/already.*submitted/i.test(detail)) {
+            // the first submit went through (a second click, a slow reply or a reload): show the saved result instead of leaving the candidate stuck
+            showMessage("Your assessment was already submitted. Opening your result...", "info");
+            await loadAssessmentState(true);
+            return;
+        }
+
         if (/language/i.test(detail)) {
             showMessage("That language is currently unavailable for this question. Please choose a different language.", "warning");
         } else {
@@ -1304,8 +1311,11 @@ async function performFinalSubmit() {
     } finally {
 
         submitInFlight = false;
-        submitButton.disabled = false;
-        submitButton.innerHTML = `<i class="bi bi-send-check"></i> Submit Assessment`;
+
+        if (!assessmentLocked) {
+            submitButton.disabled = false;
+            submitButton.innerHTML = `<i class="bi bi-send-check"></i> Submit Assessment`;
+        }
     }
 }
 
