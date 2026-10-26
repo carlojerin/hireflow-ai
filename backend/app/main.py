@@ -302,6 +302,11 @@ app.add_middleware(
 
         "http://127.0.0.1:5500",
 
+        # a second frontend port: Windows can reserve 5500 after a restart (WinError 10013), so the frontend can run on 5600 instead
+        "http://localhost:5600",
+
+        "http://127.0.0.1:5600",
+
         # Previous Vite frontend ports
         "http://localhost:5173",
 

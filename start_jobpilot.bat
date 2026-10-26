@@ -18,7 +18,7 @@ timeout /t 3 /nobreak >nul
 
 
 echo Starting Frontend...
-start "JobPilot AI - Frontend" cmd /k "cd /d D:\jobpilot-ai\frontend && ..\venv\Scripts\python.exe -m http.server 5500"
+start "JobPilot AI - Frontend" cmd /k "cd /d D:\jobpilot-ai\frontend && ..\venv\Scripts\python.exe -m http.server 5600"
 
 
 timeout /t 3 /nobreak >nul
@@ -36,11 +36,11 @@ echo Swagger:
 echo http://127.0.0.1:8000/docs
 echo.
 echo Frontend:
-echo http://127.0.0.1:5500
+echo http://127.0.0.1:5600
 echo.
 echo ==========================================
 
 
-start http://127.0.0.1:5500/index.html
+start http://127.0.0.1:5600/index.html
 
 pause
