@@ -1,0 +1,67 @@
+/*
+  Dashboard polish (company-dashboard.html only).
+
+  Additive and page-scoped: this file is linked by that one page, after css/company.css and css/theme-glass.css, and it changes how things LOOK
+  only. No class name, id or script is touched, so everything the page does is unchanged. To undo: remove the <link> to this file.
+
+  The bug it fixes: company.css forces the glyph inside .stat-icon to the primary blue, and theme-glass.css paints the tile behind it with the
+  same blue gradient, so the stat icons were blue on blue (invisible).
+*/
+
+/* ---- brand: the 3D layered symbol in place of the robot icon ---- */
+.navbar-brand { display: inline-flex; align-items: center; }
+.navbar-brand .logo3d { width: 34px; height: 34px; margin-right: 10px; display: block; overflow: visible; filter: drop-shadow(0 6px 8px rgba(79,91,255,.35)); }
+.navbar-brand .logo3d .lp { transition: transform .4s cubic-bezier(.2,.7,.2,1); }
+.navbar-brand:hover .logo3d .p1 { transform: translateY(-2px); } .navbar-brand:hover .logo3d .p3 { transform: translateY(2px); }
+
+/* ---- stat cards: a vivid, different colour per card, with a white icon you can actually see ---- */
+.row > .col-xl-3:nth-child(1) .stat-card { --ic: linear-gradient(135deg, #5b5bff, #3e7bff); --glow: rgba(79,91,255,.65);  --tint: rgba(79,91,255,.13); }
+.row > .col-xl-3:nth-child(2) .stat-card { --ic: linear-gradient(135deg, #ffb04a, #ff7a3d); --glow: rgba(255,130,60,.6);  --tint: rgba(255,150,60,.15); }
+.row > .col-xl-3:nth-child(3) .stat-card { --ic: linear-gradient(135deg, #8b5cff, #3fa9ff); --glow: rgba(110,100,255,.6); --tint: rgba(120,100,255,.14); }
+.row > .col-xl-3:nth-child(4) .stat-card { --ic: linear-gradient(135deg, #2fd197, #0e9f6e); --glow: rgba(20,180,125,.6);  --tint: rgba(30,190,130,.14); }
+
+.stat-card {
+  background: radial-gradient(240px 130px at 100% 0%, var(--tint, rgba(79,91,255,.12)), transparent 72%), rgba(255,255,255,.9) !important;
+  border: 1px solid rgba(255,255,255,.95) !important;
+  border-radius: 18px !important;
+  box-shadow: inset 0 1px 0 #fff, 0 20px 38px -24px rgba(60,70,210,.5) !important;
+  overflow: hidden;
+}
+.stat-card::before { content: ""; position: absolute; left: 22px; right: 22px; top: 0; height: 3px; border-radius: 0 0 6px 6px; background: var(--ic, var(--hf-grad)); }
+.stat-card:hover { box-shadow: inset 0 1px 0 #fff, 0 28px 46px -22px rgba(60,70,210,.6) !important; }
+
+.stat-card .stat-icon {
+  width: 56px; height: 56px; border-radius: 17px !important; font-size: 25px; margin-bottom: 16px;
+  background: var(--ic, var(--hf-grad)) !important;
+  box-shadow: 0 14px 24px -10px var(--glow, rgba(79,91,255,.6)), inset 0 1px 0 rgba(255,255,255,.5), inset 0 -3px 6px rgba(0,0,60,.12) !important;
+}
+.stat-card .stat-icon i { color: #fff !important; filter: drop-shadow(0 1px 2px rgba(10,10,70,.3)); }   /* beats company.css ".stat-icon i" */
+.stat-card .stat-title { color: #4b5190 !important; font-weight: 500; }
+.stat-card .stat-number { color: #14183a; font-size: 40px; line-height: 1.05; letter-spacing: -.03em; }
+
+/* ---- welcome card: depth and a soft glow ---- */
+.welcome-card {
+  background: linear-gradient(120deg, rgba(255,255,255,.96), rgba(222,234,255,.88)) !important;
+  border: 1px solid rgba(255,255,255,.95) !important;
+  border-radius: 22px !important;
+  box-shadow: inset 0 1px 0 #fff, 0 26px 50px -30px rgba(60,70,210,.55) !important;
+  position: relative; overflow: hidden;
+}
+.welcome-card::after { content: ""; position: absolute; right: -80px; top: -90px; width: 360px; height: 360px; border-radius: 50%; background: radial-gradient(closest-side, rgba(79,91,255,.22), transparent 70%); pointer-events: none; }
+.welcome-card > * { position: relative; z-index: 1; }
+.company-avatar { box-shadow: 0 18px 30px -12px rgba(79,91,255,.65), inset 0 1px 0 rgba(255,255,255,.45) !important; }
+
+/* ---- section and quick-action cards ---- */
+.section-card { border: 1px solid rgba(255,255,255,.95) !important; border-radius: 20px !important; box-shadow: inset 0 1px 0 #fff, 0 22px 44px -30px rgba(60,70,210,.45) !important; }
+.quick-action { border: 1px solid rgba(79,91,255,.14) !important; border-radius: 16px !important; transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease; }
+.quick-action:hover { transform: translateY(-3px); border-color: rgba(79,91,255,.4) !important; box-shadow: 0 18px 34px -20px rgba(60,70,210,.55); }
+
+/* ---- sidebar: icon tiles, so the menu has more presence ---- */
+.sidebar .nav-link i { width: 34px; height: 34px; display: inline-grid; place-items: center; border-radius: 10px; background: rgba(79,91,255,.10); color: #4f5bff; font-size: 17px; margin-right: 12px !important; transition: background .2s; }
+.sidebar .nav-link:hover i { background: rgba(79,91,255,.18); }
+.sidebar .nav-link.active i { background: rgba(255,255,255,.24); color: #fff; }
+.sidebar .nav-link.active { box-shadow: 0 14px 26px -12px rgba(79,91,255,.7); }
+
+@media (prefers-reduced-motion: reduce) {
+  .stat-card, .quick-action, .navbar-brand .logo3d .lp { transition: none; }
+}
