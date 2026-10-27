@@ -558,6 +558,7 @@ async function activateStrictModeForInterviewV2() {
         userId: currentUser ? currentUser.id : null,
         applicationId,
         assessmentType: "ai_interview",
+        screenShare: false,   // the interview does not ask for the screen; the fullscreen lock, camera and integrity checks stay
         onWarning: handleIntegrityStateChange,
         onFullscreenExit: handleIntegrityStateChange,
         onStateChange: handleIntegrityStateChange,

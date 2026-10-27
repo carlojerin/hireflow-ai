@@ -845,3 +845,9 @@
     .iv2-control-btn { width: 52px; height: 52px; }
     .iv2-control-btn i { font-size: 17px; }
 }
+
+/* Interviewer orb (js/interviewer-orb.js): sits over the fixed picture and the optional live video, which stay in the page untouched. */
+.iv2-orb { position: absolute; top: 6%; left: 50%; height: 56%; aspect-ratio: 1 / 1; transform: translateX(-50%); z-index: 2; pointer-events: none; filter: drop-shadow(0 26px 34px rgba(79,91,255,.4)); }
+.iv2-orb canvas { width: 100%; height: 100%; display: block; }
+.iv2-avatar-frame.has-orb .iv2-interviewer-image, .iv2-avatar-frame.has-orb .iv2-avatar-video { opacity: 0; }   /* hidden, not removed: playback and sound are unaffected */
+.iv2-avatar-frame.has-orb .iv2-interviewer-badge { z-index: 3; }

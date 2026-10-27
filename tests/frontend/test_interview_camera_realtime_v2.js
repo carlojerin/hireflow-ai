@@ -98,6 +98,7 @@ function makePage(opts = {}) {
     };
     sandbox.window.window = sandbox.window;
     vm.createContext(sandbox);
+    vm.runInContext("var integrityMaxWarnings = 3;", sandbox);
     vm.runInContext(grabBetween("const CAMERA_RECOVERY_DELAYS_MS", "// REALTIME CONVERSATION"), sandbox);
     sandbox.__timers = timers;
     return { sandbox, log, els, el, state, timers, FakeStream, FakeTrack,

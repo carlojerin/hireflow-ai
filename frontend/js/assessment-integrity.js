@@ -434,7 +434,8 @@ const IntegrityMode = (function () {
 
         // The entire screen must be shared (and is recorded) before the test starts. It runs BEFORE the monitors below are installed,
         // because the browser's share picker blurs the page and that must not count against the candidate.
-        if (window.ScreenProctor) {
+        // (a page can opt out with screenShare:false, as the AI interview does: it keeps every other lock but does not ask for the screen)
+        if (window.ScreenProctor && config.screenShare !== false) {
             await window.ScreenProctor.gate(config, reportIntegrityEvent);
             cleanupFns.push(function () { window.ScreenProctor.finish(); });
         }
@@ -1257,6 +1258,20 @@ const IntegrityMode = (function () {
                 }
 
                 modal.hide();
+                // safety net: if the hide animation never completes (a background tab, or Continue pressed mid-animation) Bootstrap leaves
+                // the box on screen, so take it down ourselves
+                setTimeout(function () {
+                    const stale = document.getElementById(modalId);
+                    if (!stale) return;
+                    try { modal.dispose(); } catch (error) { /* already gone */ }
+                    stale.remove();
+                    if (!document.querySelector(".modal.show")) {
+                        document.querySelectorAll(".modal-backdrop").forEach(function (node) { node.remove(); });
+                        document.body.classList.remove("modal-open");
+                        document.body.style.removeProperty("overflow");
+                        document.body.style.removeProperty("padding-right");
+                    }
+                }, 800);
                 resolve(result);
             }
 
