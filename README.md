@@ -6,6 +6,30 @@ spoken AI interview. HR then reads **one report per candidate** with scores, an 
 
 > Formerly named JobPilot AI. Some internal names still say `jobpilot`.
 
+## Demo
+
+[![HireFlow AI walkthrough preview](docs/demo/preview.gif)](docs/demo/hireflow-walkthrough.mp4)
+
+**[Watch the full 2.5-minute walkthrough (MP4, with narration)](docs/demo/hireflow-walkthrough.mp4)**: a student candidate goes from the front door to the offer
+letter, through the HR desk, the phone invite, the four assessment rooms, the live AI interview, the proctoring view, and the HR report. The same film plays
+in the browser from the home page ("Watch the demo").
+
+## Screenshots
+
+| Home page | HR dashboard |
+|---|---|
+| ![Home page](docs/screenshots/01-home.jpg) | ![HR dashboard](docs/screenshots/03-hr-dashboard.jpg) |
+| **Invite a candidate** | **Candidate tracking** |
+| ![Invite a candidate](docs/screenshots/04-invite-candidate.jpg) | ![Candidate tracking](docs/screenshots/05-candidate-tracking.jpg) |
+| **One report per candidate** | **The report on the home page** |
+| ![Candidate report](docs/screenshots/06-candidate-report.jpg) | ![Home page report section](docs/screenshots/02-home-report.jpg) |
+| **AI interviewer (walkthrough)** | **Proctoring view (walkthrough)** |
+| ![AI interview](docs/screenshots/09-demo-ai-interview.jpg) | ![Proctoring](docs/screenshots/10-demo-proctoring.jpg) |
+| **Strikes and flags (walkthrough)** | **Self introduction room (walkthrough)** |
+| ![Strikes and flags](docs/screenshots/11-demo-strikes-flags.jpg) | ![Self introduction](docs/screenshots/08-demo-self-intro.jpg) |
+
+Candidate names, emails and photos in the screenshots are samples or blurred.
+
 ## What it does
 
 ```
@@ -78,11 +102,11 @@ copy .env.example .env           # then fill in the keys (GEMINI_API_KEY, Groq, 
 # backend (http://127.0.0.1:8000)
 python -m uvicorn backend.app.main:app --reload
 
-# frontend (http://127.0.0.1:5500), in another terminal
-python -m http.server 5500 --directory frontend
+# frontend (http://127.0.0.1:5600), in another terminal
+python -m http.server 5600 --directory frontend
 ```
 
-Then open `http://127.0.0.1:5500`. `start_jobpilot.bat` starts both on Windows. Demo HR accounts can be created with `python -m backend.app.services.seed_demo_data`;
+Then open `http://127.0.0.1:5600` (port 5500 is reserved by Windows on some machines). `start_jobpilot.bat` starts both on Windows. Demo HR accounts can be created with `python -m backend.app.services.seed_demo_data`;
 read `DEMO_RUNBOOK.md` for a step-by-step demo.
 
 **Set `ASSESSMENT_MAX_VIOLATIONS=3` for real use.** Raise it only for demos.
