@@ -68,6 +68,13 @@
   .lead { color: var(--soft); font-size: clamp(18px,1.5vw,20px); max-width: 32em; }
   .actions { display: flex; gap: 26px; align-items: center; margin-top: 34px; flex-wrap: wrap; }
   .btn { display: inline-block; background: var(--grad); color: #fff; padding: 15px 26px; border-radius: 999px; text-decoration: none; font-weight: 600; box-shadow: 0 14px 34px -12px var(--shadow), inset 0 1px 0 rgba(255,255,255,.35); transition: transform .2s, box-shadow .2s; }
+  /* demo walkthrough: a button and a full-screen player (the film itself lives in demo/walkthrough.html, loaded only when opened) */
+  .demo-btn { border: 0; cursor: pointer; font: inherit; font-weight: 600; background: #fff; color: var(--ink, #14183a); box-shadow: 0 14px 34px -14px rgba(60,70,210,.45), inset 0 0 0 1px rgba(79,91,255,.25); }
+  .demo-btn:hover { color: #4f5bff; }
+  .demo-modal { position: fixed; inset: 0; z-index: 1000; display: none; background: rgba(13,16,48,.82); backdrop-filter: blur(6px); padding: clamp(0px, 2vw, 28px); }
+  .demo-modal.on { display: block; }
+  .demo-modal iframe { width: 100%; height: 100%; border: 0; border-radius: clamp(0px, 1.4vw, 18px); background: #0d1030; box-shadow: 0 40px 90px -30px rgba(0,0,0,.7); }
+  .actions .demo-btn { margin-left: 0; }
   .btn:hover { transform: translateY(-2px); box-shadow: 0 20px 44px -12px var(--shadow), inset 0 1px 0 rgba(255,255,255,.45); }
   .link { text-decoration: none; color: var(--soft); border-bottom: 1px solid rgba(20,24,58,.22); padding-bottom: 2px; } .link:hover { color: var(--ink); border-color: var(--primary); }
   .candidate-note { margin-top: 26px; font-size: 14px; color: var(--soft); }
@@ -166,7 +173,7 @@
       <p class="mono">Candidate assessment, done carefully</p>
       <h1>Know who you are hiring <i>before</i> the first interview.</h1>
       <p class="lead">Four stages, one honest report. HireFlow reads the resume, sets the right tests for the job, holds a ten-question spoken interview and hands you evidence to decide on.</p>
-      <div class="actions"><a class="btn" href="company-login.html">Invite a candidate</a><a class="link" href="company-register.html">New to HireFlow? Register</a></div>
+      <div class="actions"><a class="btn" href="company-login.html">Invite a candidate</a><button class="btn demo-btn" type="button" data-demo>&#9654; Watch the demo</button><a class="link" href="company-register.html">New to HireFlow? Register</a></div>
       <p class="candidate-note"><b>Candidate?</b> Open the link in your invitation email. There is nothing to sign up for here.</p>
     </div>
 
@@ -274,6 +281,18 @@ booking and a doctor dashboard.</pre></div>
       wrap.addEventListener('pointerleave', function () { card.style.setProperty('--ty', '-14deg'); card.style.setProperty('--tx', '8deg'); });
     }
   })();
+</script>
+<div class="demo-modal" id="demoModal" role="dialog" aria-modal="true" aria-label="HireFlow AI product walkthrough"></div>
+<script>
+(function () {
+  var modal = document.getElementById("demoModal"), opener = null;
+  function open(e) { opener = e.currentTarget; modal.innerHTML = '<iframe src="demo/walkthrough.html" title="HireFlow AI product walkthrough" allow="fullscreen; autoplay"></iframe>'; modal.classList.add("on"); document.body.style.overflow = "hidden"; modal.querySelector("iframe").focus(); }
+  function close() { modal.classList.remove("on"); modal.innerHTML = ""; document.body.style.overflow = ""; if (opener) opener.focus(); }
+  document.querySelectorAll("[data-demo]").forEach(function (b) { b.addEventListener("click", open); });
+  modal.addEventListener("click", function (e) { if (e.target === modal) close(); });
+  window.addEventListener("message", function (e) { if (e.data && e.data.type === "hf-demo-close") close(); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && modal.classList.contains("on")) close(); });
+})();
 </script>
 </body>
 </html>

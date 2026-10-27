@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HireFlow Walkthrough</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root { --ink:#14183a; --navy:#0d1030; --brand:#4f5bff; --brand2:#3e7bff; --sans:'Instrument Sans',system-ui,sans-serif; --serif:'Instrument Serif',Georgia,serif; }
+  * { box-sizing: border-box; margin: 0; }
+  html, body { height: 100%; background: var(--navy); color: #fff; font-family: var(--sans); overflow: hidden; }
+  canvas#stage { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
+  canvas#hud { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+  .fade { position: fixed; inset: 0; background: var(--navy); pointer-events: none; opacity: 1; }
+  .top { position: fixed; left: 0; right: 0; top: 0; display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; pointer-events: none;
+    background: linear-gradient(180deg, rgba(13,16,48,.55), transparent); }
+  .brand { font: 600 15px var(--sans); letter-spacing: .02em; display: flex; gap: 10px; align-items: center; }
+  .brand small { font-weight: 500; opacity: .7; }
+  .brand b { width: 26px; height: 26px; border-radius: 8px; background: linear-gradient(135deg,#7f8cff,#3e7bff); box-shadow: 0 6px 14px -6px rgba(79,91,255,.9); }
+  .x { pointer-events: auto; border: 0; width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,.14); color: #fff; font-size: 20px; cursor: pointer; backdrop-filter: blur(8px); }
+  .x:hover { background: rgba(255,255,255,.26); }
+  .cap { position: fixed; left: 50%; bottom: 96px; transform: translateX(-50%); width: min(820px, calc(100% - 32px)); text-align: center; pointer-events: none; }
+  .cap p { display: inline-block; font: 400 clamp(20px, 2.6vw, 32px)/1.25 var(--serif); padding: 12px 22px; border-radius: 16px; background: rgba(13,16,48,.62);
+    backdrop-filter: blur(10px); box-shadow: 0 20px 40px -24px rgba(0,0,0,.6); transition: opacity .35s; text-wrap: balance; }
+  .cap p:empty { opacity: 0; }
+  .bar { position: fixed; left: 0; right: 0; bottom: 0; padding: 14px 20px 18px; display: grid; grid-template-columns: auto 1fr auto; gap: 14px; align-items: center;
+    background: linear-gradient(0deg, rgba(13,16,48,.75), transparent); }
+  .play { width: 44px; height: 44px; border-radius: 50%; border: 0; cursor: pointer; background: linear-gradient(135deg,#5b5bff,#3e7bff); color: #fff; font-size: 16px;
+    box-shadow: 0 10px 22px -10px rgba(79,91,255,.9); }
+  .track { position: relative; height: 34px; cursor: pointer; }
+  .rail { position: absolute; left: 0; right: 0; top: 15px; height: 4px; border-radius: 4px; background: rgba(255,255,255,.2); }
+  .fill { position: absolute; left: 0; top: 15px; height: 4px; border-radius: 4px; background: linear-gradient(90deg,#8fa0ff,#5ab0ff); width: 0; }
+  .tick { position: absolute; top: 11px; width: 2px; height: 12px; background: rgba(255,255,255,.45); border-radius: 2px; }
+  .chap { position: absolute; left: 0; top: -2px; font: 500 12px var(--sans); letter-spacing: .06em; text-transform: uppercase; opacity: .85; white-space: nowrap; }
+  .time { font: 500 13px var(--sans); font-variant-numeric: tabular-nums; opacity: .85; min-width: 84px; text-align: right; }
+  .end { position: fixed; inset: 0; display: none; place-items: center; text-align: center; background: radial-gradient(800px 500px at 50% 40%, rgba(79,91,255,.35), transparent 70%), rgba(13,16,48,.86); }
+  .end.on { display: grid; }
+  .end h2 { font: 400 clamp(34px, 5vw, 60px)/1.05 var(--serif); margin-bottom: 10px; } .end h2 i { color: #9fb0ff; }
+  .end p { opacity: .8; margin-bottom: 24px; max-width: 34em; }
+  .end .credit { margin: 22px auto 0; font-size: 12px; opacity: .55; }
+  .end .acts { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .end a, .end button { font: 600 15px var(--sans); border-radius: 999px; padding: 13px 22px; cursor: pointer; text-decoration: none; }
+  .end a { background: linear-gradient(135deg,#5b5bff,#3e7bff); color: #fff; border: 0; }
+  .end button { background: rgba(255,255,255,.12); color: #fff; border: 1px solid rgba(255,255,255,.3); }
+  .vignette { position: fixed; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 45%, transparent 58%, rgba(6,8,28,.42) 100%); }
+  .grain { position: fixed; inset: -60px; pointer-events: none; opacity: .07; mix-blend-mode: overlay; animation: grain .9s steps(5) infinite;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+  @keyframes grain { 0% { transform: translate(0,0); } 25% { transform: translate(-18px,12px); } 50% { transform: translate(14px,-20px); } 75% { transform: translate(-10px,-8px); } 100% { transform: translate(8px,16px); } }
+  .title { position: fixed; left: 50%; top: 40%; transform: translate(-50%, -40%) scale(.98); text-align: center; opacity: 0; transition: opacity .9s, transform 1.2s; pointer-events: none; }
+  .title::before { content: ""; position: absolute; inset: -90px -160px; z-index: -1; background: radial-gradient(closest-side, rgba(13,16,48,.62), transparent); }
+  .title.on { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  .title b { display: block; font: 400 clamp(54px, 9vw, 120px)/.95 var(--serif); letter-spacing: -.02em; text-shadow: 0 12px 50px rgba(13,16,48,.55); }
+  .title b i { color: #b9c4ff; }
+  .title span { display: inline-block; margin-top: 14px; font: 600 13px var(--sans); letter-spacing: .28em; text-transform: uppercase; opacity: .9; text-shadow: 0 4px 20px rgba(13,16,48,.6); }
+  .card { position: fixed; left: clamp(20px, 5vw, 70px); top: 96px; opacity: 0; transform: translateX(-14px); transition: opacity .55s, transform .7s cubic-bezier(.2,.7,.2,1); pointer-events: none;
+    padding-left: 16px; border-left: 2px solid rgba(185,196,255,.85); text-shadow: 0 6px 26px rgba(13,16,48,.65); }
+  .card.on { opacity: 1; transform: none; }
+  .card b { display: block; font: 400 clamp(46px, 6vw, 84px)/.9 var(--serif); }
+  .card span { font: 600 13px var(--sans); letter-spacing: .26em; text-transform: uppercase; }
+  .gate { position: fixed; inset: 0; display: grid; place-items: center; background: radial-gradient(700px 420px at 50% 50%, rgba(79,91,255,.28), transparent 70%), rgba(13,16,48,.45); z-index: 6; }
+  .gate button { display: grid; justify-items: center; gap: 10px; background: none; border: 0; color: #fff; cursor: pointer; font-family: var(--sans); }
+  .gate i { width: 96px; height: 96px; border-radius: 50%; display: grid; place-items: center; font-style: normal; font-size: 30px; padding-left: 6px; background: linear-gradient(135deg,#5b5bff,#3e7bff);
+    box-shadow: 0 24px 50px -16px rgba(79,91,255,.95), inset 0 1px 0 rgba(255,255,255,.4); transition: transform .25s; }
+  .gate button:hover i { transform: scale(1.06); }
+  .gate span { font: 400 30px var(--serif); } .gate small { font: 500 13px var(--sans); letter-spacing: .08em; opacity: .75; }
+  @media (prefers-reduced-motion: reduce) { .grain { animation: none; } }
+  .load { position: fixed; inset: 0; display: grid; place-items: center; font: 500 14px var(--sans); letter-spacing: .08em; text-transform: uppercase; opacity: .8; }
+  :focus-visible { outline: 3px solid #9fb0ff; outline-offset: 2px; }
+  @media (max-width: 600px) { .cap { bottom: 86px; } .chap { display: none; } }
+</style>
+</head>
+<body>
+<canvas id="stage" aria-label="Animated walkthrough of HireFlow AI"></canvas>
+<canvas id="hud" aria-hidden="true"></canvas>
+<div class="load" id="load">Preparing the walkthrough…</div>
+<div class="vignette" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+<div class="fade" id="fade"></div>
+<div class="title" id="title" aria-hidden="true"><b>HireFlow <i>AI</i></b><span>From the front door to the offer letter</span></div>
+<div class="card" id="card" aria-hidden="true"><b>01</b><span></span></div>
+<div class="top"><div class="brand"><b></b>HireFlow AI <small>· product walkthrough</small></div><button class="x" id="close" type="button" aria-label="Close the walkthrough">×</button></div>
+<div class="cap" aria-live="polite"><p id="cap"></p></div>
+<div class="bar">
+  <button class="play" id="play" type="button" aria-label="Pause">❚❚</button>
+  <div class="track" id="track" role="slider" aria-label="Walkthrough position" tabindex="0"><span class="chap" id="chap"></span><div class="rail"></div><div class="fill" id="fill"></div></div>
+  <span class="time" id="time">0:00 / 0:00</span>
+</div>
+<div class="gate" id="gate"><button type="button" id="start"><i aria-hidden="true">&#9658;</i><span>Play the walkthrough</span><small>2 min 26 s &middot; with sound</small></button></div>
+<div class="end" id="end">
+  <div>
+    <h2>Hire on <i>evidence</i>,<br>not on guesswork.</h2>
+    <p>Resume to report in one flow: the right test for each role, a live AI interview, and one clear report for HR.</p>
+    <div class="acts"><a href="../company-register.html" target="_top">Create an HR account</a><button type="button" id="replay">Watch again</button></div>
+    <p class="credit">3D people: Microsoft Rocketbox avatars (MIT licence). Narration voiced with ElevenLabs.</p>
+  </div>
+</div>
+
+<script type="importmap">
+{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/" } }
+</script>
+<script type="module">
+import * as THREE from "three";
+import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
+import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
+import { FBXLoader } from "three/addons/loaders/FBXLoader.js";
+
+const ORB_FS = "precision highp float;\nvarying vec2 vUv;\nuniform float uTime, uAmp, uThink;\nuniform vec3 uColor;\nconst int STEPS = 10;\n\nfloat hash(vec3 p) { p = fract(p * 0.3183099 + vec3(0.1, 0.2, 0.3)); p *= 17.0; return fract(p.x * p.y * p.z * (p.x + p.y + p.z)); }\nfloat noise(vec3 x) {\n  vec3 i = floor(x), f = fract(x); f = f * f * (3.0 - 2.0 * f);\n  return mix(mix(mix(hash(i), hash(i + vec3(1,0,0)), f.x), mix(hash(i + vec3(0,1,0)), hash(i + vec3(1,1,0)), f.x), f.y),\n             mix(mix(hash(i + vec3(0,0,1)), hash(i + vec3(1,0,1)), f.x), mix(hash(i + vec3(0,1,1)), hash(i + vec3(1,1,1)), f.x), f.y), f.z);\n}\nfloat fbm3(vec3 p) { float a = 0.5, s = 0.0; for (int i = 0; i < 3; i++) { s += a * noise(p); p = p * 2.03 + vec3(1.7, 9.2, 3.1); a *= 0.5; } return s; }\nvec3 rotY(vec3 p, float a) { float c = cos(a), s = sin(a); return vec3(c * p.x + s * p.z, p.y, -s * p.x + c * p.z); }\n\nfloat density(vec3 p, float t) {\n  float r = length(p);\n  // slow rising drift with a gentle sideways sway, no spinning: smoke billows, it does not swirl like a jelly\n  vec3 q = p;\n  q.x += 0.08 * sin(t * 0.05 + p.y * 2.1);\n  q.z += 0.08 * cos(t * 0.04 + p.y * 1.7);\n  vec3 up = vec3(0.0, -t * 0.022, 0.0) - normalize(p + 0.001) * t * 0.018;   // very slow lift, and a slow spreading outward\n  vec3 w = vec3(noise(q * 1.3 + up * 0.6 + 3.1), noise(q * 1.3 + up * 0.6 + 7.7), 0.5) - 0.5;\n  vec3 z = q * vec3(1.7, 1.2, 1.7) + w * (1.8 + uAmp * 2.2) + up;      // stretched upward: long wisps and plumes\n  float n = fbm3(z);\n  float ridge = 1.0 - abs(2.0 * n - 1.0);\n  float d = pow(ridge, 6.0);                                           // only the thin ridges survive: the rest is clear air\n  d *= 0.55 + 0.9 * noise(q * 1.1 + up * 0.3) + uAmp * 0.25;                         // patchy, so it thins out like real fog\n  return smoothstep(0.24 - uAmp * 0.08, 0.8, d) * smoothstep(1.0, 0.5, r);\n}\n\nvoid main() {\n  vec2 uv = vUv * 2.0 - 1.0;\n  float r2 = dot(uv, uv), rr = sqrt(r2);\n  float aa = smoothstep(1.0, 0.986, rr);\n  if (aa <= 0.0) { gl_FragColor = vec4(0.0); return; }\n  float z = sqrt(max(0.0, 1.0 - r2));\n  vec3 n = normalize(vec3(uv, z));\n\n  vec3 deep = uColor * 0.30 + vec3(0.02, 0.03, 0.09);\n  vec3 lite = mix(uColor, vec3(1.0), 0.62);\n  vec3 col = mix(deep, lite, pow(1.0 - rr, 1.6) * 0.42);\n\n  // smoke: march through the globe from the front to the back\n  float dt = (2.0 * z) / float(STEPS), alpha = 0.0;\n  vec3 acc = vec3(0.0);\n  vec2 bend = n.xy * 0.14 * (1.0 - z);                                       // the glass bends the view a little\n  for (int i = 0; i < STEPS; i++) {\n    float tt = (float(i) + 0.5) * dt;\n    vec3 p = vec3(uv + bend * tt * 0.6, z - tt);\n    float d = density(p, uTime);\n    float a = clamp(d * dt * (2.4 + uAmp * 2.0), 0.0, 1.0);\n    float lit = clamp(0.5 + 0.38 * dot(p, normalize(vec3(-0.55, 0.62, 0.55))) + 0.28 * d, 0.0, 1.0);   // lit from the top left\n    vec3 sc = mix(uColor * 0.5 + 0.42, vec3(1.0), lit);\n    acc += (1.0 - alpha) * a * sc; alpha += (1.0 - alpha) * a;\n  }\n  col = col * (1.0 - alpha) + acc;\n\n  // the glass shell\n  float fres = pow(1.0 - z, 3.0);\n  vec3 env = mix(vec3(0.72, 0.82, 1.0), vec3(1.0), smoothstep(-0.3, 0.9, n.y));\n  col += fres * env * 0.6;\n  vec2 h = uv - vec2(-0.40, 0.50);\n  h = vec2(h.x * 0.92 + h.y * 0.38, h.y * 1.18 - h.x * 0.30);\n  col += smoothstep(0.46, 0.10, length(h * vec2(1.0, 1.85))) * 0.62 * (0.6 + 0.4 * z);       // soft-box window reflection\n  vec3 L = normalize(vec3(-0.45, 0.55, 0.7));\n  col += pow(max(reflect(-L, n).z, 0.0), 90.0) * 0.95;                                         // sharp highlight\n  float cres = smoothstep(0.30, 0.0, abs(uv.y + 0.74 - 0.12 * uv.x * uv.x)) * smoothstep(0.75, 0.15, abs(uv.x));\n  col += cres * 0.30 * lite;                                                                    // light focusing through the bottom\n  col = mix(col, vec3(1.0), smoothstep(0.93, 1.0, rr) * 0.40);                                  // bright rim\n  col += uAmp * 0.10 * lite;\n\n  gl_FragColor = vec4(col * aa, aa);\n}";
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* ---------- renderer, scene, light ---------- */
+const canvas = document.getElementById("stage");
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: "high-performance" });
+renderer.setPixelRatio(Math.min(1.5, devicePixelRatio || 1));
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.05;
+const scene = new THREE.Scene();
+const pmrem = new THREE.PMREMGenerator(renderer);
+scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+scene.background = gradientTex(["#9fb6ff", "#dfe8ff", "#f4f7ff"]);
+scene.fog = new THREE.Fog(0xe4ebff, 45, 150);
+const camera = new THREE.PerspectiveCamera(42, 1, 0.05, 500);
+scene.add(new THREE.HemisphereLight(0xe8eeff, 0x8b90b8, 0.75));
+const sun = new THREE.DirectionalLight(0xffffff, 1.7);
+sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048); sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.02;
+Object.assign(sun.shadow.camera, { left: -16, right: 16, top: 16, bottom: -16, near: 1, far: 80 });
+scene.add(sun, sun.target);
+function sunAt(x, z) { sun.position.set(x + 9, 22, z + 14); sun.target.position.set(x, 0, z); }
+
+/* ---------- helpers ---------- */
+const V = (x, y, z) => new THREE.Vector3(x, y, z);
+const clamp01 = (v) => Math.min(1, Math.max(0, v));
+const ease = (v) => { v = clamp01(v); return v * v * (3 - 2 * v); };
+const seg = (t, a, b) => clamp01((t - a) / (b - a));
+const lerp = (a, b, k) => a + (b - a) * k;
+const lerpV = (a, b, k) => a.clone().lerp(b, k);
+function std(color, o = {}) { return new THREE.MeshStandardMaterial(Object.assign({ color, roughness: 0.6, metalness: 0 }, o)); }
+function gradientTex(stops) {
+  const c = document.createElement("canvas"); c.width = 4; c.height = 256; const g = c.getContext("2d");
+  const gr = g.createLinearGradient(0, 0, 0, 256); stops.forEach((s, i) => gr.addColorStop(i / (stops.length - 1), s)); g.fillStyle = gr; g.fillRect(0, 0, 4, 256);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
+}
+function canvasTex(w, h, draw) {
+  const c = document.createElement("canvas"); c.width = w; c.height = h; const g = c.getContext("2d");
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8;
+  const api = { tex: t, g, w, h, key: null, draw(arg, key) { if (key !== undefined && key === api.key) return; api.key = key; g.clearRect(0, 0, w, h); draw(g, w, h, arg); t.needsUpdate = true; } };
+  api.draw(undefined, "init"); return api;
+}
+function rr(g, x, y, w, h, r) { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); }
+const FONT = "'Instrument Sans', 'Segoe UI', system-ui, sans-serif";
+const loader = new THREE.TextureLoader();
+function shot(name) { const t = loader.load("shots/" + name + ".jpg"); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t; }
+function box(w, h, d, mat, x, y, z, parent) { const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat); m.position.set(x, y, z); m.castShadow = m.receiveShadow = true; parent.add(m); return m; }
+function screen(map, w, h, parent, x, y, z, ry = 0) {
+  const grp = new THREE.Group(); grp.position.set(x, y, z); grp.rotation.y = ry; parent.add(grp);
+  box(w + 0.1, h + 0.1, 0.06, std(0x1b1f3b, { roughness: 0.35, metalness: 0.4 }), 0, 0, -0.035, grp);
+  const mat = new THREE.MeshBasicMaterial({ map, toneMapped: false });
+  const s = new THREE.Mesh(new THREE.PlaneGeometry(w, h), mat); s.position.z = 0.0; grp.add(s);
+  return { grp, mat };
+}
+function label(text, w, h, opts = {}) {
+  const cv = canvasTex(1024, Math.round(1024 * h / w), (g, W, H) => {
+    if (opts.bg) { rr(g, 0, 0, W, H, H * 0.18); g.fillStyle = opts.bg; g.fill(); }
+    g.fillStyle = opts.color || "#14183a"; g.textAlign = "center"; g.textBaseline = "middle";
+    g.font = `${opts.weight || 600} ${Math.round(H * (opts.size || 0.42))}px ${FONT}`; g.fillText(text, W / 2, H / 2 + (opts.dy || 0) * H);
+    if (opts.sub) { g.globalAlpha = 0.75; g.font = `500 ${Math.round(H * 0.2)}px ${FONT}`; g.fillText(opts.sub, W / 2, H * 0.8); }
+  });
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ map: cv.tex, transparent: true, toneMapped: false }));
+  return m;
+}
+
+/* ---------- a person ---------- */
+function makePerson(o) {
+  const g = new THREE.Group(), skin = std(o.skin, { roughness: 0.55 }), shirt = std(o.shirt, { roughness: 0.8 }), pants = std(o.pants, { roughness: 0.85 }), shoe = std(0x23263a, { roughness: 0.5 }), hair = std(o.hair, { roughness: 0.9 });
+  const cap = (r, l, m) => { const x = new THREE.Mesh(new THREE.CapsuleGeometry(r, l, 6, 14), m); x.castShadow = true; return x; };
+  const hips = new THREE.Group(); hips.position.y = 0.92; g.add(hips);
+  const torso = cap(0.2, 0.42, shirt); torso.position.y = 0.38; torso.scale.set(1, 1, 0.7); hips.add(torso);
+  if (o.collar) { const c = new THREE.Mesh(new THREE.TorusGeometry(0.085, 0.022, 8, 20), std(o.collar)); c.rotation.x = Math.PI / 2; c.position.y = 0.66; hips.add(c); }
+  const neck = cap(0.055, 0.06, skin); neck.position.y = 0.72; hips.add(neck);
+  const head = new THREE.Group(); head.position.y = 0.9; hips.add(head);
+  const skull = new THREE.Mesh(new THREE.SphereGeometry(0.15, 28, 20), skin); skull.scale.set(0.92, 1.06, 1); skull.castShadow = true; head.add(skull);
+  const hm = new THREE.Mesh(new THREE.SphereGeometry(0.158, 28, 20, 0, Math.PI * 2, 0, Math.PI * (o.long ? 0.75 : 0.52)), hair); hm.position.set(0, 0.015, -0.01); hm.rotation.x = -0.32; head.add(hm);
+  const eyeM = std(0x1a1c2e, { roughness: 0.3 });
+  [-1, 1].forEach((s) => { const e = new THREE.Mesh(new THREE.SphereGeometry(0.017, 10, 8), eyeM); e.position.set(0.05 * s, 0.02, 0.135); head.add(e); });
+  const arms = [], legs = [];
+  [-1, 1].forEach((s) => {
+    const sh = new THREE.Group(); sh.position.set(0.25 * s, 0.6, 0); hips.add(sh);
+    const up = cap(0.055, 0.28, shirt); up.position.y = -0.19; sh.add(up);
+    const el = new THREE.Group(); el.position.y = -0.37; sh.add(el);
+    const fo = cap(0.047, 0.24, skin); fo.position.y = -0.15; el.add(fo);
+    const hand = new THREE.Mesh(new THREE.SphereGeometry(0.056, 14, 10), skin); hand.position.y = -0.31; hand.scale.set(0.85, 1.1, 0.7); el.add(hand);
+    arms.push({ sh, el, hand });
+    const hp = new THREE.Group(); hp.position.set(0.1 * s, 0.02, 0); hips.add(hp);
+    const th = cap(0.075, 0.34, pants); th.position.y = -0.23; hp.add(th);
+    const kn = new THREE.Group(); kn.position.y = -0.45; hp.add(kn);
+    const shn = cap(0.064, 0.32, pants); shn.position.y = -0.21; kn.add(shn);
+    const sho = new THREE.Mesh(new RoundedBoxGeometry(0.12, 0.08, 0.25, 2, 0.03), shoe); sho.position.set(0, -0.43, 0.05); sho.castShadow = true; kn.add(sho);
+    legs.push({ hp, kn });
+  });
+  const p = { g, hips, head, arms, legs };
+  pose(p, {});
+  return p;
+}
+// poses are a pure function of the inputs, so any moment of the film can be drawn directly (seeking works)
+function pose(p, o) {
+  if (p.human) return humanPose(p, o);
+  const w = o.walk || 0, ph = o.phase || 0, t = o.t || 0;
+  p.hips.position.y = 0.92 + Math.abs(Math.sin(ph)) * 0.03 * w + Math.sin(t * 1.6) * 0.004 * (1 - w);
+  p.legs.forEach((L, i) => { const s = Math.sin(ph + i * Math.PI); L.hp.rotation.x = -s * 0.5 * w; L.kn.rotation.x = Math.max(0, Math.sin(ph + i * Math.PI + 1.2)) * 0.7 * w; });
+  p.arms.forEach((A, i) => { A.sh.rotation.set(Math.sin(ph + i * Math.PI) * 0.42 * w, 0, (i ? -1 : 1) * 0.06); A.el.rotation.x = -0.18 - 0.15 * w; });
+  p.head.rotation.set(o.look || 0, o.turn || 0, 0);
+  if (o.sit) { p.hips.position.y = 0.6; p.legs.forEach((L) => { L.hp.rotation.x = -1.5; L.kn.rotation.x = 1.5; }); }
+  const R = p.arms[1];
+  if (o.knock) { R.sh.rotation.x = -1.25; R.sh.rotation.z = 0.15; R.el.rotation.x = -1.0 + Math.sin(o.knock * Math.PI * 6) * 0.38; }
+  if (o.phone) { R.sh.rotation.x = -0.55 * o.phone; R.el.rotation.x = -0.18 - 1.25 * o.phone; R.sh.rotation.z = 0.25 * o.phone; p.head.rotation.x = 0.35 * o.phone; }
+  if (o.wave) { R.sh.rotation.z = -2.4 * o.wave; R.el.rotation.z = -0.4 + Math.sin(t * 9) * 0.35 * o.wave; }
+  if (o.type) { p.arms.forEach((A, i) => { A.sh.rotation.x = -0.75; A.el.rotation.x = -0.75 + Math.sin(t * 14 + i * 2) * 0.06; }); }
+}
+function place(p, pos, face) { p.g.position.copy(pos); p.g.rotation.y = face; }
+function walkAlong(p, a, b, k, extra = {}) { const pos = lerpV(a, b, k); const d = b.clone().sub(a); place(p, pos, Math.atan2(d.x, d.z)); pose(p, Object.assign({ walk: k > 0 && k < 1 ? 1 : 0, phase: a.distanceTo(b) * k * 4.4, dist: a.distanceTo(b) * k }, extra)); }
+/* ---------- people: realistic rigged humans (Microsoft Rocketbox, MIT licence), posed procedurally ---------- */
+// Every limb is aimed at a direction in the character's own space (x = its left, y = up, z = forward), starting from the
+// bind pose each frame, so the same code drives any human rig and any moment of the film can be drawn directly.
+// the student candidate, the professor on the HR side, and a visitor for the security scene
+const PEOPLE = { candidate: "student", hr: "professor", visitor: "visitor" };
+const fbxManager = new THREE.LoadingManager(); fbxManager.setURLModifier((u) => (/\.(tga|png|jpg)$/i.test(u) ? "data:," : u));   // textures are set below, not from the FBX
+async function loadPerson(dir) {
+  const root = "models/people/" + dir + "/", o = await new FBXLoader(fbxManager).loadAsync(root + "model.fbx");
+  const tex = (f, color) => { const t = loader.load(root + f); if (color) t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; return t; };
+  const hasOpacity = dir !== "student";
+  o.traverse((m) => {
+    if (!m.isMesh) return;
+    m.material = (Array.isArray(m.material) ? m.material : [m.material]).map((old) => {
+      // hair and eyelashes have their own material: a colour texture with transparency
+      if (/opacity/i.test(old.name) && hasOpacity) return new THREE.MeshStandardMaterial({ map: tex("opacity.png", true), alphaTest: 0.42, side: THREE.DoubleSide, roughness: 0.7, envMapIntensity: 0.4 });
+      const part = /head/i.test(old.name) ? "head" : "body";
+      return new THREE.MeshStandardMaterial({ map: tex(part + ".jpg", true), normalMap: tex(part + "_n.jpg"), roughness: part === "head" ? 0.62 : 0.85, metalness: 0, envMapIntensity: 0.55 });
+    });
+  });
+  return o;
+}
+let PEOPLE_MODELS = null;
+try { const keys = Object.keys(PEOPLE); const objs = await Promise.all(keys.map((k) => loadPerson(PEOPLE[k]))); PEOPLE_MODELS = Object.fromEntries(keys.map((k, i) => [k, objs[i]])); }
+catch (e) { console.warn("People models not loaded; using simple figures.", e); }
+const ALIAS = { Hips: "Bip01_Pelvis", Spine: "Bip01_Spine1", Head: "Bip01_Head", RightArm: "Bip01_R_UpperArm", RightForeArm: "Bip01_R_Forearm", RightHand: "Bip01_R_Hand",
+  LeftArm: "Bip01_L_UpperArm", LeftForeArm: "Bip01_L_Forearm", LeftHand: "Bip01_L_Hand", RightUpLeg: "Bip01_R_Thigh", RightLeg: "Bip01_R_Calf", RightFoot: "Bip01_R_Foot",
+  LeftUpLeg: "Bip01_L_Thigh", LeftLeg: "Bip01_L_Calf", LeftFoot: "Bip01_L_Foot", LeftToe_End: "Bip01_L_Toe0" };
+const AX = V(1, 0, 0), AY = V(0, 1, 0);
+const _a = new THREE.Vector3(), _b = new THREE.Vector3(), _d = new THREE.Vector3(), _rq = new THREE.Quaternion(), _wq = new THREE.Quaternion();
+function makeHuman(src, height) {
+  const g = new THREE.Group(), model = src; g.add(model);
+  let skel = null;
+  model.traverse((o) => {
+    if (o.isMesh) { o.castShadow = true; o.frustumCulled = false; }
+    if (o.isSkinnedMesh && !skel) skel = o.skeleton;
+  });
+  const bone = (n) => model.getObjectByName("mixamorig" + n) || model.getObjectByName("mixamorig:" + n) || model.getObjectByName(n) || (ALIAS[n] && model.getObjectByName(ALIAS[n]));
+  // size from the skeleton (a skinned model's bounding box is not reliable before its first render)
+  const top = bone("HeadTop_End"), headB = bone("Head"), toe = bone("LeftToe_End") || bone("LeftFoot"), wp = (b) => b.getWorldPosition(new THREE.Vector3()).y;
+  g.updateMatrixWorld(true); model.scale.multiplyScalar(top ? height / (wp(top) - wp(toe)) : (height - 0.17) / (wp(headB) - wp(toe)));   // no head-top bone: the head bone sits about 17 cm below the crown
+  g.updateMatrixWorld(true); model.position.y = -wp(toe) + 0.015;
+  const B = {}; ["Hips", "Spine", "Head", "RightArm", "RightForeArm", "RightHand", "LeftArm", "LeftForeArm", "LeftHand", "RightUpLeg", "RightLeg", "RightFoot", "LeftUpLeg", "LeftLeg", "LeftFoot"].forEach((n) => (B[n] = bone(n)));
+  g.updateMatrixWorld(true);
+  const hipY = B.Hips.getWorldPosition(new THREE.Vector3()).y;
+  const rest = skel.bones.map((b) => [b, b.quaternion.clone(), b.position.clone()]);   // the loaded pose, restored every frame
+  return { human: true, saved: [], rest, g, model, skel, base: model.position.y, hipY, B, head: B.Head, arms: [{ el: B.LeftHand }, { el: B.RightHand }] };
+}
+// rotate a bone so that the segment to its child points along dir (character space)
+function aim(p, bone, child, dir) {
+  if (!bone || !child) return;
+  bone.getWorldPosition(_a); child.getWorldPosition(_b); _a.subVectors(_b, _a).normalize();
+  _d.copy(dir).normalize().applyQuaternion(p.g.getWorldQuaternion(_rq));
+  _wq.setFromUnitVectors(_a, _d);
+  const pq = bone.parent.getWorldQuaternion(new THREE.Quaternion());
+  bone.quaternion.premultiply(pq.clone().invert().multiply(_wq).multiply(pq)); bone.updateMatrixWorld(true);
+}
+// rotate a bone about an axis in character space
+function turnBone(p, bone, axis, angle) {
+  if (!bone || !angle) return;
+  _d.copy(axis).applyQuaternion(p.g.getWorldQuaternion(_rq)).normalize();
+  const pq = bone.parent.getWorldQuaternion(new THREE.Quaternion());
+  bone.quaternion.premultiply(pq.clone().invert().multiply(new THREE.Quaternion().setFromAxisAngle(_d, angle)).multiply(pq)); bone.updateMatrixWorld(true);
+}
+function humanPose(p, o) {
+  const B = p.B, w = o.walk || 0, t = o.t || 0, ph = ((o.dist || 0) / 1.45) * Math.PI * 2, sw = Math.sin(ph) * w;
+  p.rest.forEach(([b, q, v]) => { b.quaternion.copy(q); b.position.copy(v); });
+  p.model.position.y = p.base + (o.sit ? -(p.hipY - 0.56) : Math.abs(Math.cos(ph)) * 0.022 * w);
+  p.g.updateMatrixWorld(true);
+  const breathe = Math.sin(t * 1.7) * 0.015 * (1 - w);
+  // legs (side: +1 = the character's left, -1 = its right)
+  [[1, B.LeftUpLeg, B.LeftLeg, B.LeftFoot], [-1, B.RightUpLeg, B.RightLeg, B.RightFoot]].forEach(([side, up, leg, foot]) => {
+    if (o.sit) { aim(p, up, leg, V(side * 0.1, -0.06, 1)); aim(p, leg, foot, V(side * 0.03, -1, 0.1)); return; }
+    const a = 0.42 * (side > 0 ? sw : -sw), bend = 0.6 * w * Math.max(0, Math.sin(ph + (side > 0 ? 0 : Math.PI) + 2.0));
+    aim(p, up, leg, V(side * 0.04, -Math.cos(a), Math.sin(a)));
+    aim(p, leg, foot, V(side * 0.03, -Math.cos(a - bend), Math.sin(a - bend)));
+  });
+  turnBone(p, B.Spine, AX, (o.sit || o.type ? 0.1 : 0.02) + breathe);
+  // arms: relaxed, swinging against the legs while walking
+  [[1, B.LeftArm, B.LeftForeArm, B.LeftHand], [-1, B.RightArm, B.RightForeArm, B.RightHand]].forEach(([side, arm, fore, hand]) => {
+    const swing = 0.36 * (side > 0 ? -sw : sw);
+    let up = V(side * 0.17, -1, 0.04 + swing), lo = V(side * 0.07, -1, 0.2 + swing * 1.2);
+    if (o.type) { up = V(side * 0.2, -0.78, 0.6); lo = V(-side * 0.14, -0.1, 1); lo.x += Math.sin(t * 14 + side) * 0.03; }
+    if (side < 0 && o.knock) { up = V(-0.12, 0.05, 1); lo = V(-0.02, 0.9, 0.35 + Math.sin(o.knock * Math.PI * 6) * 0.45); }
+    if (side < 0 && o.phone) { up = up.clone().lerp(V(-0.18, -0.45, 0.88), o.phone); lo = lo.clone().lerp(V(0.3, 0.72, 0.62), o.phone); }
+    if (side < 0 && o.wave) { up = up.clone().lerp(V(-0.85, 0.55, 0.15), o.wave); lo = lo.clone().lerp(V(-0.15 + Math.sin(t * 9) * 0.4, 1, 0.1), o.wave); }
+    aim(p, arm, fore, up); aim(p, fore, hand, lo);
+  });
+  turnBone(p, B.Head, AY, o.turn || 0);
+  turnBone(p, B.Head, AX, (o.look || 0) + (o.phone ? 0.32 * o.phone : 0) + (o.type ? 0.18 : 0));
+}
+const character = (k, fallback) => (PEOPLE_MODELS ? makeHuman(PEOPLE_MODELS[k], { candidate: 1.75, hr: 1.78, visitor: 1.76 }[k]) : makePerson(fallback));
+const candidate = character("candidate", { skin: 0xc68a63, shirt: 0x4f5bff, pants: 0x2a2f55, hair: 0x1d1a1a, collar: 0xeaf0ff });
+const hr = character("hr", { skin: 0xe0b08f, shirt: 0xf3f5ff, pants: 0x3b3f63, hair: 0x3a2618, long: true });
+scene.add(candidate.g, hr.g);
+
+/* ---------- world building blocks ---------- */
+const M = {
+  ground: std(0xe6eaf5, { roughness: 0.95 }), walk: std(0xd9deec, { roughness: 0.9 }), road: std(0x50566f, { roughness: 0.9 }),
+  wall: std(0xf6f8ff, { roughness: 0.92 }), wall2: std(0xe6ecff, { roughness: 0.92 }), floor: std(0xd9dff0, { roughness: 0.45, metalness: 0.05 }),
+  wood: std(0xb98a63, { roughness: 0.55 }), desk: std(0xfbfcff, { roughness: 0.3 }), metal: std(0xa4abc8, { roughness: 0.3, metalness: 0.85 }),
+  brand: std(0x4f5bff, { roughness: 0.35, metalness: 0.1 }), glass: std(0x9fb6ff, { roughness: 0.08, metalness: 0.7, emissive: 0x5d74ff, emissiveIntensity: 0.12 }),
+  leaf: std(0x6fc2a0, { roughness: 0.8, flatShading: true }), pot: std(0xffffff, { roughness: 0.4 }), dark: std(0x1b1f3b, { roughness: 0.4 }),
+};
+function plant(parent, x, z, s = 1) {
+  const pot = new THREE.Mesh(new THREE.CylinderGeometry(0.22 * s, 0.17 * s, 0.4 * s, 20), M.pot); pot.position.set(x, 0.2 * s, z); pot.castShadow = true; parent.add(pot);
+  for (let i = 0; i < 5; i++) { const l = new THREE.Mesh(new THREE.IcosahedronGeometry(0.22 * s, 0), M.leaf); l.position.set(x + Math.sin(i * 2.4) * 0.14 * s, (0.55 + i * 0.12) * s, z + Math.cos(i * 2.4) * 0.14 * s); l.castShadow = true; parent.add(l); }
+}
+function room(parent, cx, cz, w, d, h, opts = {}) {
+  const floor = new THREE.Mesh(new THREE.PlaneGeometry(w, d), opts.floor || M.floor); floor.rotation.x = -Math.PI / 2; floor.position.set(cx, 0.001, cz); floor.receiveShadow = true; parent.add(floor);
+  box(w, h, 0.2, opts.back || M.wall2, cx, h / 2, cz - d / 2, parent);
+  if (opts.left !== false) box(0.2, h, d, M.wall, cx - w / 2, h / 2, cz, parent);
+  if (opts.right !== false) box(0.2, h, d, M.wall, cx + w / 2, h / 2, cz, parent);
+  if (opts.front) box(w, h, 0.2, M.wall, cx, h / 2, cz + d / 2, parent);
+  if (opts.frontDoor) { const dw = 1.6, side = (w - dw) / 2; box(side, h, 0.2, M.wall, cx - w / 2 + side / 2, h / 2, cz + d / 2, parent); box(side, h, 0.2, M.wall, cx + w / 2 - side / 2, h / 2, cz + d / 2, parent); box(dw, h - 2.6, 0.2, M.wall, cx, 2.6 + (h - 2.6) / 2, cz + d / 2, parent); }
+  const strip = box(w - 0.4, 0.08, 0.04, M.brand, cx, 0.9, cz - d / 2 + 0.12, parent); strip.castShadow = false;
+  const lamp = new THREE.PointLight(0xfff1dc, 18, 14, 2); lamp.position.set(cx, h - 0.4, cz); parent.add(lamp);
+}
+
+/* ---------- 1. outside the building ---------- */
+const EXT = new THREE.Group(); scene.add(EXT);
+{
+  const g = new THREE.Mesh(new THREE.PlaneGeometry(260, 260), M.ground); g.rotation.x = -Math.PI / 2; g.receiveShadow = true; EXT.add(g);
+  box(40, 0.06, 9, M.walk, 0, 0.03, 4.5, EXT);
+  const road = new THREE.Mesh(new THREE.PlaneGeometry(260, 12), M.road); road.rotation.x = -Math.PI / 2; road.position.set(0, 0.01, 15); road.receiveShadow = true; EXT.add(road);
+  for (let x = -40; x <= 40; x += 6) { const s = new THREE.Mesh(new THREE.PlaneGeometry(3, 0.2), std(0xf2f4ff)); s.rotation.x = -Math.PI / 2; s.position.set(x, 0.02, 15); EXT.add(s); }
+  box(22, 12, 10, M.wall, 0, 6, -5, EXT);
+  box(22.4, 0.5, 10.4, M.wall2, 0, 12.2, -5, EXT);
+  for (let r = 0; r < 3; r++) for (let c = -4; c <= 4; c++) { const win = box(1.9, 1.5, 0.08, M.glass, c * 2.35, 5.6 + r * 2.1, 0.04, EXT); win.castShadow = false; }
+  for (let c of [-4, -3, -2, 2, 3, 4]) { const win = box(1.9, 2.6, 0.08, M.glass, c * 2.35, 1.6, 0.04, EXT); win.castShadow = false; }
+  box(7, 0.22, 2.4, M.wall2, 0, 3.3, 1.1, EXT); box(0.18, 3.2, 0.18, M.metal, -3.3, 1.6, 2.2, EXT); box(0.18, 3.2, 0.18, M.metal, 3.3, 1.6, 2.2, EXT);
+  box(2.2, 3.0, 0.3, M.dark, 0, 1.5, 0.0, EXT);
+  const glow = new THREE.Mesh(new THREE.PlaneGeometry(1.6, 2.6), new THREE.MeshBasicMaterial({ color: 0xfff1d6, toneMapped: false })); glow.position.set(0, 1.3, 0.16); EXT.add(glow);
+  const sign = label("HireFlow AI", 5.2, 1.0, { color: "#ffffff", bg: "#4f5bff", size: 0.5 }); sign.position.set(0, 4.35, 0.12); EXT.add(sign);
+  const hours = label("Assessment centre · Please knock", 2.4, 0.3, { color: "#14183a", bg: "rgba(255,255,255,.92)", size: 0.42, weight: 500 }); hours.position.set(1.85, 1.9, 0.2); EXT.add(hours);
+  [[-6.5, 3.2], [6.5, 3.2], [-10, 6.5], [10, 6.5]].forEach(([x, z]) => {
+    const tr = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.16, 2.2, 10), M.wood); tr.position.set(x, 1.1, z); tr.castShadow = true; EXT.add(tr);
+    const f = new THREE.Mesh(new THREE.IcosahedronGeometry(1.25, 1), M.leaf); f.position.set(x, 2.8, z); f.castShadow = true; EXT.add(f);
+  });
+  plant(EXT, -1.7, 1.3, 1.2); plant(EXT, 1.7, 1.3, 1.2);
+}
+const extDoor = new THREE.Group(); extDoor.position.set(-0.8, 0, 0.2); EXT.add(extDoor);
+box(1.6, 2.6, 0.08, std(0x4f5bff, { roughness: 0.15, metalness: 0.3, transparent: true, opacity: 0.92 }), 0.8, 1.3, 0, extDoor);
+box(0.05, 0.6, 0.06, M.metal, 1.4, 1.2, 0.07, extDoor);
+
+/* ---------- 2. HR office ---------- */
+const HRX = 200;
+const HROOM = new THREE.Group(); scene.add(HROOM);
+room(HROOM, HRX, 0, 10, 10, 4.2, { frontDoor: true });
+const tInvite = shot("04-invite"), tDash = shot("03-hr-dashboard");
+const hrWall = screen(tInvite, 4.0, 2.5, HROOM, HRX, 2.45, -4.85);
+box(2.8, 0.08, 1.1, M.desk, HRX, 0.95, -2.2, HROOM); [-1.25, 1.25].forEach((x) => box(0.08, 0.95, 1.0, M.metal, HRX + x, 0.475, -2.2, HROOM));
+box(0.9, 0.55, 0.05, M.dark, HRX + 0.4, 1.33, -2.45, HROOM).rotation.y = Math.PI;
+box(0.06, 0.3, 0.06, M.metal, HRX + 0.4, 1.1, -2.48, HROOM);
+plant(HROOM, HRX - 4.2, -4.2, 1.4); plant(HROOM, HRX + 4.2, -4.2, 1.2);
+const hrSign = label("HR · Hiring desk", 2.4, 0.4, { color: "#ffffff", bg: "#14183a", size: 0.45 }); hrSign.position.set(HRX - 2.9, 3.6, -4.73); HROOM.add(hrSign);
+const envMat = canvasTex(256, 170, (g, W, H) => { rr(g, 2, 2, W - 4, H - 4, 14); g.fillStyle = "#ffffff"; g.fill(); g.strokeStyle = "#4f5bff"; g.lineWidth = 6; g.beginPath(); g.moveTo(10, 14); g.lineTo(W / 2, H * 0.58); g.lineTo(W - 10, 14); g.stroke(); g.fillStyle = "#4f5bff"; g.beginPath(); g.arc(W / 2, H * 0.58, 16, 0, 7); g.fill(); });
+const envelope = new THREE.Mesh(new THREE.PlaneGeometry(0.46, 0.3), new THREE.MeshBasicMaterial({ map: envMat.tex, toneMapped: false, transparent: true, side: THREE.DoubleSide })); scene.add(envelope);
+const envGlow = new THREE.PointLight(0x8fa0ff, 0, 3, 2); envelope.add(envGlow);
+
+/* ---------- 3. the phone ---------- */
+const PX = 400;
+const PHONE = new THREE.Group(); scene.add(PHONE);
+{
+  const bg = new THREE.Mesh(new THREE.PlaneGeometry(30, 18), new THREE.MeshBasicMaterial({ map: gradientTex(["#c9d6ff", "#eef2ff", "#dfe7ff"]), toneMapped: false })); bg.position.set(PX, 2, -4); PHONE.add(bg);
+  for (let i = 0; i < 9; i++) { const b = new THREE.Mesh(new THREE.SphereGeometry(0.35 + (i % 3) * 0.2, 16, 12), new THREE.MeshBasicMaterial({ color: [0x8fa0ff, 0xb9c6ff, 0x7fc4ff][i % 3], transparent: true, opacity: 0.35, toneMapped: false })); b.position.set(PX - 5 + i * 1.3, 0.4 + (i * 1.7) % 3.5, -3 + (i % 2)); PHONE.add(b); }
+}
+const phone = new THREE.Group(); phone.position.set(PX, 1.6, 0); PHONE.add(phone);
+const body = new THREE.Mesh(new RoundedBoxGeometry(0.86, 1.76, 0.09, 6, 0.11), std(0x1b1f3b, { roughness: 0.25, metalness: 0.6 })); body.castShadow = true; phone.add(body);
+const phoneUI = canvasTex(540, 1110, drawPhone);
+const phoneScreen = new THREE.Mesh(new THREE.PlaneGeometry(0.79, 1.64), new THREE.MeshBasicMaterial({ map: phoneUI.tex, toneMapped: false })); phoneScreen.position.z = 0.047; phone.add(phoneScreen);
+const palm = new THREE.Mesh(new THREE.SphereGeometry(0.42, 24, 18), std(0xc68a63, { roughness: 0.55 })); palm.scale.set(1.1, 1.25, 0.45); palm.position.set(0.02, -0.55, -0.16); phone.add(palm);
+const fingers = []; for (let i = 0; i < 4; i++) { const f = new THREE.Mesh(new THREE.CapsuleGeometry(0.055, 0.2, 6, 10), palm.material); f.position.set(0.47, 0.25 - i * 0.18, -0.02); f.rotation.z = 0.3; phone.add(f); fingers.push(f); }
+const thumb = new THREE.Mesh(new THREE.CapsuleGeometry(0.06, 0.3, 6, 12), palm.material); phone.add(thumb);
+const ripple = new THREE.Mesh(new THREE.RingGeometry(0.03, 0.05, 40), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0, toneMapped: false })); ripple.position.set(0, -0.285, 0.05); phone.add(ripple);
+function drawPhone(g, W, H, s = { mode: "mail", pressed: false, k: 0 }) {
+  g.fillStyle = "#f4f6ff"; g.fillRect(0, 0, W, H);
+  g.fillStyle = "#14183a"; g.font = `600 26px ${FONT}`; g.textAlign = "left"; g.fillText("9:41", 36, 52); g.textAlign = "right"; g.fillText("5G ▮▮▮", W - 36, 52);
+  if (s.mode === "mail") {
+    g.textAlign = "left"; g.fillStyle = "#5a5f8c"; g.font = `500 24px ${FONT}`; g.fillText("Inbox", 36, 120);
+    rr(g, 24, 150, W - 48, 760, 28); g.fillStyle = "#ffffff"; g.fill();
+    g.fillStyle = "#4f5bff"; rr(g, 52, 182, 72, 72, 20); g.fill(); g.fillStyle = "#fff"; g.font = `700 34px ${FONT}`; g.textAlign = "center"; g.fillText("H", 88, 230);
+    g.textAlign = "left"; g.fillStyle = "#14183a"; g.font = `600 28px ${FONT}`; g.fillText("HireFlow AI", 142, 210); g.fillStyle = "#5a5f8c"; g.font = `500 22px ${FONT}`; g.fillText("to you · just now", 142, 244);
+    g.fillStyle = "#14183a"; g.font = `600 38px ${FONT}`; ["You're invited to", "your assessment"].forEach((l, i) => g.fillText(l, 52, 330 + i * 48));
+    g.fillStyle = "#4b5190"; g.font = `500 26px ${FONT}`;
+    ["TechNova Solutions has invited you", "for the role of AI/ML Engineer.", "", "No password needed. One tap", "creates your profile from the", "resume HR uploaded."].forEach((l, i) => g.fillText(l, 52, 440 + i * 38));
+    const by = 700; rr(g, 52, by, W - 104, 96, 48); const gr = g.createLinearGradient(52, 0, W - 52, 0); gr.addColorStop(0, s.pressed ? "#3b46e0" : "#5b5bff"); gr.addColorStop(1, s.pressed ? "#2358d8" : "#3e7bff"); g.fillStyle = gr; g.fill();
+    g.fillStyle = "#fff"; g.textAlign = "center"; g.font = `600 32px ${FONT}`; g.fillText("Start assessment", W / 2, by + 60);
+  } else {
+    g.textAlign = "center"; g.fillStyle = "#14183a"; g.font = `600 36px ${FONT}`; g.fillText("Welcome, Arjun", W / 2, 250);
+    g.fillStyle = "#5a5f8c"; g.font = `500 24px ${FONT}`; g.fillText("Setting up your assessment", W / 2, 296);
+    const items = ["Resume read", "Profile created", "Assessment plan ready", "Camera check next"];
+    items.forEach((it, i) => { const on = s.k > (i + 0.5) / items.length; const y = 400 + i * 110; rr(g, 52, y, W - 104, 84, 22); g.fillStyle = on ? "#eef1ff" : "#ffffff"; g.fill();
+      g.beginPath(); g.arc(100, y + 42, 20, 0, 7); g.fillStyle = on ? "#22b981" : "#d7dcf2"; g.fill(); if (on) { g.strokeStyle = "#fff"; g.lineWidth = 5; g.beginPath(); g.moveTo(90, y + 42); g.lineTo(98, y + 50); g.lineTo(112, y + 34); g.stroke(); }
+      g.textAlign = "left"; g.fillStyle = on ? "#14183a" : "#9aa0c4"; g.font = `600 28px ${FONT}`; g.fillText(it, 140, y + 52); });
+  }
+}
+
+/* ---------- 4. the assessment corridor and its rooms ---------- */
+const CX = 600, DOORS = [-6, -18, -30, -42];
+const STAGES = ["Self introduction", "Role test", "Hands-on task", "AI interview"];
+const COR = new THREE.Group(); scene.add(COR);
+{
+  const L = 56, z0 = 6, zc = z0 - L / 2;
+  const f = new THREE.Mesh(new THREE.PlaneGeometry(4, L), M.floor); f.rotation.x = -Math.PI / 2; f.position.set(CX, 0.002, zc); f.receiveShadow = true; COR.add(f);
+  box(0.2, 4, L, M.wall, CX + 2, 2, zc, COR);
+  for (let z = 2; z > -52; z -= 6) { const w = box(0.06, 2, 3.4, M.glass, CX + 1.88, 2.1, z, COR); w.castShadow = false; }
+  let last = z0;
+  DOORS.forEach((dz) => { const a = dz + 0.8; box(0.2, 4, last - a, M.wall, CX - 2, 2, (last + a) / 2, COR); box(0.2, 1.4, 1.6, M.wall, CX - 2, 3.3, dz, COR); last = dz - 0.8; });
+  box(0.2, 4, last - (z0 - L), M.wall, CX - 2, 2, (last + z0 - L) / 2, COR);
+  box(4, 4, 0.2, M.wall2, CX, 2, z0 - L, COR);
+  const endSign = label("HR report →", 2.6, 0.5, { color: "#fff", bg: "#4f5bff" }); endSign.position.set(CX, 2.8, z0 - L + 0.12); COR.add(endSign);
+  for (let z = 0; z > -50; z -= 14) { const l = new THREE.PointLight(0xfff3e0, 9, 13, 2); l.position.set(CX, 3.6, z); COR.add(l); }
+  const strip = box(0.04, 0.08, L, M.brand, CX + 1.88, 0.9, zc, COR); strip.castShadow = false;
+}
+const corDoors = DOORS.map((dz, i) => {
+  const hinge = new THREE.Group(); hinge.position.set(CX - 2, 0, dz + 0.78); COR.add(hinge);
+  box(0.07, 2.6, 1.56, std([0x4f5bff, 0x3e7bff, 0x1e96f5, 0x9a4dff][i], { roughness: 0.35 }), 0, 1.3, -0.78, hinge);
+  box(0.06, 0.06, 0.3, M.metal, 0.06, 1.15, -1.35, hinge);
+  const s = label(`${i + 1} · ${STAGES[i]}`, 2.2, 0.42, { color: "#14183a", bg: "rgba(255,255,255,.95)", size: 0.42 }); s.position.set(CX - 1.88, 2.85, dz); s.rotation.y = Math.PI / 2; COR.add(s);
+  const rx = CX - 6.1;
+  room(COR, rx, dz, 8, 11.6, 4, { back: M.wall, right: false, front: true });
+  return hinge;
+});
+// the rooms are seen from the side: turn each "room" so its back wall is at the far left (x = CX - 10)
+// (room() builds a back wall at -z; for these rooms we add a separate far-left wall and screen instead)
+const CODE = ["def top_k_accuracy(scores, labels, k=3):", "    hits = 0", "    for row, label in zip(scores, labels):", "        best = sorted(range(len(row)),", "                      key=row.__getitem__,", "                      reverse=True)[:k]", "        hits += label in best", "    return hits / len(labels)"];
+const stageScreens = DOORS.map((dz, i) => {
+  if (i === 3) return null;
+  const ui = canvasTex(1280, 760, [drawIntro, drawQuiz, drawCode][i]);
+  const s = screen(ui.tex, 3.8, 2.25, COR, CX - 9.9, 2.15, dz, Math.PI / 2);
+  return ui;
+});
+function drawIntro(g, W, H, k = 0) {
+  g.fillStyle = "#0f1330"; g.fillRect(0, 0, W, H);
+  const gr = g.createRadialGradient(W / 2, H * 0.45, 40, W / 2, H * 0.45, 420); gr.addColorStop(0, "#2b3366"); gr.addColorStop(1, "#0f1330"); g.fillStyle = gr; g.fillRect(0, 0, W, H);
+  g.fillStyle = "#c68a63"; g.beginPath(); g.ellipse(W / 2, H * 0.4, 92, 112, 0, 0, 7); g.fill(); g.fillStyle = "#1d1a1a"; g.beginPath(); g.ellipse(W / 2, H * 0.33, 98, 70, 0, Math.PI, 0); g.fill();
+  g.fillStyle = "#4f5bff"; g.beginPath(); g.ellipse(W / 2, H * 0.95, 250, 190, 0, Math.PI, 0); g.fill();
+  g.setLineDash([14, 12]); g.strokeStyle = "rgba(255,255,255,.55)"; g.lineWidth = 4; g.beginPath(); g.ellipse(W / 2, H * 0.43, 190, 230, 0, 0, 7); g.stroke(); g.setLineDash([]);
+  rr(g, 36, 32, 220, 54, 27); g.fillStyle = "rgba(255,255,255,.12)"; g.fill(); g.fillStyle = "#ff4d4d"; g.beginPath(); g.arc(70, 59, 11 + Math.sin(k * 40) * 2, 0, 7); g.fill();
+  g.fillStyle = "#fff"; g.font = `600 26px ${FONT}`; g.textAlign = "left"; g.fillText("Recording", 94, 68);
+  g.textAlign = "center"; g.font = `600 40px ${FONT}`; g.fillText("Self introduction", W / 2, H - 120);
+  g.font = `500 26px ${FONT}`; g.fillStyle = "rgba(255,255,255,.8)"; g.fillText("Tell us about yourself, your projects and what you enjoy building.", W / 2, H - 76);
+  for (let i = 0; i < 36; i++) { const h = 8 + Math.abs(Math.sin(k * 30 + i * 0.7)) * 44 * (0.4 + 0.6 * Math.abs(Math.sin(i * 1.3))); g.fillStyle = "rgba(143,160,255,.9)"; rr(g, W - 330 + i * 8, 70 - h / 2, 5, h, 2); g.fill(); }
+}
+function drawQuiz(g, W, H, k = 0) {
+  g.fillStyle = "#f4f6ff"; g.fillRect(0, 0, W, H);
+  g.fillStyle = "#4f5bff"; g.fillRect(0, 0, W, 84); g.fillStyle = "#fff"; g.font = `600 30px ${FONT}`; g.textAlign = "left"; g.fillText("HireFlow AI · AI/ML Engineer · Role test", 40, 54);
+  rr(g, 40, 120, W - 80, H - 160, 26); g.fillStyle = "#fff"; g.fill();
+  g.fillStyle = "#4f5bff"; g.font = `600 22px ${FONT}`; g.fillText("QUESTION 3 OF 10", 80, 176);
+  g.fillStyle = "#14183a"; g.font = `600 34px ${FONT}`; ["Your model scores 99% on training data but 71% on", "new data. What is the most likely cause?"].forEach((l, i) => g.fillText(l, 80, 236 + i * 46));
+  const opts = ["The learning rate is too low", "The model is overfitting the training data", "The test set is too large", "The features are already normalised"];
+  const sel = k > 0.45 ? 1 : -1;
+  opts.forEach((o, i) => { const y = 340 + i * 84; rr(g, 80, y, W - 160, 66, 16); g.fillStyle = i === sel ? "#eef1ff" : "#f8f9ff"; g.fill(); g.strokeStyle = i === sel ? "#4f5bff" : "#e3e7f7"; g.lineWidth = 3; g.stroke();
+    g.beginPath(); g.arc(118, y + 33, 12, 0, 7); g.strokeStyle = i === sel ? "#4f5bff" : "#b8bfdc"; g.stroke(); if (i === sel) { g.fillStyle = "#4f5bff"; g.beginPath(); g.arc(118, y + 33, 6, 0, 7); g.fill(); }
+    g.fillStyle = "#14183a"; g.font = `500 28px ${FONT}`; g.fillText(o, 150, y + 43); });
+}
+function drawCode(g, W, H, k = 0) {
+  g.fillStyle = "#0f1330"; g.fillRect(0, 0, W, H);
+  g.fillStyle = "#171c45"; g.fillRect(0, 0, W, 64); g.fillStyle = "#c9d2ff"; g.font = `600 24px ${FONT}`; g.textAlign = "left"; g.fillText("solution.py", 34, 42);
+  const shown = Math.floor(clamp01(k / 0.7) * (CODE.join("\n").length));
+  let n = 0; g.font = `500 27px Consolas, 'Courier New', monospace`;
+  CODE.forEach((line, i) => { const vis = line.slice(0, Math.max(0, shown - n)); n += line.length + 1; g.fillStyle = "#5a6299"; g.fillText(String(i + 1).padStart(2, " "), 30, 120 + i * 44);
+    g.fillStyle = /^\s*(def|for|return)/.test(line) ? "#9fb0ff" : "#e7ebff"; g.fillText(vis, 84, 120 + i * 44); });
+  g.fillStyle = "#171c45"; g.fillRect(W - 360, 64, 360, H - 64);
+  g.fillStyle = "#c9d2ff"; g.font = `600 24px ${FONT}`; g.fillText("Hidden tests", W - 330, 110);
+  for (let i = 0; i < 5; i++) { const on = k > 0.72 + i * 0.05; rr(g, W - 330, 140 + i * 70, 300, 52, 12); g.fillStyle = on ? "rgba(34,185,129,.18)" : "rgba(255,255,255,.06)"; g.fill();
+    g.fillStyle = on ? "#3be0a3" : "#7f86b8"; g.font = `600 22px ${FONT}`; g.fillText((on ? "✓ " : "• ") + "Test " + (i + 1), W - 312, 174 + i * 70); }
+  rr(g, W - 330, H - 100, 300, 64, 32); g.fillStyle = "#4f5bff"; g.fill(); g.fillStyle = "#fff"; g.textAlign = "center"; g.font = `600 26px ${FONT}`; g.fillText(k > 0.95 ? "5 / 5 passed" : "Run tests", W - 180, H - 58);
+}
+// the AI interviewer: the same glass-and-smoke globe shader used in the real interview page
+const orbMat = new THREE.ShaderMaterial({
+  uniforms: { uTime: { value: 0 }, uAmp: { value: 0.1 }, uThink: { value: 0 }, uColor: { value: new THREE.Color(0.31, 0.36, 1) } },
+  vertexShader: "varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }",
+  fragmentShader: ORB_FS.replace(/precision highp float;/, ""), transparent: true, premultipliedAlpha: true, depthWrite: false, toneMapped: false,
+});
+const orb = new THREE.Mesh(new THREE.PlaneGeometry(2.3, 2.3), orbMat); orb.position.set(CX - 8.2, 2.2, DOORS[3]); orb.rotation.y = Math.PI / 2; COR.add(orb);
+const orbLight = new THREE.PointLight(0x6f86ff, 6, 7, 2); orbLight.position.set(CX - 7.4, 2.2, DOORS[3]); COR.add(orbLight);
+const youTile = canvasTex(480, 360, (g, W, H) => { const gr = g.createLinearGradient(0, 0, 0, H); gr.addColorStop(0, "#cfd9ff"); gr.addColorStop(1, "#a9b9ff"); g.fillStyle = gr; g.fillRect(0, 0, W, H);
+  g.fillStyle = "#c68a63"; g.beginPath(); g.ellipse(W / 2, H * 0.42, 62, 74, 0, 0, 7); g.fill(); g.fillStyle = "#1d1a1a"; g.beginPath(); g.ellipse(W / 2, H * 0.34, 66, 46, 0, Math.PI, 0); g.fill();
+  g.fillStyle = "#4f5bff"; g.beginPath(); g.ellipse(W / 2, H * 1.02, 150, 120, 0, Math.PI, 0); g.fill();
+  rr(g, 14, H - 54, 196, 40, 20); g.fillStyle = "rgba(20,24,58,.6)"; g.fill(); g.fillStyle = "#34d399"; g.beginPath(); g.arc(36, H - 34, 7, 0, 7); g.fill(); g.fillStyle = "#fff"; g.font = `600 20px ${FONT}`; g.fillText("You · camera on", 52, H - 27); });
+screen(youTile.tex, 1.2, 0.9, COR, CX - 9.9, 3.1, DOORS[3] - 3.2, Math.PI / 2);
+const ivSign = label("AI Interviewer", 1.8, 0.32, { color: "#fff", bg: "rgba(20,24,58,.85)", size: 0.46 }); ivSign.position.set(CX - 9.9, 0.85, DOORS[3]); ivSign.rotation.y = Math.PI / 2; COR.add(ivSign);
+const QCOLORS = [[79, 91, 255], [30, 150, 245], [154, 77, 255], [255, 154, 61]];
+
+/* ---------- 5. HR report room ---------- */
+const RX = 800;
+const RROOM = new THREE.Group(); scene.add(RROOM);
+room(RROOM, RX, 0, 16, 11, 4.6);
+const repScreens = [["05-tracking", -5.2, 0.42], ["06-report", 0, 0], ["07-report-2", 5.2, -0.42]].map(([n, x, ry]) => screen(shot(n), 4.6, 2.88, RROOM, RX + x, 2.45, -4.6 + Math.abs(x) * 0.12, ry));
+box(3.2, 0.08, 1.1, M.desk, RX - 1.2, 0.95, 1.2, RROOM); [-1.45, 1.45].forEach((x) => box(0.08, 0.95, 1.0, M.metal, RX - 1.2 + x, 0.475, 1.2, RROOM));
+box(1.0, 0.6, 0.05, M.dark, RX - 1.2, 1.35, 0.95, RROOM);
+plant(RROOM, RX - 7.2, -0.6, 1.5); plant(RROOM, RX + 7.2, -0.6, 1.5);
+const offer = new THREE.Mesh(new THREE.PlaneGeometry(0.62, 0.4), new THREE.MeshBasicMaterial({ map: envMat.tex, toneMapped: false, transparent: true, side: THREE.DoubleSide })); scene.add(offer);
+const offerTag = label("Offer letter", 1.1, 0.26, { color: "#fff", bg: "#22b981", size: 0.5 }); offer.add(offerTag); offerTag.position.set(0, -0.36, 0);
+
+/* ---------- 6. the security view: what the proctoring camera sees ---------- */
+const SX = 1000;
+const SEC = new THREE.Group(); scene.add(SEC);
+room(SEC, SX, 0, 9, 9, 4);
+box(1.7, 0.06, 0.85, M.desk, SX, 0.76, 0, SEC); [-0.8, 0.8].forEach((x) => box(0.06, 0.76, 0.8, M.metal, SX + x, 0.38, 0, SEC));
+box(0.55, 0.08, 0.55, M.dark, SX, 0.46, 0.85, SEC); box(0.55, 0.62, 0.06, M.dark, SX, 0.82, 1.13, SEC); box(0.08, 0.42, 0.08, M.metal, SX, 0.21, 0.85, SEC);
+const alu = std(0xc9cfe6, { metalness: 0.75, roughness: 0.28 });
+box(0.62, 0.025, 0.42, alu, SX, 0.8, -0.12, SEC);
+const lid = new THREE.Group(); lid.position.set(SX, 0.81, -0.33); lid.rotation.x = -0.22; SEC.add(lid);
+box(0.62, 0.41, 0.02, alu, 0, 0.205, -0.011, lid);
+const lapUI = canvasTex(1024, 660, drawLaptop);
+const lapScreen = new THREE.Mesh(new THREE.PlaneGeometry(0.58, 0.37), new THREE.MeshBasicMaterial({ map: lapUI.tex, toneMapped: false })); lapScreen.position.set(0, 0.205, 0.001); lid.add(lapScreen);
+const camDot = new THREE.Mesh(new THREE.SphereGeometry(0.008, 10, 8), new THREE.MeshBasicMaterial({ color: 0x34d399, toneMapped: false })); camDot.position.set(0, 0.397, 0.004); lid.add(camDot);
+plant(SEC, SX - 3.7, -3.7, 1.3); plant(SEC, SX + 3.7, -3.7, 1.1);
+{ const w = box(3.2, 1.6, 0.06, M.glass, SX - 1.6, 2.3, -4.38, SEC); w.castShadow = false; }
+const visitor = character("visitor", { skin: 0x8d5a3b, shirt: 0x2fbf8f, pants: 0x30344f, hair: 0x111111 }); scene.add(visitor.g);
+const handPhone = new THREE.Mesh(new RoundedBoxGeometry(0.09, 0.17, 0.014, 2, 0.012), std(0x1b1f3b, { roughness: 0.3, metalness: 0.5 }));
+{ const glass = new THREE.Mesh(new THREE.PlaneGeometry(0.078, 0.155), new THREE.MeshBasicMaterial({ map: phoneUI.tex, toneMapped: false })); glass.position.z = 0.0075; handPhone.add(glass); }
+scene.add(handPhone); handPhone.visible = false;
+// the phone is placed in the hand every frame: just past the fingers, its screen turned to the face
+const _ph = new THREE.Vector3(), _pf = new THREE.Vector3(), _pe = new THREE.Vector3();
+function holdPhone(p, on) {
+  handPhone.visible = !!on;
+  if (!on) return;
+  const hand = p.B ? p.B.RightHand : p.arms[1].el, fore = p.B ? p.B.RightForeArm : p.arms[1].el.parent;
+  hand.getWorldPosition(_ph); fore.getWorldPosition(_pf);
+  handPhone.position.copy(_ph).addScaledVector(_pf.sub(_ph).normalize(), -0.075);
+  (p.B ? p.B.Head : p.head).getWorldPosition(_pe); _pe.y += 0.07;
+  handPhone.up.set(0, 1, 0); handPhone.lookAt(_pe);
+}
+function drawLaptop(g, W, H, s = { n: 0, toast: false }) {
+  g.fillStyle = "#f4f6ff"; g.fillRect(0, 0, W, H);
+  g.fillStyle = "#14183a"; g.fillRect(0, 0, W, 70);
+  rr(g, 22, 16, 290, 40, 20); g.fillStyle = "rgba(52,211,153,.18)"; g.fill(); g.fillStyle = "#3be0a3"; g.font = `600 22px ${FONT}`; g.textAlign = "left"; g.fillText("🔒 Full screen · locked", 40, 44);
+  rr(g, W - 220, 16, 196, 40, 20); g.fillStyle = s.n ? "rgba(229,55,42,.22)" : "rgba(255,255,255,.12)"; g.fill(); g.fillStyle = s.n ? "#ff8a80" : "#e9ecff"; g.fillText("Integrity " + s.n + "/3", W - 196, 44);
+  rr(g, 40, 100, W - 80, H - 140, 22); g.fillStyle = "#fff"; g.fill();
+  g.fillStyle = "#4f5bff"; g.font = `600 20px ${FONT}`; g.fillText("QUESTION 6 OF 10", 76, 150);
+  g.fillStyle = "#14183a"; g.font = `600 30px ${FONT}`; g.fillText("Which metric suits an imbalanced dataset?", 76, 200);
+  ["Accuracy", "F1 score", "Mean squared error"].forEach((o, i) => { rr(g, 76, 240 + i * 76, W - 152, 58, 14); g.fillStyle = i === 1 ? "#eef1ff" : "#f8f9ff"; g.fill(); g.strokeStyle = i === 1 ? "#4f5bff" : "#e3e7f7"; g.lineWidth = 3; g.stroke(); g.fillStyle = "#14183a"; g.font = `500 26px ${FONT}`; g.fillText(o, 110, 278 + i * 76); });
+  if (s.toast) { rr(g, W / 2 - 330, H - 120, 660, 70, 35); g.fillStyle = "#14183a"; g.fill(); g.fillStyle = "#fff"; g.textAlign = "center"; g.font = `600 26px ${FONT}`; g.fillText("⛔  Copy and paste are blocked in this test", W / 2, H - 76); }
+}
+function cardTex(color, title, sub, items) {
+  return canvasTex(900, 600, (g, W, H) => {
+    rr(g, 6, 6, W - 12, H - 12, 40); g.fillStyle = "rgba(255,255,255,.96)"; g.fill();
+    rr(g, 6, 6, W - 12, 26, 13); g.fillStyle = color; g.fill();
+    g.fillStyle = color; g.font = `700 30px ${FONT}`; g.textAlign = "left"; g.fillText(title, 56, 110);
+    g.fillStyle = "#14183a"; g.font = `600 40px ${FONT}`; g.fillText(sub, 56, 170);
+    items.forEach((it, i) => { g.fillStyle = color; g.beginPath(); g.arc(72, 268 + i * 92, 12, 0, 7); g.fill(); g.fillStyle = "#14183a"; g.font = `500 36px ${FONT}`; g.fillText(it, 104, 281 + i * 92); });
+  });
+}
+const strikeTex = cardTex("#e5372a", "STRIKES", "Count toward ending the test", ["A phone or device in view", "A second face on camera", "Leaving full screen"]);
+const flagTex = cardTex("#f2a33a", "FLAGS", "For HR to review, with photos", ["Eyes leaving the screen", "Switching windows", "Another voice, or too-fast typing"]);
+const cardMat = (t) => new THREE.MeshBasicMaterial({ map: t.tex, transparent: true, toneMapped: false, depthTest: false });
+const strikeCard = new THREE.Mesh(new THREE.PlaneGeometry(1.35, 0.9), cardMat(strikeTex)), flagCard = new THREE.Mesh(new THREE.PlaneGeometry(1.35, 0.9), cardMat(flagTex));
+const riskChip = label("Shown to HR in plain words: Low risk · 2 strikes · 1 flag", 2.6, 0.26, { color: "#14183a", bg: "rgba(255,255,255,.96)", size: 0.4 });
+riskChip.material.depthTest = false;
+[strikeCard, flagCard, riskChip].forEach((m) => { m.renderOrder = 10; scene.add(m); m.visible = false; });
+
+// the camera's view, drawn over the 3D picture (boxes follow the real 3D positions)
+const hud = document.getElementById("hud"), hx = hud.getContext("2d");
+function sizeHud() { const d = Math.min(2, devicePixelRatio || 1); hud.width = innerWidth * d; hud.height = innerHeight * d; hx.setTransform(d, 0, 0, d, 0, 0); }
+addEventListener("resize", sizeHud); sizeHud();
+const _v = new THREE.Vector3();
+function toScreen(obj, dy = 0) { obj.getWorldPosition(_v); _v.y += dy; _v.project(camera); return { x: (_v.x + 1) / 2 * innerWidth, y: (1 - _v.y) / 2 * innerHeight }; }
+function tagBox(c, half, color, text) {
+  hx.strokeStyle = color; hx.lineWidth = 2.5; const L = half * 0.35, x0 = c.x - half, y0 = c.y - half, x1 = c.x + half, y1 = c.y + half;
+  [[x0, y0, 1, 1], [x1, y0, -1, 1], [x0, y1, 1, -1], [x1, y1, -1, -1]].forEach(([x, y, sx, sy]) => { hx.beginPath(); hx.moveTo(x + sx * L, y); hx.lineTo(x, y); hx.lineTo(x, y + sy * L); hx.stroke(); });
+  hx.font = `600 13px ${FONT}`; const w = hx.measureText(text).width + 16; hx.fillStyle = color; rr(hx, x0, y0 - 26, w, 22, 11); hx.fill(); hx.fillStyle = "#fff"; hx.textAlign = "left"; hx.fillText(text, x0 + 8, y0 - 10);
+}
+function drawHud(t) {
+  const W = innerWidth, H = innerHeight, m = 22;
+  hx.fillStyle = "rgba(10,14,40,.18)"; hx.fillRect(0, 0, W, H);
+  hx.strokeStyle = "rgba(255,255,255,.75)"; hx.lineWidth = 2;
+  [[m, m + 50, 1, 1], [W - m, m + 50, -1, 1], [m, H - m - 70, 1, -1], [W - m, H - m - 70, -1, -1]].forEach(([x, y, sx, sy]) => { hx.beginPath(); hx.moveTo(x + sx * 40, y); hx.lineTo(x, y); hx.lineTo(x, y + sy * 40); hx.stroke(); });
+  hx.fillStyle = "#ff4d4d"; hx.beginPath(); hx.arc(m + 22, m + 76, 6, 0, 7); hx.fill();
+  hx.fillStyle = "#fff"; hx.font = `600 13px ${FONT}`; hx.textAlign = "left"; hx.fillText("PROCTORING CAMERA · LIVE", m + 36, m + 81);
+  const hy = candidate.human ? 0.09 : 0, head = toScreen(candidate.head, hy), top = toScreen(candidate.head, hy + 0.2), half = Math.max(30, Math.abs(head.y - top.y) * 1.25);
+  const away = t > 0.36 && t < 0.46;
+  tagBox(head, half, away ? "#f2a33a" : "#22b981", away ? "Looking away · flag" : "Face in view");
+  if (handPhone.visible && t > 0.22) { const p = toScreen(handPhone), ph = toScreen(handPhone, 0.1); tagBox(p, Math.max(22, Math.abs(p.y - ph.y) * 1.3), "#e5372a", "Phone detected · strike"); }
+  if (visitor.g.visible && t > 0.29 && t < 0.46) { const vy = visitor.human ? 0.09 : 0, v = toScreen(visitor.head, vy), vt = toScreen(visitor.head, vy + 0.2); tagBox(v, Math.max(24, Math.abs(v.y - vt.y) * 1.25), "#e5372a", "Second face · strike"); }
+  const log = [[0.04, "#22b981", "Face in view"], [0.23, "#e5372a", "Phone in view · strike 1"], [0.31, "#e5372a", "Second face · strike 2"], [0.37, "#f2a33a", "Looking away · flag"]].filter((e) => t > e[0]);
+  const px = W - m - 250, py = m + 70;
+  hx.fillStyle = "rgba(13,16,48,.72)"; rr(hx, px, py, 250, 44 + log.length * 30, 14); hx.fill();
+  hx.fillStyle = "#c9d2ff"; hx.font = `600 12px ${FONT}`; hx.fillText("INTEGRITY  " + (t > 0.31 ? 2 : t > 0.23 ? 1 : 0) + "/3", px + 16, py + 26);
+  log.forEach(([, c, txt], i) => { hx.fillStyle = c; hx.beginPath(); hx.arc(px + 22, py + 50 + i * 30, 5, 0, 7); hx.fill(); hx.fillStyle = "#fff"; hx.font = `500 14px ${FONT}`; hx.fillText(txt, px + 36, py + 55 + i * 30); });
+}
+
+/* ---------- the film: shots on a timeline ---------- */
+function setCam(pos, look) { camera.position.copy(pos); camera.lookAt(look); }
+const vis = (g) => { [EXT, HROOM, PHONE, COR, RROOM, SEC].forEach((x) => (x.visible = x === g)); visitor.g.visible = handPhone.visible = false; strikeCard.visible = flagCard.visible = riskChip.visible = false; };
+const SHOTS = [
+  { name: "Arrival", dur: 11, caps: [[0, "A candidate arrives at HireFlow AI."], [0.62, "Knock, knock."], [0.82, "The door opens."]],
+    run(t, T) {
+      vis(EXT); sunAt(0, 2); hr.g.visible = false; candidate.g.visible = true; envelope.visible = offer.visible = false;
+      const a = V(3.2, 0, 17), b = V(0.05, 0, 1.5);
+      if (t < 0.78) walkAlong(candidate, a, b, seg(t, 0, 0.78), { t: T });
+      else { place(candidate, b, Math.PI); pose(candidate, { t: T, knock: t > 0.9 && t < 0.96 ? seg(t, 0.9, 0.96) : 0, look: -0.05 }); }
+      extDoor.rotation.y = ease(seg(t, 0.965, 1)) * 1.5;
+      const c0 = V(9, 4.4, 25), c1 = V(2.6, 2.3, 7.2), c2 = V(1.3, 1.9, 4.6);
+      const cp = t < 0.78 ? lerpV(c0, c1, ease(seg(t, 0.25, 0.78))) : lerpV(c1, c2, ease(seg(t, 0.78, 1)));
+      setCam(cp, lerpV(V(0, 3.2, 0), V(0, 1.6, 0), ease(seg(t, 0.3, 0.8))));
+    } },
+  { name: "HR desk", dur: 13, caps: [[0, "Inside, HR describes the role and uploads the candidate's resume."], [0.45, "HireFlow AI reads it and plans the right tests for this job."], [0.72, "The invite goes out as a one-tap link."]],
+    run(t, T) {
+      vis(HROOM); sunAt(HRX, 0); hr.g.visible = candidate.g.visible = true; offer.visible = false;
+      place(hr, V(HRX + 0.4, 0, -3.1), 0); pose(hr, { t: T, type: t < 0.62 ? 1 : 0, wave: t > 0.66 && t < 0.8 ? Math.sin(seg(t, 0.66, 0.8) * Math.PI) : 0 });
+      const a = V(HRX - 0.2, 0, 6.5), b = V(HRX - 0.5, 0, 0.6);
+      if (t < 0.3) walkAlong(candidate, a, b, ease(seg(t, 0, 0.3)), { t: T }); else { place(candidate, b, Math.PI); pose(candidate, { t: T, phone: ease(seg(t, 0.82, 0.95)) }); } holdPhone(candidate, t > 0.86);
+      hrWall.mat.map = t < 0.5 ? tInvite : tDash;
+      const ek = seg(t, 0.72, 0.9); envelope.visible = ek > 0 && ek < 1;
+      if (envelope.visible) { const p0 = V(HRX, 2.4, -4.6), p1 = V(HRX - 0.35, 1.3, 0.35); const p = lerpV(p0, p1, ease(ek)); p.y += Math.sin(ek * Math.PI) * 1.1; envelope.position.copy(p); envelope.rotation.set(0, ek * 6.28, Math.sin(ek * 9) * 0.2); envGlow.intensity = 3; }
+      const c0 = V(HRX + 0.6, 2.1, 9.5), c1 = V(HRX + 2.4, 2.0, 2.6), c2 = V(HRX + 1.6, 1.9, 2.2);
+      setCam(t < 0.4 ? lerpV(c0, c1, ease(seg(t, 0, 0.4))) : lerpV(c1, c2, ease(seg(t, 0.4, 1))), lerpV(V(HRX, 2.0, -3), V(HRX - 0.2, 1.8, -2.4), ease(seg(t, 0.5, 1))));
+    } },
+  { name: "Invite", dur: 10, caps: [[0, "The candidate opens the invite on their phone."], [0.45, "One tap. No password."], [0.68, "HireFlow AI builds their profile straight from the resume."]],
+    run(t, T) {
+      vis(PHONE); sunAt(PX, 0); hr.g.visible = candidate.g.visible = false; envelope.visible = offer.visible = false;
+      phone.rotation.set(-0.08 + Math.sin(T * 0.8) * 0.02, -0.18 + t * 0.2, 0.04);
+      const tap = seg(t, 0.2, 0.3), back = seg(t, 0.34, 0.44);
+      const tp = lerpV(V(0.75, -0.9, 0.25), V(0.04, -0.285, 0.09), ease(tap)).lerp(V(0.75, -0.9, 0.25), ease(back));
+      thumb.position.copy(tp); thumb.rotation.set(0.2, 0, 0.9);
+      const pressed = t > 0.29 && t < 0.38, mode = t < 0.4 ? "mail" : "build", k = seg(t, 0.42, 0.95);
+      phoneUI.draw({ mode, pressed, k }, mode + pressed + Math.floor(k * 8));
+      const rk = seg(t, 0.3, 0.42); ripple.material.opacity = rk > 0 && rk < 1 ? (1 - rk) * 0.9 : 0; ripple.scale.setScalar(1 + rk * 6);
+      setCam(lerpV(V(PX + 0.7, 1.95, 3.0), V(PX + 0.2, 1.7, 2.05), ease(t)), V(PX, 1.55, 0));
+    } },
+];
+const STAGE_CAPS = [
+  [[0, "Stage 1: a short self introduction, on camera."], [0.62, "The camera checks the face and coaches the lighting."]],
+  [[0, "Stage 2: a role test written for this job and this resume."], [0.62, "Questions change with the role: AI/ML here."]],
+  [[0, "Stage 3: real hands-on work for the role."], [0.62, "For developers, real code runs against hidden tests."]],
+  [[0, "Stage 4: a live, spoken AI interview."], [0.55, "“Tell me about the project you're proudest of.”"], [0.78, "The smoke moves with the AI's voice."]],
+];
+DOORS.forEach((dz, i) => SHOTS.push({
+  name: STAGES[i], dur: i === 3 ? 12 : 9, caps: STAGE_CAPS[i],
+  run(t, T) {
+    vis(COR); sunAt(CX - 4, dz); hr.g.visible = false; candidate.g.visible = true; envelope.visible = offer.visible = false;
+    corDoors.forEach((d, j) => (d.rotation.y = j < i ? 1.6 : 0));
+    const zPrev = i === 0 ? 4 : DOORS[i - 1] + 1.5;
+    const pA = V(CX + 0.3, 0, zPrev), pB = V(CX + 0.3, 0, dz), pC = V(CX - 6.9, 0, dz);
+    if (t < 0.3) walkAlong(candidate, pA, pB, ease(seg(t, 0, 0.3)), { t: T });
+    else if (t < 0.42) { place(candidate, pB, lerp(Math.PI, -Math.PI / 2 + 2 * Math.PI, ease(seg(t, 0.3, 0.42))) ); pose(candidate, { t: T, knock: i === 0 ? seg(t, 0.3, 0.42) : 0 }); }
+    else if (t < 0.62) walkAlong(candidate, pB, pC, ease(seg(t, 0.42, 0.62)), { t: T });
+    else { place(candidate, pC, -Math.PI / 2); pose(candidate, { t: T, type: i === 2 ? 1 : 0, look: i === 3 ? -0.08 : 0 }); }
+    corDoors[i].rotation.y = ease(seg(t, 0.32, 0.44)) * 1.6;
+    const k = seg(t, 0.62, 1);
+    if (stageScreens[i]) stageScreens[i].draw(i === 0 ? T : k, Math.round((i === 0 ? T : k) * 20));
+    if (i === 3) {
+      const qi = Math.min(QCOLORS.length - 1, Math.floor(k * QCOLORS.length)), c = QCOLORS[qi];
+      orbMat.uniforms.uColor.value.setRGB(c[0] / 255, c[1] / 255, c[2] / 255);
+      const speaking = k > 0.05 && (k % 0.25) < 0.17;
+      const amp = speaking ? 0.3 + 0.25 * Math.abs(Math.sin(T * 7.3)) + 0.18 * Math.abs(Math.sin(T * 3.1 + 1)) : 0.06;
+      orbMat.uniforms.uAmp.value = reduce ? 0.08 : amp; orbMat.uniforms.uTime.value = reduce ? 0 : T * (2.2 + amp * 6);
+      orbLight.color.setRGB(c[0] / 255, c[1] / 255, c[2] / 255); orbLight.intensity = 4 + amp * 10;
+      orb.position.y = 2.2 + Math.sin(T * 1.2) * 0.05;
+    }
+    const cp = candidate.g.position;
+    let cam, look;
+    if (t < 0.3) { cam = V(CX + 1.0, 1.95, cp.z + 3.4); look = V(CX - 0.4, 1.5, cp.z - 4); }
+    else if (t < 0.42) { const k2 = ease(seg(t, 0.3, 0.42)); cam = lerpV(V(CX + 1.0, 1.95, dz + 3.4), V(CX + 1.7, 1.85, dz - 0.3), k2); look = lerpV(V(CX - 0.4, 1.5, dz - 4), V(CX - 2, 1.4, dz), k2); }
+    else if (t < 0.62) { cam = V(cp.x + 2.2, 1.85, dz - 0.45); look = V(cp.x - 3, 1.6, dz - 0.2); }   // on the far side of the open door, so it never blocks the view
+    else { const k3 = ease(seg(t, 0.62, 1)); cam = lerpV(V(CX - 4.3, 1.9, dz + 1.6), V(CX - 5.0, 1.85, dz + 1.0), k3); look = V(CX - 9.8, 2.15, dz - 0.1); }
+    setCam(cam, look);
+  },
+}));
+SHOTS.push({ name: "Security", dur: 19, caps: [[0, "All the while, HireFlow AI keeps every stage fair."], [0.18, "The camera notices a phone, a second face, or eyes leaving the screen."], [0.62, "The test stays locked in full screen. Copy and paste are blocked."], [0.82, "Window switches, another voice and too-fast typing are noticed too."]],
+  run(t, T) {
+    vis(SEC); sunAt(SX, 0); hr.g.visible = false; candidate.g.visible = true; envelope.visible = offer.visible = false;
+    place(candidate, V(SX, 0, 0.8), Math.PI);
+    const phoneOn = t > 0.2 && t < 0.36;
+    const away = t > 0.36 && t < 0.46 ? Math.sin(seg(t, 0.36, 0.46) * Math.PI) : 0;
+    pose(candidate, { t: T, sit: 1, type: phoneOn ? 0 : 1, phone: phoneOn ? 1 : 0, turn: away * 0.8 }); holdPhone(candidate, phoneOn);
+    visitor.g.visible = t > 0.26 && t < 0.5;
+    if (visitor.g.visible) {
+      const a = V(SX + 3.6, 0, 3.6), b = V(SX + 0.85, 0, 2.1);
+      if (t < 0.34) walkAlong(visitor, a, b, seg(t, 0.26, 0.34), { t: T });
+      else if (t < 0.42) { place(visitor, b, Math.PI); pose(visitor, { t: T }); }
+      else walkAlong(visitor, b, a, seg(t, 0.42, 0.5), { t: T });
+    }
+    const n = t > 0.31 ? 2 : t > 0.23 ? 1 : 0, toast = t > 0.58 && t < 0.78;
+    lapUI.draw({ n, toast }, n + "" + toast);
+    if (t < 0.45) { setCam(V(SX, 1.28, -0.36), V(SX + 0.1, 1.1, 1.2)); camera.fov = Math.max(camera.fov, 66); camera.updateProjectionMatrix(); drawHud(t); }
+    else { const k = ease(seg(t, 0.45, 1)); setCam(lerpV(V(SX + 0.95, 1.75, 2.1), V(SX + 0.8, 1.68, 1.8), k), V(SX, 0.98, -0.3)); }
+  } });
+SHOTS.push({ name: "Strikes and flags", dur: 10, caps: [[0, "Serious problems are strikes. Repeated strikes end the test."], [0.42, "Smaller signals are flags for HR, with photos and the moment it happened."]],
+  run(t, T) {
+    vis(SEC); sunAt(SX, 0); hr.g.visible = false; candidate.g.visible = true; envelope.visible = offer.visible = false; visitor.g.visible = false; handPhone.visible = false;
+    place(candidate, V(SX, 0, 0.8), Math.PI); pose(candidate, { t: T, sit: 1, type: 1 });
+    lapUI.draw({ n: 2, toast: false }, "2false");
+    const k = ease(seg(t, 0, 1)); setCam(lerpV(V(SX + 0.6, 1.6, 1.9), V(SX + 1.2, 2.0, 3.9), k), V(SX, 1.25, 0));
+    const fwd = new THREE.Vector3(); camera.getWorldDirection(fwd); const right = new THREE.Vector3().crossVectors(fwd, camera.up).normalize();
+    const at = (dx, dy, d) => camera.position.clone().addScaledVector(fwd, d).addScaledVector(right, dx).add(V(0, dy, 0));
+    const a = ease(seg(t, 0.04, 0.2)), b = ease(seg(t, 0.42, 0.58)), c = ease(seg(t, 0.75, 0.88));
+    strikeCard.visible = a > 0; flagCard.visible = b > 0; riskChip.visible = c > 0;
+    strikeCard.position.copy(at(-0.78 - (1 - a) * 2.4, 0.18, 2.6)); flagCard.position.copy(at(0.78 + (1 - b) * 2.4, 0.18, 2.6)); riskChip.position.copy(at(0, 0.78 + (1 - c) * 0.4, 2.6));
+    [strikeCard, flagCard, riskChip].forEach((m) => m.quaternion.copy(camera.quaternion));
+    strikeCard.material.opacity = a; flagCard.material.opacity = b; riskChip.material.opacity = c;
+  } });
+SHOTS.push({ name: "HR report", dur: 14, caps: [[0, "Back at HR: every candidate, and exactly where they are."], [0.36, "One report per candidate: scores, an AI summary, integrity and a face check."], [0.7, "HR makes the call, and sends the offer letter in one click."]],
+  run(t, T) {
+    vis(RROOM); sunAt(RX, 0); hr.g.visible = true; candidate.g.visible = false; envelope.visible = false;
+    place(hr, V(RX - 1.2, 0, 2.2), Math.PI); pose(hr, { t: T, type: t > 0.74 && t < 0.84 ? 1 : 0, turn: Math.sin(T * 0.6) * 0.15 });
+    const ok = seg(t, 0.82, 1); offer.visible = ok > 0;
+    if (offer.visible) { const p = lerpV(V(RX - 1.2, 1.5, 1.0), V(RX + 0.4, 2.5, 3.4), ease(ok)); p.y += Math.sin(ok * Math.PI) * 0.6; offer.position.copy(p); offer.rotation.set(0, Math.sin(ok * 3) * 0.6, Math.sin(ok * 8) * 0.12); }
+    let cam, look;
+    if (t < 0.24) { const k = ease(seg(t, 0, 0.24)); cam = lerpV(V(RX - 3.5, 2.3, 7.5), V(RX - 5.2, 2.2, 1.8), k); look = V(RX - 5.2, 2.4, -4.0); }
+    else if (t < 0.58) { const k = ease(seg(t, 0.24, 0.58)); cam = lerpV(V(RX - 1.0, 2.2, 1.6), V(RX + 0.6, 2.3, 1.3), k); look = lerpV(V(RX, 2.4, -4.6), V(RX + 3.2, 2.4, -4.2), k); }
+    else { const k = ease(seg(t, 0.58, 1)); cam = lerpV(V(RX + 1.2, 2.3, 3.0), V(RX + 0.8, 2.2, 7.6), k); look = lerpV(V(RX - 0.6, 1.8, 0), V(RX, 2.0, 1.0), k); }
+    setCam(cam, look);
+  } });
+
+/* ---------- sound: narration is the master clock; effects and music are synthesised (no extra files) ---------- */
+const voice = new Audio("voice/narration.mp3"); voice.preload = "auto";
+let actx = null, master, sfxBus, musicBus, noiseBuf;
+function initAudio() {
+  if (actx) { actx.resume(); return; }
+  actx = new (window.AudioContext || window.webkitAudioContext)();
+  master = actx.createGain(); master.gain.value = 0.9; master.connect(actx.destination);
+  const verb = actx.createConvolver(), r = actx.sampleRate, n = Math.floor(r * 2.6), ir = actx.createBuffer(2, n, r);
+  for (let c = 0; c < 2; c++) { const d = ir.getChannelData(c); for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / n, 2.4); }
+  verb.buffer = ir; const wet = actx.createGain(); wet.gain.value = 0.32; verb.connect(wet).connect(master);
+  sfxBus = actx.createGain(); sfxBus.gain.value = 0.5; sfxBus.connect(master); sfxBus.connect(verb);
+  musicBus = actx.createGain(); musicBus.gain.value = 0; musicBus.connect(master); musicBus.connect(verb);
+  noiseBuf = actx.createBuffer(1, r, r); const nd = noiseBuf.getChannelData(0); for (let i = 0; i < r; i++) nd[i] = Math.random() * 2 - 1;
+}
+const now = () => actx.currentTime;
+function envGain(t0, a, peak, d, dest = sfxBus) { const g = actx.createGain(); g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(peak, t0 + a); g.gain.exponentialRampToValueAtTime(0.0001, t0 + a + d); g.connect(dest); return g; }
+function osc(type, f0, f1, t0, len, g) { const o = actx.createOscillator(); o.type = type; o.frequency.setValueAtTime(f0, t0); if (f1) o.frequency.exponentialRampToValueAtTime(f1, t0 + len); o.connect(g); o.start(t0); o.stop(t0 + len + 0.05); return o; }
+function noise(t0, len, filter, g) { const s = actx.createBufferSource(); s.buffer = noiseBuf; s.loop = true; s.connect(filter); filter.connect(g); s.start(t0); s.stop(t0 + len + 0.05); return s; }
+function filt(type, f, q = 1) { const b = actx.createBiquadFilter(); b.type = type; b.frequency.value = f; b.Q.value = q; return b; }
+function panned(p) { const s = actx.createStereoPanner ? actx.createStereoPanner() : null; if (!s) return sfxBus; s.pan.value = p; s.connect(sfxBus); return s; }
+const SFX = {
+  knock(t) { osc("sine", 210, 85, t, 0.13, envGain(t, 0.002, 0.95, 0.14)); noise(t, 0.06, filt("bandpass", 1900, 1.3), envGain(t, 0.001, 0.45, 0.05)); },
+  door(t) { noise(t, 0.04, filt("highpass", 3500), envGain(t, 0.001, 0.25, 0.03)); const f = filt("lowpass", 500); f.frequency.setValueAtTime(400, t); f.frequency.exponentialRampToValueAtTime(1600, t + 0.9); noise(t + 0.05, 1.0, f, envGain(t + 0.05, 0.35, 0.22, 0.75)); },
+  step(t, p = 0) { const f = filt("lowpass", 520); noise(t, 0.07, f, envGain(t, 0.004, 0.16, 0.07, panned(p))); },
+  whoosh(t, len = 0.8, from = -0.6, to = 0.6) { const f = filt("bandpass", 400, 0.9); f.frequency.setValueAtTime(350, t); f.frequency.exponentialRampToValueAtTime(3200, t + len * 0.6); f.frequency.exponentialRampToValueAtTime(900, t + len);
+    const pn = actx.createStereoPanner ? actx.createStereoPanner() : null; const g = envGain(t, len * 0.45, 0.42, len * 0.55, pn || sfxBus); if (pn) { pn.pan.setValueAtTime(from, t); pn.pan.linearRampToValueAtTime(to, t + len); pn.connect(sfxBus); } noise(t, len, f, g); },
+  rise(t) { const f = filt("lowpass", 300, 2); f.frequency.setValueAtTime(300, t); f.frequency.exponentialRampToValueAtTime(5000, t + 1.0); noise(t, 1.1, f, envGain(t, 0.9, 0.12, 0.25)); },
+  tap(t) { osc("sine", 1500, 700, t, 0.035, envGain(t, 0.001, 0.4, 0.04)); noise(t, 0.015, filt("highpass", 4000), envGain(t, 0.001, 0.2, 0.015)); },
+  key(t, p = 0) { noise(t, 0.02, filt("bandpass", 3200 + Math.random() * 1500, 2), envGain(t, 0.001, 0.12, 0.022, panned(p))); },
+  tick(t) { osc("sine", 1760, 0, t, 0.06, envGain(t, 0.002, 0.22, 0.08)); osc("sine", 2637, 0, t, 0.05, envGain(t, 0.002, 0.08, 0.06)); },
+  chime(t, notes = [1046.5, 1568]) { notes.forEach((f, i) => { const s = t + i * 0.085; osc("sine", f, 0, s, 1.3, envGain(s, 0.006, 0.32, 1.25)); osc("triangle", f * 2, 0, s, 0.5, envGain(s, 0.004, 0.06, 0.45)); }); },
+  rec(t) { osc("sine", 880, 0, t, 0.12, envGain(t, 0.004, 0.25, 0.12)); },
+  strike(t) { [622, 466].forEach((f, i) => { const s = t + i * 0.13; const lp = filt("lowpass", 2200); const g = envGain(s, 0.004, 0.3, 0.2); lp.connect(g); osc("square", f, 0, s, 0.2, lp); }); },
+  flag(t) { const lp = filt("lowpass", 1800); const g = envGain(t, 0.006, 0.22, 0.3); lp.connect(g); osc("triangle", 784, 0, t, 0.3, lp); },
+  scan(t) { const f = filt("bandpass", 600, 4); f.frequency.setValueAtTime(500, t); f.frequency.exponentialRampToValueAtTime(4500, t + 1.2); noise(t, 1.2, f, envGain(t, 0.3, 0.14, 0.9)); osc("sine", 220, 440, t, 1.2, envGain(t, 0.4, 0.05, 0.8)); },
+  buzz(t) { const lp = filt("lowpass", 900); const g = envGain(t, 0.005, 0.24, 0.22); lp.connect(g); osc("sawtooth", 150, 0, t, 0.22, lp); },
+  bloom(t) { [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => { const s = t + i * 0.12; osc("sine", f, 0, s, 2.6, envGain(s, 0.02, 0.18, 2.5)); }); },
+};
+// music: slow, warm pad chords with a soft plucked arpeggio, generated live
+const CHORDS = [[261.63, 329.63, 392, 493.88, 587.33], [220, 261.63, 329.63, 392, 493.88], [174.61, 220, 261.63, 329.63, 440], [196, 246.94, 293.66, 392, 440]];
+let musicTimer = null, nextBar = 0, barIdx = 0, nextPluck = 0, pluckIdx = 0;
+function musicTick() {
+  const ahead = now() + 0.6;
+  while (nextBar < ahead) {
+    const ch = CHORDS[barIdx % CHORDS.length];
+    ch.slice(0, 4).forEach((f, i) => { const lp = filt("lowpass", 1100, 0.4); const g = actx.createGain(); g.gain.setValueAtTime(0.0001, nextBar); g.gain.exponentialRampToValueAtTime(0.05, nextBar + 2.2); g.gain.setValueAtTime(0.05, nextBar + 6.5); g.gain.exponentialRampToValueAtTime(0.0001, nextBar + 9.5); lp.connect(g); g.connect(musicBus);
+      [-5, 5].forEach((cents) => { const o = actx.createOscillator(); o.type = i === 0 ? "sine" : "triangle"; o.frequency.value = (i === 0 ? f / 2 : f) * Math.pow(2, cents / 1200); o.connect(lp); o.start(nextBar); o.stop(nextBar + 9.6); }); });
+    nextBar += 8; barIdx++;
+  }
+  while (nextPluck < ahead) {
+    const ch = CHORDS[Math.floor(pluckIdx / 16) % CHORDS.length];
+    const f = ch[[0, 2, 4, 3, 1, 2, 4, 3][pluckIdx % 8]] * 2;
+    if (pluckIdx % 8 !== 7) osc("sine", f, 0, nextPluck, 0.9, envGain(nextPluck, 0.004, 0.035, 0.85, musicBus));
+    nextPluck += 0.5; pluckIdx++;
+  }
+}
+function musicStart() { if (musicTimer) return; nextBar = Math.max(nextBar, now() + 0.05); nextPluck = Math.max(nextPluck, now() + 0.05); musicTimer = setInterval(musicTick, 150); musicTick(); }
+function musicLevel(target) { if (!actx) return; musicBus.gain.setTargetAtTime(target, now(), 0.35); }
+
+/* ---------- player: chapter times and captions come from the narration (word timings) ---------- */
+const TIMING = {"starts": [0, 16.05, 28.13, 36.79, 47.73, 59.15, 71.23, 85.87, 107.13, 118.17, 140.19], "end": 146.6, "cues": [[0.0, 1.62, "This is HireFlow AI."], [2.48, 5.94, "Let's follow one candidate, from the front door to the offer letter."], [6.78, 7.42, "Meet Arjun."], [8.08, 11.28, "He's applying for an AI and machine learning role at TechNova."], [11.94, 14.3, "No forms to fill, no password to remember."], [14.92, 15.58, "He just knocks."], [16.4, 21.1, "Inside, HR describes the role in plain words and uploads Arjun's resume."], [21.78, 24.1, "HireFlow AI reads it against the job,"], [24.42, 27.84, "plans the right tests for this role and sends him a single link."], [28.48, 30.0, "The invite lands on his phone."], [30.68, 34.72, "One tap and HireFlow AI builds his profile straight from the resume."], [35.36, 36.32, "He's ready to begin."], [37.14, 40.18, "First, a short self introduction on camera."], [40.84, 42.92, "Arjun talks about himself and his work,"], [43.16, 47.32, "while the camera makes sure his face is clearly visible and even helps with the lighting."], [48.08, 49.52, "Next, a role test."], [50.1, 51.16, "Not a generic quiz."], [51.78, 54.66, "The questions are written for this job and this resume."], [55.32, 58.68, "For an AI role, that means real machine learning problems."], [59.5, 60.8, "Then, real work."], [61.38, 64.1, "Developers write code that runs against hidden tests."], [64.76, 66.96, "Other roles get a lab, a data task,"], [67.24, 69.18, "a written brief, or a design task."], [69.5, 70.84, "Each matched to the job."], [71.58, 74.04, "Finally, a live, spoken interview."], [74.68, 78.2, "Ten questions, built from Arjun's own resume and the job."], [78.76, 82.1, "The interviewer listens, follows up and keeps things on track."], [82.78, 83.62, "Watch the smoke."], [84.08, 85.46, "It moves with its voice."], [86.22, 89.84, "And all the while, HireFlow AI keeps every stage fair."], [90.46, 92.88, "The camera notices a phone, a second face,"], [93.22, 94.96, "or eyes that keep leaving the screen."], [95.56, 97.86, "The test stays locked in full screen."], [98.4, 101.7, "Copy and paste are blocked and switching windows is recorded."], [102.32, 106.9, "It even notices another voice in the room or text that appears too fast to be typed."], [107.48, 111.7, "Serious problems count as strikes and repeated strikes end the test."], [112.26, 115.06, "Smaller signals become flags for HR to review,"], [115.52, 117.74, "each with photos and the moment it happened."], [118.52, 123.14, "Back at HR, every candidate is in one place with exactly where they are."], [123.66, 128.78, "Each one gets a single report: scores, an AI summary, integrity signals,"], [129.06, 131.54, "and a face check with the evidence behind them."], [131.54, 134.62, "HireFlow AI never makes the hiring decision."], [135.12, 135.82, "HR does."], [136.42, 139.94, "And when the answer is yes, the offer letter is one click away."], [140.54, 141.64, "HireFlow AI."], [142.38, 144.78, "Hire on evidence, not on guesswork."]]};
+SHOTS.push({ name: "HireFlow AI", run(t, T) { SHOTS[9].run(1, T); const k = ease(t); setCam(lerpV(V(RX + 0.8, 2.2, 7.6), V(RX + 0.6, 2.6, 10.5), k), V(RX, 2.2, -1)); offer.visible = false; } });
+SHOTS.forEach((s, i) => { s.dur = (i + 1 < TIMING.starts.length ? TIMING.starts[i + 1] : TIMING.end) - TIMING.starts[i]; });
+const starts = TIMING.starts.slice(), total = TIMING.end;
+const fadeEl = document.getElementById("fade"), capEl = document.getElementById("cap"), fill = document.getElementById("fill"), chap = document.getElementById("chap"), timeEl = document.getElementById("time");
+const track = document.getElementById("track"), playBtn = document.getElementById("play"), endEl = document.getElementById("end"), gate = document.getElementById("gate"), card = document.getElementById("card");
+SHOTS.forEach((s, i) => { if (i === 0) return; const d = document.createElement("i"); d.className = "tick"; d.style.left = (starts[i] / total * 100) + "%"; track.appendChild(d); });
+let T = 0, prevT = 0, playing = false, last = performance.now(), ended = false, lastShot = -1;
+const fmt = (s) => Math.floor(s / 60) + ":" + String(Math.floor(s % 60)).padStart(2, "0");
+
+// sound effects on the timeline: [time in seconds, effect]
+const EV = [];
+const at = (i, f) => starts[i] + SHOTS[i].dur * f;
+const ev = (time, fn) => EV.push([time, fn]);
+for (let i = 1; i < SHOTS.length; i++) ev(starts[i] - 0.55, (t) => SFX.whoosh(t, 0.9, -0.4, 0.4));
+for (let x = 0.02; x < 0.78; x += 0.045) ev(at(0, x), (t) => SFX.step(t, 0.1));
+[0.905, 0.925, 0.945].forEach((f) => ev(at(0, f), SFX.knock)); ev(at(0, 0.965), SFX.door);
+for (let x = 0.01; x < 0.3; x += 0.05) ev(at(1, x), (t) => SFX.step(t, -0.1));
+for (let x = 0.06; x < 0.6; x += 0.014) ev(at(1, x + (Math.sin(x * 977) * 0.004)), (t) => SFX.key(t, 0.2));
+ev(at(1, 0.72), (t) => SFX.whoosh(t, 1.0, 0.5, -0.5)); ev(at(1, 0.9), (t) => SFX.chime(t, [987.77, 1318.5]));
+ev(at(2, 0.3), SFX.tap); for (let n = 0; n < 4; n++) ev(at(2, 0.42 + ((n + 0.5) / 4) * 0.53), SFX.tick); ev(at(2, 0.97), (t) => SFX.chime(t, [1046.5, 1318.5, 1568]));
+for (let s = 0; s < 4; s++) {
+  const i = 3 + s;
+  for (let x = 0.01; x < 0.3; x += 0.045) ev(at(i, x), (t) => SFX.step(t, 0));
+  ev(at(i, 0.32), SFX.door);
+  for (let x = 0.43; x < 0.62; x += 0.045) ev(at(i, x), (t) => SFX.step(t, -0.2));
+  if (s === 0) ev(at(i, 0.64), SFX.rec);
+  if (s === 1) ev(at(i, 0.62 + 0.38 * 0.45), SFX.tap);
+  if (s === 2) { for (let x = 0.63; x < 0.62 + 0.38 * 0.7; x += 0.012) ev(at(i, x), (t) => SFX.key(t, -0.1)); for (let n = 0; n < 5; n++) ev(at(i, 0.62 + 0.38 * (0.72 + n * 0.05)), SFX.tick); }
+  if (s === 3) ev(at(i, 0.63), (t) => SFX.chime(t, [659.25, 987.77]));
+}
+ev(at(7, 0.02), SFX.scan); ev(at(7, 0.23), SFX.strike); ev(at(7, 0.31), SFX.strike); ev(at(7, 0.37), SFX.flag); ev(at(7, 0.45), (t) => SFX.whoosh(t, 0.8, 0.3, -0.3)); ev(at(7, 0.58), SFX.buzz);
+ev(at(8, 0.05), (t) => SFX.whoosh(t, 0.7, -0.8, -0.2)); ev(at(8, 0.43), (t) => SFX.whoosh(t, 0.7, 0.8, 0.2)); ev(at(8, 0.76), SFX.tick);
+ev(at(9, 0.24), (t) => SFX.whoosh(t, 1.1, -0.5, 0.2)); ev(at(9, 0.58), (t) => SFX.whoosh(t, 1.1, 0.2, 0.6)); ev(at(9, 0.8), SFX.tap); ev(at(9, 0.83), (t) => SFX.whoosh(t, 1.0, 0, 0.6)); ev(at(9, 0.97), (t) => SFX.chime(t, [783.99, 1046.5, 1318.5]));
+ev(starts[10] + 0.1, SFX.bloom);
+EV.sort((a, b) => a[0] - b[0]);
+function fireEvents(from, to) {
+  if (!actx || to <= from || to - from > 0.6) return;
+  for (const [time, fn] of EV) if (time > from && time <= to) { try { fn(now() + 0.01); } catch (e) {} }
+}
+
+function setPlaying(v) {
+  playing = v; playBtn.textContent = v ? "❚❚" : "►"; playBtn.setAttribute("aria-label", v ? "Pause" : "Play");
+  if (v) { initAudio(); musicStart(); if (T < (voice.duration || 1e9) - 0.05) { voice.currentTime = T; voice.play().catch(() => {}); } }
+  else { voice.pause(); if (actx) actx.suspend(); }
+}
+function cueAt(T) { for (const c of TIMING.cues) if (T >= c[0] - 0.05 && T <= c[1] + 0.45) return c[2]; return ""; }
+function render() {
+  T = Math.min(total - 0.001, Math.max(0, T));
+  let i = SHOTS.length - 1; for (let k = 0; k < SHOTS.length; k++) if (T < starts[k] + SHOTS[k].dur) { i = k; break; }
+  const s = SHOTS[i], local = T - starts[i], t = local / s.dur;
+  hx.clearRect(0, 0, innerWidth, innerHeight);
+  const fov = innerWidth / innerHeight < 0.9 ? 62 : 42; if (camera.fov !== fov) { camera.fov = fov; camera.updateProjectionMatrix(); }
+  s.run(t, T);
+  const cap = endEl.classList.contains("on") ? "" : cueAt(T); if (capEl.textContent !== cap) capEl.textContent = cap;
+  const edge = Math.min(local, s.dur - local); fadeEl.style.opacity = String(i === 0 && local < 0.6 ? 1 - local / 0.6 : i === SHOTS.length - 1 ? 0 : Math.max(0, 1 - edge / 0.38));
+  // chapter title card (the first chapter opens on the big title instead)
+  const showCard = i > 0 && i < SHOTS.length - 1 && local > 0.25 && local < 2.6;
+  if (i !== lastShot) { lastShot = i; card.querySelector("b").textContent = String(i).padStart(2, "0"); card.querySelector("span").textContent = s.name; }
+  card.classList.toggle("on", showCard);
+  document.getElementById("title").classList.toggle("on", i === 0 && T > 0.2 && T < 6.3);
+  endEl.classList.toggle("on", i === SHOTS.length - 1 && local > 0.6 || ended);
+  fill.style.width = (T / total * 100) + "%"; chap.textContent = (i + 1) + " · " + s.name; timeEl.textContent = fmt(T) + " / " + fmt(total);
+  track.setAttribute("aria-valuenow", Math.round(T)); track.setAttribute("aria-valuemax", Math.round(total));
+  renderer.render(scene, camera);
+}
+function frame(nowMs) {
+  const dt = Math.min(0.1, (nowMs - last) / 1000); last = nowMs;
+  if (playing && !ended) {
+    const v = voice.duration && !voice.paused && !voice.ended && voice.readyState >= 2;
+    T = v ? voice.currentTime : T + dt;                         // the voice is the clock while it plays
+    fireEvents(prevT, T);
+    musicLevel(cueAt(T) ? 0.11 : 0.24);                         // the music dips under the narration
+    if (T >= total - 0.02) { ended = true; setPlaying(false); }
+  }
+  prevT = T;
+  render(); requestAnimationFrame(frame);
+}
+function resize() { const w = innerWidth, h = innerHeight; renderer.setSize(w, h, false); camera.aspect = w / h; camera.fov = w / h < 0.9 ? 62 : 42; camera.updateProjectionMatrix(); }
+addEventListener("resize", resize); resize();
+function jump(sec) { T = Math.min(total - 0.05, Math.max(0, sec)); prevT = T; ended = false; if (voice.duration && T < voice.duration) voice.currentTime = T; }
+function seek(x) { const r = track.getBoundingClientRect(); jump(clamp01((x - r.left) / r.width) * total); }
+track.addEventListener("pointerdown", (e) => { seek(e.clientX); track.setPointerCapture(e.pointerId); });
+track.addEventListener("pointermove", (e) => { if (e.buttons) seek(e.clientX); });
+track.addEventListener("keydown", (e) => { if (e.key === "ArrowRight") jump(T + 5); if (e.key === "ArrowLeft") jump(T - 5); });
+playBtn.addEventListener("click", () => { if (ended) replay(); else setPlaying(!playing); });
+function replay() { jump(0); setPlaying(true); }
+document.getElementById("replay").addEventListener("click", replay);
+document.getElementById("start").addEventListener("click", () => { gate.remove(); jump(0); setPlaying(true); });
+addEventListener("keydown", (e) => { if (e.code === "Space" && !gate.isConnected) { e.preventDefault(); playBtn.click(); } if (e.key === "Escape") closeMe(); });
+function closeMe() { voice.pause(); if (window.parent !== window) window.parent.postMessage({ type: "hf-demo-close" }, "*"); else location.href = "../index.html"; }
+document.getElementById("close").addEventListener("click", closeMe);
+document.getElementById("load").remove();
+window.__hfSeek = (sec) => { if (gate.isConnected) gate.remove(); T = sec; prevT = sec; ended = false; playing = false; render(); return T; };   // used by the screenshot check
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>

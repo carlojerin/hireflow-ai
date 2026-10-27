@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Walkthrough Voice Script</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root { --ink:#14183a; --soft:#5a5f8c; --line:#e1e6f7; --card:#ffffff; --bg:#eef3ff; --brand:#4f5bff; --ok:#14a06f; --tint:#f4f6ff;
+    --serif:'Instrument Serif',Georgia,serif; --sans:'Instrument Sans',system-ui,sans-serif; --mono:'IBM Plex Mono',Consolas,monospace; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --ink:#e9ecff; --soft:#a3a9d6; --line:#2a3060; --card:#161a3d; --bg:#0d1030; --brand:#8f9bff; --ok:#3be0a3; --tint:#1b2050; } }
+  :root[data-theme="dark"] { --ink:#e9ecff; --soft:#a3a9d6; --line:#2a3060; --card:#161a3d; --bg:#0d1030; --brand:#8f9bff; --ok:#3be0a3; --tint:#1b2050; }
+  * { box-sizing: border-box; margin: 0; }
+  body { background: var(--bg); color: var(--ink); font: 16px/1.55 var(--sans); padding: 32px 16px 64px; }
+  .wrap { max-width: 920px; margin: 0 auto; display: grid; gap: 22px; }
+  .eyebrow { font: 500 12px var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--soft); }
+  h1 { font: 400 clamp(32px, 4.4vw, 48px)/1.05 var(--serif); letter-spacing: -.01em; text-wrap: balance; } h1 i { color: var(--brand); }
+  .lead { color: var(--soft); max-width: 62ch; }
+  .panel { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 18px 20px; display: grid; gap: 12px; }
+  .row { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; }
+  .set { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px 18px; font-size: 14px; }
+  .set b { display: block; font: 500 11px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--soft); font-weight: 500; }
+  label.tog { display: inline-flex; gap: 8px; align-items: center; font-size: 14px; cursor: pointer; }
+  button { font: 600 14px var(--sans); border-radius: 999px; padding: 8px 16px; cursor: pointer; border: 1px solid var(--line); background: var(--card); color: var(--ink); }
+  button.primary { background: linear-gradient(135deg,#5b5bff,#3e7bff); color: #fff; border: 0; }
+  button.copied { background: var(--ok); color: #fff; border-color: transparent; }
+  .list { display: grid; gap: 12px; }
+  .item { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 16px 18px; display: grid; grid-template-columns: auto 1fr; gap: 6px 16px; }
+  .item.done { opacity: .62; }
+  .num { font: 400 34px/1 var(--serif); color: var(--brand); padding-top: 2px; font-variant-numeric: tabular-nums; }
+  .head { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: baseline; justify-content: space-between; }
+  .head h2 { font: 600 17px var(--sans); }
+  .meta { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; font-size: 13px; color: var(--soft); }
+  .file { font: 500 13px var(--mono); background: var(--tint); border: 1px solid var(--line); border-radius: 8px; padding: 2px 8px; color: var(--ink); }
+  .text { grid-column: 2; font: 400 20px/1.5 var(--serif); padding: 10px 14px; border-radius: 12px; background: var(--tint); white-space: pre-wrap; }
+  .text .brk { font: 500 12px var(--mono); color: var(--brand); }
+  .acts { grid-column: 2; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .note { font-size: 14px; color: var(--soft); }
+  :focus-visible { outline: 3px solid var(--brand); outline-offset: 2px; }
+  @media (max-width: 560px) { .item { grid-template-columns: 1fr; } .text, .acts { grid-column: 1; } }
+</style>
+</head>
+<body>
+<main class="wrap">
+  <div>
+    <p class="eyebrow">HireFlow AI · home page walkthrough</p>
+    <h1>The <i>voice-over</i> script</h1>
+    <p class="lead">Thirteen lines, one audio file each. Copy a line, paste it into ElevenLabs, generate, and download it with the file name shown. Save the files in <span class="file">frontend/demo/voice/</span>. The film will be retimed to your audio.</p>
+  </div>
+
+  <section class="panel" aria-label="ElevenLabs settings">
+    <div class="set">
+      <div><b>Voice</b>Warm, calm narrator, same voice for every line</div>
+      <div><b>Model</b>Eleven Multilingual v2 (or v3)</div>
+      <div><b>Settings</b>Stability 50% · Similarity 75% · Style 0–15%</div>
+      <div><b>Download</b>MP3, 44.1 kHz, 128 kbps or better</div>
+    </div>
+    <div class="row">
+      <label class="tog"><input type="checkbox" id="breaks" checked> Add natural pauses (ElevenLabs break tags)</label>
+      <button class="primary" type="button" id="copyAll">Copy all lines</button>
+      <button type="button" id="reset">Clear ticks</button>
+    </div>
+    <p class="note">Tick a line when its file is saved; the ticks stay on this computer. "Copy all" is for listening to the whole script once; the film needs the separate files.</p>
+  </section>
+
+  <section class="list" id="list" aria-label="Script lines"></section>
+
+  <section class="panel" aria-label="Optional sound effects">
+    <div class="head"><h2>Optional sound effects (ElevenLabs Sound Effects)</h2></div>
+    <div class="list" id="sfx"></div>
+  </section>
+</main>
+
+<script>
+(function () {
+  // [file, chapter, text]. "|" marks a natural pause; it becomes a break tag when pauses are on.
+  var LINES = [
+    ["00-intro.mp3", "Title", "This is HireFlow AI.| Let's follow one candidate,| from the front door to the offer letter."],
+    ["01-arrival.mp3", "Arrival", "Meet Arjun.| He's applying for an AI and machine learning role at TechNova.| No forms to fill. No password to remember.| He just knocks."],
+    ["02-hr-desk.mp3", "HR desk", "Inside, HR describes the role in plain words, and uploads Arjun's resume.| HireFlow AI reads it against the job,| plans the right tests for this role,| and sends him a single link."],
+    ["03-invite.mp3", "Invite", "The invite lands on his phone.| One tap,| and HireFlow AI builds his profile straight from the resume.| He's ready to begin."],
+    ["04-self-intro.mp3", "Self introduction", "First, a short self introduction, on camera.| Arjun talks about himself and his work,| while the camera makes sure his face is clearly visible,| and even helps with the lighting."],
+    ["05-role-test.mp3", "Role test", "Next, a role test.| Not a generic quiz.| The questions are written for this job, and this resume.| For an AI role, that means real machine learning problems."],
+    ["06-hands-on.mp3", "Hands-on task", "Then, real work.| Developers write code that runs against hidden tests.| Other roles get a lab, a data task, a written brief, or a design task,| each matched to the job."],
+    ["07-interview.mp3", "AI interview", "Finally, a live, spoken interview.| Ten questions, built from Arjun's own resume and the job.| The interviewer listens, follows up, and keeps things on track.| Watch the smoke.| It moves with its voice."],
+    ["08-security.mp3", "Security", "And all the while,| HireFlow AI keeps every stage fair.| The camera notices a phone,| a second face,| or eyes that keep leaving the screen.| The test stays locked in full screen.| Copy and paste are blocked,| and switching windows is recorded.| It even notices another voice in the room,| or text that appears too fast to be typed."],
+    ["09-strikes.mp3", "Strikes and flags", "Serious problems count as strikes,| and repeated strikes end the test.| Smaller signals become flags for HR to review,| each with photos and the moment it happened."],
+    ["10-report.mp3", "HR report", "Back at HR, every candidate is in one place,| with exactly where they are.| Each one gets a single report:| scores, an AI summary, integrity signals, and a face check,| with the evidence behind them."],
+    ["11-decision.mp3", "Decision", "HireFlow AI never makes the hiring decision.| HR does.| And when the answer is yes,| the offer letter is one click away."],
+    ["12-outro.mp3", "End card", "HireFlow AI.| Hire on evidence,| not on guesswork."]
+  ];
+  var SFX = [
+    ["knock.mp3", "Two firm knocks on a glass office door, close up, clean, no echo."],
+    ["door.mp3", "A modern glass office door opening smoothly, soft click and gentle swish."],
+    ["whoosh.mp3", "A light, airy swoosh, like a letter flying past, short and soft."],
+    ["tap.mp3", "A single soft tap on a phone touch screen with a subtle UI click."],
+    ["music.mp3", "Calm modern corporate ambient music, soft piano and warm pads, hopeful, no vocals, loopable, 90 seconds."]
+  ];
+
+  var list = document.getElementById("list"), sfx = document.getElementById("sfx"), breaks = document.getElementById("breaks");
+  var store = { get: function (k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, set: function (k, v) { try { localStorage.setItem(k, v); } catch (e) {} } };
+
+  function forCopy(text) { return breaks.checked ? text.split("|").map(function (s) { return s.trim(); }).join(' <break time="0.4s" /> ') : text.split("|").map(function (s) { return s.trim(); }).join(" "); }
+  function forShow(text, el) {
+    el.textContent = "";
+    text.split("|").forEach(function (part, i, all) {
+      el.appendChild(document.createTextNode((i ? " " : "") + part.trim()));
+      if (breaks.checked && i < all.length - 1) { var b = document.createElement("span"); b.className = "brk"; b.textContent = " ‖"; b.title = "Pause"; el.appendChild(b); }
+    });
+  }
+  function copy(text, btn, label) {
+    var done = function () { btn.textContent = "Copied"; btn.classList.add("copied"); setTimeout(function () { btn.textContent = label; btn.classList.remove("copied"); }, 1400); };
+    if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(text).then(done, fallback); else fallback();
+    function fallback() { var ta = document.createElement("textarea"); ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0"; document.body.appendChild(ta); ta.select(); try { document.execCommand("copy"); done(); } catch (e) { btn.textContent = "Select and copy by hand"; } ta.remove(); }
+  }
+
+  function render() {
+    list.innerHTML = "";
+    LINES.forEach(function (l, i) {
+      var words = l[2].replace(/\|/g, " ").split(/\s+/).filter(Boolean).length, secs = Math.round(words / 2.5 + LINES[i][2].split("|").length * 0.4);
+      var item = document.createElement("article"); item.className = "item" + (store.get("hf-voice-" + l[0]) === "1" ? " done" : "");
+      item.innerHTML = '<div class="num">' + String(i).padStart(2, "0") + '</div>' +
+        '<div class="head"><h2></h2><div class="meta"><span class="file"></span><span>' + words + ' words · about ' + secs + ' s</span></div></div>' +
+        '<p class="text"></p>' +
+        '<div class="acts"><button class="primary" type="button" data-a="text">Copy text</button><button type="button" data-a="file">Copy file name</button>' +
+        '<label class="tog"><input type="checkbox"> Saved</label></div>';
+      item.querySelector("h2").textContent = l[1];
+      item.querySelector(".file").textContent = l[0];
+      forShow(l[2], item.querySelector(".text"));
+      item.querySelector('[data-a="text"]').addEventListener("click", function (e) { copy(forCopy(l[2]), e.currentTarget, "Copy text"); });
+      item.querySelector('[data-a="file"]').addEventListener("click", function (e) { copy(l[0].replace(/\.mp3$/, ""), e.currentTarget, "Copy file name"); });
+      var cb = item.querySelector("input"); cb.checked = item.classList.contains("done");
+      cb.addEventListener("change", function () { store.set("hf-voice-" + l[0], cb.checked ? "1" : "0"); item.classList.toggle("done", cb.checked); });
+      list.appendChild(item);
+    });
+  }
+  SFX.forEach(function (s) {
+    var item = document.createElement("article"); item.className = "item";
+    item.innerHTML = '<div class="num" aria-hidden="true">♪</div><div class="head"><h2></h2></div><p class="text"></p><div class="acts"><button class="primary" type="button">Copy prompt</button></div>';
+    item.querySelector("h2").textContent = s[0]; item.querySelector(".text").textContent = s[1];
+    item.querySelector("button").addEventListener("click", function (e) { copy(s[1], e.currentTarget, "Copy prompt"); });
+    sfx.appendChild(item);
+  });
+  breaks.checked = store.get("hf-voice-breaks") !== "0";
+  breaks.addEventListener("change", function () { store.set("hf-voice-breaks", breaks.checked ? "1" : "0"); render(); });
+  document.getElementById("copyAll").addEventListener("click", function (e) { copy(LINES.map(function (l) { return forCopy(l[2]); }).join("\n\n"), e.currentTarget, "Copy all lines"); });
+  document.getElementById("reset").addEventListener("click", function () { LINES.forEach(function (l) { store.set("hf-voice-" + l[0], "0"); }); render(); });
+  render();
+})();
+</script>
+</body>
+</html>
